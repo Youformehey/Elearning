@@ -53,6 +53,7 @@ const routes = {
   prof: require("./routes/prof"),
   demandes: require("./routes/demandesRoutes"),
   assistant: require("./routes/assistant"),
+  
 };
 
 // Import routes rappels faits et matières

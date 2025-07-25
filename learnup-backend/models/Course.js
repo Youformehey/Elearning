@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 
 const courseSchema = new mongoose.Schema({
+  nom:       { type: String, required: true, trim: true }, // ← Nouveau champ nom
   matiere:   { type: mongoose.Schema.Types.ObjectId, ref: 'Matiere', required: true },
   classe:    { type: String, required: true },
   semestre:  { type: String },
@@ -20,26 +21,24 @@ const courseSchema = new mongoose.Schema({
   ],
   soumissions: [
     {
-      student:       { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
-      fileName:      String,
-      fileUrl:       String,
-      dateSoumission:{ type: Date, default: Date.now }
+      student:        { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
+      fileName:       String,
+      fileUrl:        String,
+      dateSoumission: { type: Date, default: Date.now }
     }
   ]
 }, {
-  timestamps: true
+  timestamps: true,
+  toObject:   { virtuals: true },
+  toJSON:     { virtuals: true }
 });
 
 // Virtual populate pour récupérer les chapitres liés
 courseSchema.virtual('chapitres', {
-  ref: 'Chapitre',       // modèle à peupler
-  localField: '_id',     // champ local
-  foreignField: 'course',// champ dans Chapitre
+  ref: 'Chapitre',        // modèle à peupler
+  localField: '_id',      // champ local
+  foreignField: 'course', // champ dans Chapitre
   justOne: false
 });
-
-// Pour inclure les virtuals dans toObject() et toJSON()
-courseSchema.set('toObject', { virtuals: true });
-courseSchema.set('toJSON',   { virtuals: true });
 
 module.exports = mongoose.model('Course', courseSchema);

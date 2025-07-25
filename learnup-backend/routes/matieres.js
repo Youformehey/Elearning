@@ -1,16 +1,8 @@
-// routes/matieres.js
 const express = require("express");
 const router = express.Router();
-const Matiere = require("../models/Matiere");
+const { getAllMatieres, createMatiere } = require("../controllers/matiereController");
 
-// ✅ Juste "/"
-router.get("/", async (req, res) => {
-  try {
-    const matieres = await Matiere.find();
-    res.json(matieres);
-  } catch (err) {
-    res.status(500).json({ error: "Erreur serveur" });
-  }
-});
+router.get("/",  getAllMatieres);
+router.post("/", createMatiere);
 
 module.exports = router;
