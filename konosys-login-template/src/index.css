@@ -1,0 +1,250 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #f4f6f8;
+  color: #111827;
+  
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Container principal réduit et centré */
+.container {
+  max-width: 1024px;  /* ou 900px ou 800px selon ton besoin */
+  margin: 0 auto;     /* centre horizontalement */
+  padding: 0 16px;    /* padding horizontal pour éviter que le contenu touche les bords */
+}
+
+
+.main-content {
+  padding-top: 72px; /* doit être >= hauteur navbar sticky */
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #1e3a8a;
+  padding: 10px;
+}
+
+
+
+
+html, body {
+  @apply bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
+  min-height: 100vh;
+}
+
+  .login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 5vh; /* passe de 6vh à 12vh pour bien l’abaisser */
+  }
+  
+  
+  .logo {
+    width: 300px;
+    margin-top: 2vh; /* descente fine du logo */
+    margin-bottom: 1rem;
+    animation: fadeIn 0.5s ease-in-out, float 5s ease-in-out infinite;
+  }
+  
+  
+  .login-card {
+    margin-top:1rem; /* espace entre logo/titre et carte */
+  }
+  
+  
+  .title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0.5rem 0 0;
+  }
+  
+  .subtitle {
+    font-size: 0.9rem;
+    color: #60a5fa;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+  
+  .login-card {
+    background-color: rgba(15, 23, 42, 0.95);
+    padding: 3rem; /* plus d’espace intérieur */
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 500px; /* élargir la carte */
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35); /* ombre plus forte */
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    text-align: left;
+  }
+  
+  .login-label {
+    font-size: 1.6rem; /* plus gros */
+    font-weight: 600;
+  }
+  
+  .login-input {
+    padding: 1.4rem 1.6rem; /* plus de hauteur et largeur interne */
+    font-size: 0.4rem; 
+    border-radius: 1.5rem; /* 🔄 Plus arrondi */   
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 3px solid rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 1.125rem; /* texte plus lisible */
+  }
+
+  .login-input {
+    width: 90%;
+    max-width: 100%;
+  }
+  
+  
+  .login-input:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px #3b82f6;
+  }
+  .login-button {
+    background-color: #2563eb;
+    color: white;
+    padding: 1.25rem; /* un peu plus grand */
+    border: none;
+    font-weight: bold;
+    font-size: 1.25rem; /* plus lisible */
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  
+    width: 100%;       /* prend toute la largeur du formulaire */
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;    /* centré */
+  }
+  
+  
+  .login-button:hover {
+    background-color: #1d4ed8;
+  }
+  
+  .login-link {
+    display: block;
+    margin-top: 1.25rem;
+    text-align: center;
+    font-size: 1rem;
+    color: #60a5fa;
+    text-decoration: none;
+  }
+  
+  .login-link:hover {
+    text-decoration: underline;
+  }
+  
+  
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+  
+  
+  .logo {
+    width: 300px;
+    margin-bottom: -65px ; 
+    animation: fadeIn 0.5s ease-in-out, float 5s ease-in-out infinite;
+  }
+  
+  
+  .login-card {
+    background-color: rgba(15, 23, 42, 0.95);
+    padding: 3rem;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+    animation: fadeInUp 1s ease-out;
+  }
+  
+  
+  
+  .login-button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(to right, #2563eb, #1d4ed8);
+  }
+  
+  .login-link {
+    animation: fadeInUp 1.4s ease;
+    animation-delay: 0.8s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #60a5fa;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .password-toggle:hover {
+    text-decoration: underline;
+  }
+  
+  .login-link-inline {
+    font-size: 0.95rem;
+    color: #60a5fa;
+    margin-top: 0.5rem;
+    text-align: right;
+    display: block;
+    text-decoration: none;
+  }
+  
+  .login-link-inline:hover {
+    text-decoration: underline;
+  }
+  
+
+
+  
+  @keyframes fadeSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fadeSlideIn {
+    animation: fadeSlideIn 0.25s ease-out forwards;
+  }
+  
+  
