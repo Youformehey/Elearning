@@ -2,11 +2,13 @@ const jwt = require("jsonwebtoken");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
 const Admin = require("../models/Admin");
+const Parent = require("../models/Parent");
 
 const roleModelMap = {
   student: Student,
   teacher: Teacher,
   admin: Admin,
+  parent: Parent,
 };
 
 const protect = async (req, res, next) => {
@@ -19,24 +21,31 @@ const protect = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const id = decoded._id || decoded.id;
-    const role = decoded.role.toLowerCase();
+    // Gérer les différents formats d'ID dans le token
+    const id = decoded._id || decoded.id || decoded.userId;
+    const role = decoded.role ? decoded.role.toLowerCase() : 'admin'; // Par défaut admin si pas de rôle
+
+    console.log('🔍 Token décodé:', { id, role, decoded });
 
     const Model = roleModelMap[role];
     if (!Model) {
+      console.log('❌ Rôle invalide:', role);
       return res.status(403).json({ message: "Rôle utilisateur invalide." });
     }
 
     const user = await Model.findById(id).select("-password");
     if (!user) {
+      console.log('❌ Utilisateur non trouvé:', { id, role, Model: Model.modelName });
       return res.status(401).json({ message: "Utilisateur introuvable." });
     }
 
     user.role = role;
     req.user = user;
+    console.log('✅ Utilisateur authentifié:', { id: user._id, role: user.role, name: user.name });
 
     next();
   } catch (error) {
+    console.error('❌ Erreur d\'authentification:', error.message);
     return res.status(401).json({ message: "Token invalide ou expiré." });
   }
 };
@@ -50,7 +59,43 @@ const authorizeRoles = (...allowedRoles) => {
   };
 };
 
+// Middleware spécifique pour les admins
+const admin = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: "Accès refusé : droits administrateur requis." });
+  }
+  next();
+};
+
+// Middleware spécifique pour les professeurs
+const teacher = (req, res, next) => {
+  if (!req.user || req.user.role !== 'teacher') {
+    return res.status(403).json({ message: "Accès refusé : droits professeur requis." });
+  }
+  next();
+};
+
+// Middleware spécifique pour les étudiants
+const student = (req, res, next) => {
+  if (!req.user || req.user.role !== 'student') {
+    return res.status(403).json({ message: "Accès refusé : droits étudiant requis." });
+  }
+  next();
+};
+
+// Middleware spécifique pour les parents
+const parent = (req, res, next) => {
+  if (!req.user || req.user.role !== 'parent') {
+    return res.status(403).json({ message: "Accès refusé : droits parent requis." });
+  }
+  next();
+};
+
 module.exports = {
   protect,
   authorizeRoles,
+  admin,
+  teacher,
+  student,
+  parent,
 };

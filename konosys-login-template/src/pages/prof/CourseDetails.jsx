@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { CalendarDays, Clock, MapPin, Users, ArrowLeft } from "lucide-react";
+import { ThemeContext } from "../../context/ThemeContext";
 
 export default function CourseDetails() {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
+  const { darkMode } = useContext(ThemeContext);
 
   const API = import.meta.env.VITE_API_URL || "http://localhost:5001";
   const token = JSON.parse(localStorage.getItem("userInfo"))?.token;
@@ -22,8 +24,8 @@ export default function CourseDetails() {
   if (!course) return <div className="text-center py-20">Chargement...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4">
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-8 space-y-6">
+    <div className={`min-h-screen py-10 px-4 ${darkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
+      <div className={`max-w-4xl mx-auto rounded-xl shadow-md p-8 space-y-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <Link
           to="/prof/cours"
           className="inline-flex items-center text-sm text-blue-600 hover:underline"
@@ -33,10 +35,10 @@ export default function CourseDetails() {
         </Link>
 
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
             {course.classe} — {course.matiere?.nom || "Matière non précisée"}
           </h1>
-          <div className="flex items-center text-gray-500 text-sm gap-4 mt-2">
+          <div className={`flex items-center text-sm gap-4 mt-2 ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
             <span className="flex items-center gap-1">
               <CalendarDays className="w-4 h-4" />
               {new Date(course.date).toLocaleDateString("fr-FR")}

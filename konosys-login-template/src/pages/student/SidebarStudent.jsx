@@ -1,94 +1,170 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   User,
   BookOpen,
   Calendar,
   ClipboardList,
-  FileText,
   MessageSquare,
-  Bot,
+  Menu,
+  LogOut,
+  GraduationCap,
+  Clock,
+  Target,
+  Brain,
+  Award,
+  Moon,
+  Sun
 } from "lucide-react";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const links = [
-  { to: "/student", icon: BookOpen, label: "Accueil" },
-  { to: "/student/cours", icon: FileText, label: "Mes cours" },
-  { to: "/student/planning", icon: Calendar, label: "Planning" },
-  { to: "/student/rappels", icon: ClipboardList, label: "Rappels" },
-  { to: "/student/absences", icon: Calendar, label: "Absences" },
-  { to: "/student/demandes", icon: MessageSquare, label: "Demandes" },
-  { to: "/student/formations", icon: BookOpen, label: "Formations" },
-  { to: "/student/assistant", icon: Bot, label: "Assistant" },
-  { to: "/student/profil", icon: User, label: "Profil" },
+  { to: "/student", icon: GraduationCap, label: "Accueil", emoji: "🏠" },
+  { to: "/student/cours", icon: BookOpen, label: "Mes cours", emoji: "📚" },
+  { to: "/student/notes", icon: Target, label: "Mes Notes", emoji: "🎯" },
+  { to: "/student/planning", icon: Calendar, label: "Planning", emoji: "📅" },
+  { to: "/student/rappels", icon: ClipboardList, label: "Rappels", emoji: "🔔" },
+  { to: "/student/absences", icon: Clock, label: "Absences", emoji: "⏰" },
+  { to: "/student/demandes", icon: MessageSquare, label: "Demandes", emoji: "💬" },
+  { to: "/student/formations", icon: Award, label: "Formations", emoji: "🏆" },
+  { to: "/student/assistant", icon: Brain, label: "Assistant", emoji: "🤖" },
+  { to: "/student/profil", icon: User, label: "Profil", emoji: "👤" },
 ];
 
 export default function SidebarStudent() {
+  const [open, setOpen] = useState(false);
+  const { darkMode, setDarkMode } = useContext(ThemeContext);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
+
   return (
-    <aside
-      className="
-        fixed top-0 left-0 h-full w-64
-        bg-white shadow-lg
-        text-gray-800 flex flex-col justify-between
-        py-8 px-6
-        font-sans select-none
-      "
-      style={{ fontFamily: "'Quicksand', sans-serif" }}
-    >
-      {/* Espace en haut avec avatar + statut */}
-      <div className="mb-8 flex items-center gap-3 px-2">
-        <div className="w-12 h-12 rounded-full bg-cyan-500 flex items-center justify-center shadow-md">
-          <User size={26} className="text-white" strokeWidth={2} />
-        </div>
-        <div>
-          <p className="text-lg font-semibold text-cyan-600">Élève</p>
-          <p className="text-sm text-gray-500">Connecté</p>
-        </div>
-      </div>
+    <>
+      {/* Hamburger bouton (mobile uniquement) */}
+      <motion.button
+        className="fixed top-4 left-4 z-[110] md:hidden p-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+        onClick={() => setOpen(!open)}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        aria-label="Toggle menu"
+      >
+        <Menu size={20} />
+      </motion.button>
 
-      {/* NAVIGATION */}
-      <nav className="flex flex-col gap-5">
-        {links.map(({ to, icon: Icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) =>
-              `group flex items-center gap-4 px-5 py-3 rounded-md text-base font-semibold transition
-              ${
-                isActive
-                  ? "bg-cyan-500 text-white shadow-lg"
-                  : "hover:bg-cyan-100 hover:text-cyan-600 text-gray-700"
-              }
-              `
-            }
-            aria-label={label}
-            title={label}
-            tabIndex={0}
+      {/* Overlay pour mobile */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-[90] md:hidden"
+            onClick={() => setOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar principal */}
+      <aside
+        className={`
+          fixed top-0 left-0 h-screen z-[100] w-[280px]
+          ${darkMode 
+            ? 'bg-gray-900 text-gray-100' 
+            : 'bg-white text-gray-800'
+          }
+          md:static md:translate-x-0
+          transition-all duration-300 ease-in-out
+          shadow-xl
+          ${open ? "translate-x-0" : "-translate-x-full"}
+          md:translate-x-0
+        `}
+      >
+        {/* HEADER */}
+        <div className={`flex flex-col items-center px-6 py-8 border-b ${
+          darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-gray-50'
+        }`}>
+          {/* Theme toggle */}
+          <motion.button
+            className={`absolute top-4 right-4 flex items-center gap-2 px-3 py-2 rounded-lg shadow-md font-medium text-sm transition-all duration-300 ${
+              darkMode 
+                ? 'bg-gray-700 text-gray-100' 
+                : 'bg-white text-gray-700 border border-gray-200'
+            }`}
+            onClick={() => setDarkMode && setDarkMode(!darkMode)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            title={darkMode ? "Mode clair" : "Mode sombre"}
           >
-            <Icon
-              size={22}
-              className="transition-colors duration-300 group-hover:text-cyan-600"
-              aria-hidden="true"
-              strokeWidth={2}
-              style={{ filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.1))" }}
-            />
-            <span className="select-none">{label}</span>
-          </NavLink>
-        ))}
-      </nav>
+            {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+            <span className="hidden sm:inline">{darkMode ? "Clair" : "Sombre"}</span>
+          </motion.button>
 
-      {/* FOOTER */}
-      <div className="mt-auto w-full pt-8 border-t border-gray-300">
-        <NavLink
-          to="/login"
-          className="flex items-center gap-4 px-5 py-3 rounded-md bg-red-600 text-white font-semibold justify-center text-base shadow-md hover:bg-red-700 transition focus:outline-none focus:ring-4 focus:ring-red-400"
-          aria-label="Se déconnecter"
-          title="Se déconnecter"
-          tabIndex={0}
-        >
-          <User size={22} aria-hidden="true" />
-          Se déconnecter
-        </NavLink>
-      </div>
-    </aside>
+          {/* Logo et titre */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+              <GraduationCap size={32} className="text-white" />
+            </div>
+            <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+              Espace Étudiant
+            </h2>
+            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              Gestion de vos cours
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Navigation Links */}
+        <nav className="flex-1 px-4 py-6">
+          <ul className="space-y-2">
+            {links.map((link, index) => (
+              <motion.li
+                key={link.to}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                <NavLink
+                  to={link.to}
+                  className={({ isActive }) => `
+                    flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium
+                    ${isActive 
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
+                      : `hover:bg-opacity-10 ${darkMode ? 'hover:bg-white text-gray-300 hover:text-white' : 'hover:bg-gray-100 text-gray-700'}`
+                    }
+                  `}
+                  onClick={() => setOpen(false)}
+                >
+                  <link.icon size={20} />
+                  <span>{link.label}</span>
+                  <span className="ml-auto">{link.emoji}</span>
+                </NavLink>
+              </motion.li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Footer avec logout */}
+        <div className={`px-4 py-6 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <motion.button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-all duration-200"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <LogOut size={20} />
+            <span>Déconnexion</span>
+          </motion.button>
+        </div>
+      </aside>
+    </>
   );
 }

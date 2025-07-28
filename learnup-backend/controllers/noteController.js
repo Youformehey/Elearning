@@ -1,5 +1,6 @@
 const Note = require("../models/Note");
 const Course = require("../models/Course");
+const Student = require("../models/Student");
 
 // 🔹 Ajouter ou mettre à jour une note
 exports.ajouterOuModifierNote = async (req, res) => {
@@ -35,7 +36,7 @@ exports.ajouterOuModifierNote = async (req, res) => {
   }
 };
 
-// 🔹 Obtenir les notes d’un cours (prof uniquement)
+// 🔹 Obtenir les notes d'un cours (prof uniquement)
 exports.getNotesParCours = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
@@ -52,6 +53,44 @@ exports.getNotesParCours = async (req, res) => {
 
     res.status(200).json(notes);
   } catch (err) {
+    res.status(500).json({ error: "Erreur serveur : " + err.message });
+  }
+};
+
+// 🔹 Obtenir les notes de l'étudiant connecté (filtrées par classe)
+exports.getNotesForStudent = async (req, res) => {
+  try {
+    const etudiantId = req.user._id;
+    
+    // Récupérer l'étudiant pour connaître sa classe
+    const student = await Student.findById(etudiantId);
+    if (!student) {
+      return res.status(404).json({ error: "Étudiant non trouvé" });
+    }
+
+    // Récupérer tous les cours de la classe de l'étudiant
+    const coursesDeLaClasse = await Course.find({ classe: student.classe });
+    const courseIds = coursesDeLaClasse.map(course => course._id);
+
+    // Récupérer les notes de l'étudiant uniquement pour les cours de sa classe
+    const notes = await Note.find({ 
+      etudiant: etudiantId,
+      cours: { $in: courseIds }
+    })
+      .populate({
+        path: "cours",
+        select: "matiere classe",
+        populate: {
+          path: "matiere",
+          select: "nom"
+        }
+      })
+      .populate("enseignant", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(notes);
+  } catch (err) {
+    console.error("Erreur récupération notes étudiant:", err);
     res.status(500).json({ error: "Erreur serveur : " + err.message });
   }
 };

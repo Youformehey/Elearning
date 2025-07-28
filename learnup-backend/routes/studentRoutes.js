@@ -1,54 +1,39 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-
 const {
   registerStudent,
   loginStudent,
   getStudentProfile,
   getStudentCourses,
   getStudentRappels,
-  getStudentPlanning,
   markRappelFait,
+  getStudentPlanning,
   getChapitresWithCourses,
-} = require("../controllers/studentController");
+  updateStudentProfile,
+  getStudentNotes,
+  getStudentAbsences,
+  getStudentDashboard,
+  getStudentFormations
+} = require('../controllers/studentController');
+const { protect } = require('../middleware/authMiddleware');
 
-const {
-  getAbsencesEtudiantParMatiere,
-} = require("../controllers/absenceController");
+// Routes publiques (pas besoin d'authentification)
+router.post('/register', registerStudent);
+router.post('/login', loginStudent);
 
-const { protect, authorizeRoles } = require("../middleware/authMiddleware");
-
-// Routes publiques (inscription, login)
-router.post("/register", registerStudent);
-router.post("/login", loginStudent);
-
-// Middleware : protection et vérification rôle étudiant
-router.use(protect, authorizeRoles("student"));
-
-// Profil de l’étudiant connecté
-router.get("/me", getStudentProfile);
-
-// Exemple dashboard simple
-router.get("/dashboard", (req, res) => {
-  res.json({ message: `Bienvenue étudiant ${req.user.name} !` });
-});
-
-// Liste des cours de la classe de l’étudiant
-router.get("/cours", getStudentCourses);
-
-// Liste des rappels (devoirs, tâches, etc.) de la classe
-router.get("/rappels", getStudentRappels);
-
-// Marquer un rappel comme fait (étudiant)
-router.put("/rappels/:id/mark", markRappelFait);
-
-// Planning complet (cours + séances) de l’étudiant
-router.get("/planning", getStudentPlanning);
-
-// Absences par matière (heures + dépassement)
-router.get("/absences/matieres", getAbsencesEtudiantParMatiere);
-
-// Chapitres et cours liés pour l’étudiant
-router.get("/chapitres-cours", getChapitresWithCourses);
+// Routes protégées (nécessitent un token JWT valide)
+router.get('/profile', protect, getStudentProfile);
+router.get('/me', protect, getStudentProfile); // Alias pour /me
+router.get('/dashboard', protect, getStudentDashboard); // Ajout de la route dashboard
+router.get('/courses', protect, getStudentCourses);
+router.get('/notes', protect, getStudentNotes);
+router.get('/absences', protect, getStudentAbsences);
+router.get('/rappels', protect, getStudentRappels);
+router.put('/rappels/:rappelId/fait', protect, markRappelFait);
+router.get('/planning', protect, getStudentPlanning);
+router.get('/chapitres', protect, getChapitresWithCourses);
+router.get('/formations', protect, getStudentFormations); // Ajout de la route formations
+router.put('/profile', protect, updateStudentProfile);
+router.put('/me', protect, updateStudentProfile); // Alias pour /me
 
 module.exports = router;

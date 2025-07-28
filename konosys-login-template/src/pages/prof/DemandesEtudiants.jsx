@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { FileText, Info, CheckCircle, XCircle, MessageSquare } from "lucide-react";
+import { ThemeContext } from "../../context/ThemeContext";
 
 export default function DemandesEtudiants() {
   const [demandes, setDemandes] = useState([]);
   const [selectedDemande, setSelectedDemande] = useState(null);
   const profId = "1234567890abcdef"; // 🔁 Remplace par le vrai ID du prof (via auth ou localStorage)
+  const { darkMode } = useContext(ThemeContext);
 
   // Charger les demandes depuis le backend
   useEffect(() => {
@@ -25,9 +27,9 @@ export default function DemandesEtudiants() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-12 text-gray-800">
+    <div className={`min-h-screen px-6 py-12 ${darkMode ? 'bg-gray-900 text-gray-200' : 'bg-gray-50 text-gray-800'}`}>
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-blue-800 mb-10 flex items-center gap-3">
+        <h1 className={`text-4xl font-extrabold mb-10 flex items-center gap-3 ${darkMode ? 'text-white' : 'text-blue-800'}`}>
           <FileText size={32} />
           Demandes des étudiants
         </h1>

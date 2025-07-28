@@ -8,6 +8,9 @@ const {
   getRappelsByClasse,
   updateRappel,
   getEtudiantsAyantFaitRappel,
+  toggleRappelFait,
+  getAllRappelsForStudent,
+  getRappelsByStudentId,
 } = require("../controllers/rappelController");
 
 const { protect, authorizeRoles } = require("../middleware/authMiddleware");
@@ -29,5 +32,14 @@ router.get("/classe/:classe", protect, authorizeRoles("student"), getRappelsByCl
 
 // 👨‍🎓 Voir les étudiants qui ont marqué un rappel comme fait (professeur)
 router.get("/:id/etudiants", protect, authorizeRoles("teacher"), getEtudiantsAyantFaitRappel);
+
+// ✅ Marquer un rappel comme fait (étudiant) — protégé + rôle student
+router.post("/:id/toggle-fait", protect, authorizeRoles("student"), toggleRappelFait);
+
+// 📋 Tous les rappels pour l'étudiant connecté (avec statut fait)
+router.get("/student/all", protect, authorizeRoles("student"), getAllRappelsForStudent);
+
+// 👨‍👩‍👧‍👦 Rappels pour un étudiant spécifique (parent) — protégé + rôle parent
+router.get("/student/:studentId", protect, authorizeRoles("parent"), getRappelsByStudentId);
 
 module.exports = router;

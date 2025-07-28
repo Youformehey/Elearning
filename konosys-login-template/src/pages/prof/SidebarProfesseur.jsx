@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   User,
   BookOpen,
@@ -8,95 +9,161 @@ import {
   FolderKanban,
   Bell,
   FilePlus2,
+  GraduationCap,
+  Clock,
+  Settings,
+  LogOut,
+  Menu,
+  BarChart3,
+  MessageSquare,
+  X
 } from "lucide-react";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const links = [
-  { to: "/prof/cours", icon: BookOpen, label: "Mes cours" },
-  { to: "/prof/notes", icon: FileBarChart2, label: "Notes" },
-  { to: "/prof/absences", icon: Calendar, label: "Absences" },
-  { to: "/prof/planning", icon: Calendar, label: "Planning" },
-  { to: "/prof/documents", icon: FolderKanban, label: "Documents" },
-  { to: "/prof/rappels", icon: Bell, label: "Rappels" },
-  { to: "/prof/rappels/1/faits", icon: FilePlus2, label: "Rappels faits" },
-  { to: "/prof/profil", icon: User, label: "Profil" },
+  { to: "/prof", icon: GraduationCap, label: "Accueil", emoji: "🏠" },
+  { to: "/prof/dashboard", icon: BarChart3, label: "Dashboard", emoji: "📊" },
+  { to: "/prof/cours", icon: BookOpen, label: "Mes cours", emoji: "📚" },
+  { to: "/prof/notes", icon: FileBarChart2, label: "Notes", emoji: "📝" },
+  { to: "/prof/absences", icon: Clock, label: "Absences", emoji: "⏰" },
+  { to: "/prof/planning", icon: Calendar, label: "Planning", emoji: "📅" },
+  { to: "/prof/documents", icon: FolderKanban, label: "Documents", emoji: "📁" },
+  { to: "/prof/rappels", icon: Bell, label: "Rappels", emoji: "🔔" },
+  { to: "/prof/rappels/1/faits", icon: FilePlus2, label: "Rappels faits", emoji: "✅" },
+  { to: "/prof/demandes", icon: MessageSquare, label: "Demandes", emoji: "💬" },
+  { to: "/prof/profil", icon: User, label: "Profil", emoji: "👤" },
+  { to: "/prof/parametres", icon: Settings, label: "Paramètres", emoji: "⚙️" },
 ];
 
 export default function SidebarProfesseur() {
   const [open, setOpen] = useState(false);
+  const { darkMode } = useContext(ThemeContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("token");
+    setOpen(false);
+    navigate("/login");
+  };
 
   return (
     <>
-      {/* Bouton hamburger mobile */}
-      <button
-        className="fixed top-4 left-4 z-60 md:hidden p-2 rounded-md bg-blue-900 text-white shadow-lg"
+      {/* Hamburger bouton (mobile uniquement) */}
+      <motion.button
+        className="fixed top-4 left-4 z-[110] md:hidden p-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
         onClick={() => setOpen(!open)}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         aria-label="Toggle menu"
       >
-        ☰
-      </button>
+        <Menu size={20} />
+      </motion.button>
 
+      {/* Overlay pour mobile */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-[90] md:hidden"
+            onClick={() => setOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar principal */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen bg-blue-900 text-white shadow-2xl z-50
-          w-full max-w-xs sm:max-w-[240px] md:max-w-[240px] 
-          transform transition-transform duration-300 ease-in-out
+          fixed top-0 left-0 h-screen z-[100] w-[280px]
+          ${darkMode 
+            ? 'bg-gray-900 text-gray-100' 
+            : 'bg-blue-800 text-white'
+          }
+          md:static md:translate-x-0
+          transition-all duration-300 ease-in-out
+          shadow-xl
           ${open ? "translate-x-0" : "-translate-x-full"}
-          md:translate-x-0 md:static md:flex md:flex-col md:justify-between
-          overflow-y-auto
-          scrollbar-thin scrollbar-thumb-blue-700 scrollbar-track-blue-900
+          md:translate-x-0
         `}
-        style={{ height: "100vh" }}
       >
         {/* HEADER */}
-        <div className="flex flex-col items-center px-4 py-6 border-b border-blue-800">
-          <img
-            src="/image pfe.png"
-            alt="LearnUp Logo"
-            className="w-12 h-12 mb-2 rounded-full shadow"
-          />
-          <h1 className="text-lg font-semibold">LearnUp</h1>
-          <p className="text-xs text-blue-300 mt-1 tracking-wide">Espace Prof</p>
+        <div className={`flex flex-col items-center px-6 py-8 border-b ${
+          darkMode ? 'border-gray-700 bg-gray-800' : 'border-blue-700 bg-blue-900'
+        }`}>
+          {/* Bouton fermer mobile */}
+          <button
+            onClick={() => setOpen(false)}
+            className="absolute top-4 right-4 md:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
+          >
+            <X size={20} className="text-white" />
+          </button>
+          
+          {/* Logo et titre */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mb-4">
+              <GraduationCap size={32} className="text-white" />
+            </div>
+            <h2 className="text-xl font-bold text-white">
+              Espace Professeur
+            </h2>
+            <p className="text-sm text-blue-200">
+              Gestion de vos cours
+            </p>
+          </motion.div>
         </div>
 
-        {/* NAVIGATION */}
-        <nav className="flex flex-col gap-4 px-2 py-6 flex-grow">
-          {links.map(({ to, icon: Icon, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `flex items-center gap-4 px-4 py-3 rounded-lg text-base font-semibold transition duration-150
-                ${isActive ? "bg-white text-blue-900" : "hover:bg-blue-800"}`
-              }
-              onClick={() => setOpen(false)} // ferme menu mobile au clic
-            >
-              <Icon size={24} />
-              <span>{label}</span>
-            </NavLink>
-          ))}
+        {/* Navigation Links */}
+        <nav className="flex-1 px-4 py-6">
+          <ul className="space-y-2">
+            {links.map((link, index) => (
+              <motion.li
+                key={link.to}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                <NavLink
+                  to={link.to}
+                  className={({ isActive }) => `
+                    flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium
+                    ${isActive 
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg' 
+                      : 'hover:bg-white/10 text-white hover:text-white'
+                    }
+                  `}
+                  onClick={() => setOpen(false)}
+                >
+                  <link.icon size={20} />
+                  <span>{link.label}</span>
+                  <span className="ml-auto">{link.emoji}</span>
+                </NavLink>
+              </motion.li>
+            ))}
+          </ul>
         </nav>
 
-        {/* FOOTER */}
-        <div className="px-6 py-4 border-t border-blue-800">
-          <NavLink
-            to="/login"
-            className="flex items-center gap-3 py-2 text-base hover:bg-blue-800 rounded-lg transition"
-            onClick={() => setOpen(false)}
+        {/* Footer avec logout */}
+        <div className={`px-4 py-6 border-t ${darkMode ? 'border-gray-700' : 'border-blue-700'}`}>
+          <motion.button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-all duration-200"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <User size={24} />
-            <span>Se déconnecter</span>
-          </NavLink>
+            <LogOut size={20} />
+            <span>Déconnexion</span>
+          </motion.button>
         </div>
       </aside>
-
-      {/* Overlay mobile */}
-      {open && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-          onClick={() => setOpen(false)}
-          aria-hidden="true"
-        />
-      )}
     </>
   );
 }
+

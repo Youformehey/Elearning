@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const API_URL = "http://localhost:5001";
 
 const QuizPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { darkMode } = useContext(ThemeContext);
 
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -107,7 +109,7 @@ const QuizPage = () => {
   if (loading) return <div className="text-center p-4">Chargement...</div>;
 
   return (
-    <div className="min-h-screen bg-indigo-50 p-6 max-w-4xl mx-auto">
+    <div className={`min-h-screen p-6 max-w-4xl mx-auto ${darkMode ? 'bg-gray-900' : 'bg-indigo-50'}`}>
       <button onClick={() => navigate(-1)} className="text-indigo-600 underline mb-6">
         ← Retour
       </button>
@@ -115,25 +117,33 @@ const QuizPage = () => {
       <h1 className="text-3xl font-bold mb-8 text-center">Quiz</h1>
 
       {role === "teacher" && (
-        <div className="mb-8 p-4 bg-white rounded shadow">
-          <h2 className="text-xl font-semibold mb-4">Ajouter une question</h2>
-
+        <div style={{
+          marginBottom: 36,
+          padding: 24,
+          background: '#fff',
+          borderRadius: 14,
+          boxShadow: '0 2px 12px #2563eb11',
+          maxWidth: 600,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          animation: 'fadeInSlide 0.7s',
+        }}>
+          <h2 style={{ color: '#2563eb', fontWeight: 700, fontSize: 20, marginBottom: 18 }}>Ajouter une question</h2>
           <input
             type="text"
             placeholder="Question"
             value={newQuestion}
             onChange={(e) => setNewQuestion(e.target.value)}
-            className="w-full p-2 border rounded mb-3"
+            style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #e0e7ff', fontSize: 15, marginBottom: 14 }}
           />
-
           {newOptions.map((opt, i) => (
-            <div key={i} className="flex items-center gap-2 mb-2">
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <input
                 type="radio"
                 name="correct"
                 checked={correctIndex === i}
                 onChange={() => setCorrectIndex(i)}
-                className="cursor-pointer"
+                style={{ accentColor: '#2563eb', cursor: 'pointer' }}
               />
               <input
                 type="text"
@@ -144,84 +154,47 @@ const QuizPage = () => {
                   newOpts[i] = e.target.value;
                   setNewOptions(newOpts);
                 }}
-                className="flex-grow p-2 border rounded"
+                style={{ flex: 1, padding: 9, borderRadius: 8, border: '1px solid #e0e7ff', fontSize: 15 }}
               />
             </div>
           ))}
-
           <button
             onClick={handleAddQuestion}
-            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+            style={{ marginTop: 18, background: '#2563eb', color: 'white', border: 'none', borderRadius: 8, padding: '10px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 1px 6px #2563eb22', transition: 'background 0.2s' }}
           >
             Ajouter la question
           </button>
         </div>
       )}
-
-      {/* Liste questions */}
-      <div className="space-y-6">
-        {questions.length === 0 && <p>Aucune question pour ce quiz.</p>}
-
-        {questions.map((q, index) => (
-          <div
-            key={q._id || index}
-            className="bg-white p-6 rounded shadow flex flex-col gap-4"
-          >
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold">{index + 1}. {q.question}</h3>
-              {role === "teacher" && (
+      {/* Liste questions (prof) */}
+      {role === "teacher" && (
+        <div style={{ maxWidth: 700, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 18 }}>
+          {questions.length === 0 && <p style={{ color: '#64748b', textAlign: 'center' }}>Aucune question pour ce quiz.</p>}
+          {questions.map((q, index) => (
+            <div key={q._id || index} style={{ background: '#f6faff', border: '1px solid #e3e8f0', borderRadius: 12, boxShadow: '0 2px 8px #2563eb0a', padding: '18px 22px', display: 'flex', flexDirection: 'column', gap: 8, animation: 'fadeInSlide 0.5s' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                <h3 style={{ fontWeight: 600, color: '#2563eb', fontSize: 16, margin: 0 }}>{index + 1}. {q.question}</h3>
                 <button
                   onClick={() => handleDeleteQuestion(q._id)}
-                  className="text-red-600 hover:underline"
+                  style={{ background: 'none', color: '#b91c1c', border: 'none', fontWeight: 600, fontSize: 14, cursor: 'pointer', padding: '2px 8px', borderRadius: 6, transition: 'background 0.2s' }}
+                  onMouseOver={e => e.currentTarget.style.background='#fee2e2'}
+                  onMouseOut={e => e.currentTarget.style.background='none'}
                 >
                   Supprimer
                 </button>
-              )}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginLeft: 18 }}>
+                {q.options.map((opt, i) => (
+                  <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 15, color: i === q.correctIndex ? '#059669' : '#334155', fontWeight: i === q.correctIndex ? 700 : 400 }}>
+                    {i === q.correctIndex && <span style={{ background: '#bbf7d0', color: '#059669', borderRadius: 6, padding: '2px 8px', fontSize: 13, fontWeight: 700, marginRight: 6 }}>Bonne réponse</span>}
+                    {opt}
+                  </span>
+                ))}
+              </div>
             </div>
-
-            <div className="flex flex-col gap-2">
-              {q.options.map((opt, i) => {
-                const isSelected = userAnswers[index] === i;
-                const isCorrect = finalScore !== null && i === q.correctIndex;
-                return (
-                  <label
-                    key={i}
-                    className={`flex items-center gap-3 p-2 rounded border cursor-pointer
-                      ${finalScore === null
-                        ? "hover:bg-indigo-100"
-                        : isCorrect
-                        ? "bg-green-100 border-green-400"
-                        : isSelected
-                        ? "bg-red-100 border-red-400"
-                        : "bg-gray-100"
-                      }
-                    `}
-                  >
-                    <input
-                      type="radio"
-                      name={`q-${index}`}
-                      disabled={finalScore !== null}
-                      checked={isSelected}
-                      onChange={() => handleAnswer(index, i)}
-                    />
-                    <span>{opt}</span>
-                  </label>
-                );
-              })}
-            </div>
-
-            {finalScore !== null && (
-              <p className={`mt-2 font-medium ${
-                userAnswers[index] === q.correctIndex ? "text-green-600" : "text-red-600"
-              }`}>
-                {userAnswers[index] === q.correctIndex
-                  ? "✅ Bonne réponse"
-                  : `❌ Mauvaise réponse, la bonne était : ${q.options[q.correctIndex]}`}
-              </p>
-            )}
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Bouton soumettre (étudiant) */}
       {finalScore === null && role === "student" && questions.length > 0 && (

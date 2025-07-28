@@ -1,15 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  BellIcon,
-  UserCircleIcon,
-  ArrowRightOnRectangleIcon,
-  Cog6ToothIcon,
-  Bars3Icon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { Bell, User, LogOut, Settings, Menu, X, Sparkles, Star, Zap, Trophy, Heart, Moon, Sun } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import NotificationRappels from "./NotificationRappels";
+import NotificationRappelsStudent from "./NotificationRappelsStudent";
+import { ThemeContext } from "../context/ThemeContext";
 
 export default function HomeNavbarStudent({ userName = "Élève" }) {
   const navigate = useNavigate();
@@ -17,7 +11,7 @@ export default function HomeNavbarStudent({ userName = "Élève" }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const notifRef = useRef();
   const menuRef = useRef();
-  const [isScrolled, setIsScrolled] = useState(false);
+  const { darkMode, setDarkMode } = useContext(ThemeContext);
 
   const handleLogout = () => {
     localStorage.removeItem("userInfo");
@@ -29,11 +23,9 @@ export default function HomeNavbarStudent({ userName = "Élève" }) {
     navigate("/student/profil");
   };
 
+  // Close notif dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (notifRef.current && !notifRef.current.contains(e.target)) {
-        setNotifOpen(false);
-      }
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setMenuOpen(false);
       }
@@ -42,150 +34,296 @@ export default function HomeNavbarStudent({ userName = "Élève" }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    const onScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <header
-      className={`fixed top-0 left-[280px] right-0 z-[1000] flex items-center justify-between
-        px-8 transition-all duration-300 backdrop-blur-sm
-        ${
-          isScrolled
-            ? "bg-white/95 shadow-lg py-3 border-b border-gray-300"
-            : "bg-white/75 py-4"
-        }
-      `}
-      style={{
-        minHeight: "56px",
-        maxWidth: "calc(100% - 280px)",
-      }}
+    <motion.header 
+      className={`flex items-center justify-between px-4 sm:px-10 py-4 shadow-2xl relative z-[999998] backdrop-blur-md ${darkMode ? 'bg-gray-800/90 text-white' : 'bg-white/90 text-black'}`}
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 100 }}
     >
-      {/* Logo + Title */}
-      <div className="flex items-center gap-4">
-        <img
-          src="/image pfe.png"
-          alt="Logo LearnUp"
-          className="w-11 h-11 rounded-full object-cover border-2 border-cyan-500"
-        />
-        <span
-          className="text-2xl font-bold text-cyan-600 select-none"
-          style={{ fontFamily: "'Quicksand', sans-serif" }}
+      {/* Logo + Title avec animation */}
+      <motion.div 
+        className="flex items-center gap-4"
+        whileHover={{ scale: 1.05 }}
+        transition={{ type: "spring", stiffness: 300 }}
+      >
+        <motion.div
+          whileHover={{ rotate: 360, scale: 1.1 }}
+          transition={{ type: "spring", stiffness: 200 }}
+          className="relative"
         >
-          LEARNUP
-        </span>
-      </div>
+          <img
+            src="/image pfe.png"
+            alt="Logo LearnUp"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover shadow-2xl border-4 border-white"
+          />
+          <motion.div
+            className="absolute -top-2 -right-2 w-5 h-5 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center"
+            animate={{ scale: [1, 1.3, 1], rotate: [0, 180, 360] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            <Star className="w-3 h-3 text-white" />
+          </motion.div>
+        </motion.div>
+        
+        <div className="flex flex-col">
+          <motion.span 
+            className={`text-2xl sm:text-3xl font-bold tracking-wide bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent`}
+            animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          >
+            LEARNUP
+          </motion.span>
+          <motion.div 
+            className="flex items-center gap-1 text-xs text-purple-600 font-medium"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Sparkles className="w-3 h-3" />
+            <span>Super Élève</span>
+            <Sparkles className="w-3 h-3" />
+          </motion.div>
+        </div>
+      </motion.div>
 
       {/* Desktop Actions */}
       <nav className="hidden sm:flex items-center gap-6">
-        {/* Notifications */}
-        <div className="relative" ref={notifRef}>
-          <button
+        {/* Notifications avec animation */}
+        <div className="relative z-[999999]" ref={notifRef}>
+          <motion.button
             onClick={() => setNotifOpen((o) => !o)}
             aria-label="Afficher les notifications"
-            className="relative p-2 rounded-full bg-cyan-500 hover:bg-cyan-600 transition"
+            className="relative p-4 rounded-2xl bg-gradient-to-r from-pink-100 to-purple-200 hover:from-pink-200 hover:to-purple-300 transition-all duration-300 shadow-2xl hover:shadow-3xl group"
+            whileHover={{ scale: 1.1, y: -2 }}
+            whileTap={{ scale: 0.9 }}
           >
-            <BellIcon className="text-white w-6 h-6" />
-            <span className="absolute top-0 right-0 h-3 w-3 rounded-full ring-2 ring-white bg-red-500 animate-pulse"></span>
-          </button>
+            <Bell className="text-purple-700" size={26} />
+            
+            {/* Animation de notification */}
+            <motion.span 
+              className="absolute -top-1 -right-1 h-5 w-5 rounded-full ring-2 ring-white bg-gradient-to-r from-red-500 to-pink-500"
+              animate={{ 
+                scale: [1, 1.2, 1],
+                boxShadow: ["0 0 0 0 rgba(239, 68, 68, 0.7)", "0 0 0 10px rgba(239, 68, 68, 0)", "0 0 0 0 rgba(239, 68, 68, 0)"]
+              }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+            
+            {/* Effet de brillance */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-2xl"></div>
+          </motion.button>
 
           <AnimatePresence>
             {notifOpen && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
-                className="absolute right-0 mt-2 w-80 bg-white border border-cyan-300 rounded-xl shadow-xl p-5 z-50"
+                initial={{ opacity: 0, y: -20, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
+                className={`absolute right-0 mt-4 w-96 border-2 rounded-2xl shadow-2xl p-6 z-[999999] backdrop-blur-md ${
+                  darkMode ? 'bg-gray-800/95 border-purple-500' : 'bg-white/95 border-pink-300'
+                }`}
               >
-                <h3 className="text-sm font-semibold text-cyan-700 mb-3">📌 Tes rappels</h3>
-                <NotificationRappels />
+                <div className="flex items-center justify-between mb-4">
+                  <motion.h3 
+                    className={`text-lg font-bold flex items-center gap-2 ${darkMode ? 'text-white' : 'text-purple-800'}`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                  >
+                    <Bell className="w-5 h-5 text-purple-600" />
+                    📌 Tes rappels
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <Sparkles className="w-4 h-4 text-yellow-500" />
+                    </motion.div>
+                  </motion.h3>
+                  <motion.button
+                    onClick={() => setNotifOpen(false)}
+                    className="p-2 hover:bg-red-100 rounded-full transition-colors"
+                    whileHover={{ scale: 1.1, rotate: 90 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <X className="w-4 h-4 text-red-500" />
+                  </motion.button>
+                </div>
+                <div className="max-h-80 overflow-y-auto">
+                  <NotificationRappelsStudent />
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        {/* Username */}
-        <div
-          className="flex items-center space-x-3 text-cyan-600 font-semibold text-base select-none"
-          style={{ fontFamily: "'Quicksand', sans-serif" }}
+        {/* Dark Mode Toggle */}
+        <motion.button
+          onClick={() => setDarkMode && setDarkMode(!darkMode)}
+          className={`flex items-center gap-2 px-4 py-3 rounded-2xl font-bold text-sm transition-all duration-300 shadow-xl border-2 ${
+            darkMode 
+              ? 'bg-gradient-to-r from-purple-800 to-indigo-800 text-yellow-300 border-purple-600 hover:from-purple-700 hover:to-indigo-700' 
+              : 'bg-gradient-to-r from-yellow-100 to-orange-100 text-purple-700 border-yellow-300 hover:from-yellow-200 hover:to-orange-200'
+          }`}
+          whileHover={{ scale: 1.05, rotate: 5 }}
+          whileTap={{ scale: 0.95 }}
+          title={darkMode ? "Passer en mode clair" : "Passer en mode sombre"}
         >
-          <UserCircleIcon className="w-6 h-6" />
+          {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+          <span>{darkMode ? "Clair" : "Sombre"}</span>
+        </motion.button>
+
+        {/* Username avec animation */}
+        <motion.div 
+          className={`flex items-center space-x-3 font-bold text-lg px-6 py-3 rounded-2xl shadow-xl border-2 ${
+            darkMode 
+              ? 'bg-gradient-to-r from-purple-800 to-indigo-800 text-purple-100 border-purple-600' 
+              : 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 border-purple-200'
+          }`}
+          whileHover={{ scale: 1.05, y: -2 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          <motion.div
+            whileHover={{ rotate: 360 }}
+            transition={{ type: "spring", stiffness: 200 }}
+          >
+            <User size={26} className={darkMode ? "text-purple-200" : "text-purple-600"} />
+          </motion.div>
           <span>{userName}</span>
-        </div>
+          <motion.div
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <Trophy className="w-5 h-5 text-yellow-500" />
+          </motion.div>
+        </motion.div>
 
-        {/* Paramètres */}
-        <button
+        {/* Paramètres avec animation */}
+        <motion.button
           onClick={goToSettings}
-          className="flex items-center gap-2 px-5 py-2 text-cyan-600 border border-cyan-600 rounded-full font-semibold hover:bg-cyan-600 hover:text-white transition-transform hover:scale-105"
-          aria-label="Profil"
+          className={`flex items-center gap-3 px-6 py-3 border-2 rounded-2xl font-bold transition-all duration-300 hover:scale-105 shadow-xl ${
+            darkMode 
+              ? 'text-purple-200 border-purple-500 hover:bg-purple-700/50' 
+              : 'text-purple-700 border-purple-500 hover:bg-purple-50'
+          }`}
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <Cog6ToothIcon className="w-6 h-6" />
+          <motion.div
+            whileHover={{ rotate: 180 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Settings size={22} />
+          </motion.div>
           <span>Profil</span>
-        </button>
+        </motion.button>
 
-        {/* Logout */}
-        <button
+        {/* Logout avec animation */}
+        <motion.button
           onClick={handleLogout}
-          className="flex items-center gap-2 px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full font-semibold transition-transform hover:scale-105"
-          aria-label="Se déconnecter"
+          className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-2xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-3xl group"
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <ArrowRightOnRectangleIcon className="w-6 h-6" />
+          <motion.div
+            whileHover={{ rotate: 180 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <LogOut size={22} />
+          </motion.div>
           <span>Se déconnecter</span>
-        </button>
+          <motion.div
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            whileHover={{ scale: 1.2 }}
+          >
+            <Zap className="w-5 h-5" />
+          </motion.div>
+        </motion.button>
       </nav>
 
-      {/* Mobile menu button */}
+      {/* Mobile menu button avec animation */}
       <div className="sm:hidden flex items-center" ref={menuRef}>
-        <button
+        <motion.button
           onClick={() => setMenuOpen((o) => !o)}
           aria-label="Menu"
-          className="p-3 rounded-md bg-cyan-600 hover:bg-cyan-700 transition"
+          className="p-4 rounded-2xl bg-gradient-to-r from-pink-100 to-purple-200 hover:from-pink-200 hover:to-purple-300 transition-all duration-300 shadow-2xl"
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          whileTap={{ scale: 0.9 }}
         >
-          {menuOpen ? (
-            <XMarkIcon className="w-7 h-7 text-white" />
-          ) : (
-            <Bars3Icon className="w-7 h-7 text-white" />
-          )}
-        </button>
+          <AnimatePresence mode="wait">
+            {menuOpen ? (
+              <motion.div
+                key="close"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <X size={30} className="text-purple-700" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="menu"
+                initial={{ rotate: 90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: -90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Menu size={30} className="text-purple-700" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.button>
 
         <AnimatePresence>
           {menuOpen && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.15 }}
-              className="absolute top-full right-4 mt-2 w-56 bg-white border border-cyan-300 rounded-xl shadow-lg z-50 py-3 flex flex-col gap-2"
+              initial={{ opacity: 0, y: -10, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.9 }}
+              transition={{ duration: 0.2, type: "spring", stiffness: 200 }}
+              className={`absolute top-full right-4 mt-3 w-64 border-2 rounded-2xl shadow-2xl z-[999999] py-4 flex flex-col gap-2 backdrop-blur-md ${
+                darkMode ? 'bg-gray-800/95 border-purple-500' : 'bg-white/95 border-pink-300'
+              }`}
             >
-              <button
+              <motion.button
                 onClick={() => {
                   setMenuOpen(false);
                   goToSettings();
                 }}
-                className="flex items-center gap-2 px-4 py-2 text-cyan-600 hover:bg-cyan-100 transition rounded"
+                className={`flex items-center gap-3 px-6 py-3 transition-all duration-200 rounded-xl mx-2 ${
+                  darkMode 
+                    ? 'text-purple-200 hover:bg-purple-700/50' 
+                    : 'text-purple-700 hover:bg-purple-50'
+                }`}
+                whileHover={{ scale: 1.05, x: 5 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Cog6ToothIcon className="w-5 h-5" />
-                Profil
-              </button>
-              <button
+                <Settings size={22} />
+                <span className="font-semibold">Profil</span>
+                <Heart className="w-4 h-4 text-pink-500" />
+              </motion.button>
+              <motion.button
                 onClick={() => {
                   setMenuOpen(false);
                   handleLogout();
                 }}
-                className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-100 transition rounded"
+                className={`flex items-center gap-3 px-6 py-3 transition-all duration-200 rounded-xl mx-2 ${
+                  darkMode 
+                    ? 'text-red-400 hover:bg-red-900/20' 
+                    : 'text-red-600 hover:bg-red-50'
+                }`}
+                whileHover={{ scale: 1.05, x: 5 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <ArrowRightOnRectangleIcon className="w-5 h-5" />
-                Se déconnecter
-              </button>
+                <LogOut size={22} />
+                <span className="font-semibold">Se déconnecter</span>
+                <Zap className="w-4 h-4" />
+              </motion.button>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-    </header>
+    </motion.header>
   );
 }

@@ -1,3 +1,5 @@
+// routes/absenceRoutes.js
+
 const express = require("express");
 const router = express.Router();
 
@@ -6,7 +8,7 @@ const {
   marquerAbsence,
   getAbsencesParCours,
   getAbsencesByCourseId,
-  getAbsencesEtudiantParMatiere, // ✅ Ajouté ici
+  getAbsencesEtudiantParMatiere,
 } = require("../controllers/absenceController");
 
 const { protect, authorizeRoles } = require("../middleware/authMiddleware");
@@ -36,26 +38,40 @@ router.get(
   getAbsencesParCours
 );
 
-// ✅ GET /api/absences/student/:id → historique d’absences d’un étudiant (vue admin/prof)
+// ✅ GET /api/absences/student/:id → historique d'absences d'un étudiant
+//    (vue admin/prof/étudiant/parent)
 router.get(
   "/student/:id",
   protect,
-  authorizeRoles("teacher", "admin", "student"),
+  authorizeRoles("teacher", "admin", "student", "parent"),
   async (req, res) => {
     try {
       const absences = await Absence.find({ student: req.params.id })
-        .populate("course", "classe date semestre")
+        .populate({
+          path: "course",
+          select: "nom matiere classe semestre",
+          populate: {
+            path: "matiere",
+            select: "nom"
+          }
+        })
         .sort({ date: -1 });
 
       res.status(200).json(absences);
     } catch (err) {
-      console.error("❌ Erreur récupération absences étudiant :", err.message);
-      res.status(500).json({ message: "Erreur récupération absences étudiant" });
+      console.error(
+        "❌ Erreur récupération absences étudiant :",
+        err.message
+      );
+      res
+        .status(500)
+        .json({ message: "Erreur récupération absences étudiant" });
     }
   }
 );
 
-// ✅ GET /api/absences/etudiant → regroupe les absences par matière pour l’étudiant connecté
+// ✅ GET /api/absences/etudiant → regroupe les absences
+//    par matière pour l’étudiant connecté
 router.get(
   "/etudiant",
   protect,

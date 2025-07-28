@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   FileText,
   FileImage,
@@ -10,7 +10,28 @@ import {
   UploadCloud,
   FolderPlus,
   Youtube,
+  Loader2,
+  AlertCircle,
+  CheckCircle,
+  Eye,
+  Calendar,
+  Clock,
+  Building,
+  Users,
+  GraduationCap,
+  Sparkles,
+  Zap,
+  Trophy,
+  Star,
+  RefreshCw,
+  Plus,
+  XCircle,
+  BookOpen,
+  Target,
+  BarChart3
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ThemeContext } from "../../context/ThemeContext";
 
 export default function DocumentsProfesseur() {
   const [documents, setDocuments] = useState([]);
@@ -21,17 +42,21 @@ export default function DocumentsProfesseur() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showAddForm, setShowAddForm] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-  const token = localStorage.getItem("token");
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+  const token = JSON.parse(localStorage.getItem("userInfo"))?.token;
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const teacherEmail = userInfo?.email;
+  const { darkMode } = useContext(ThemeContext);
 
   // Charger les cours du prof
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/courses?search=&page=1&limit=100`, {
+        const res = await fetch(`${API_URL}/api/courses`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -47,6 +72,8 @@ export default function DocumentsProfesseur() {
       } catch (err) {
         console.error("Erreur chargement cours:", err);
         setError("Impossible de charger les cours.");
+        setErrorMessage("❌ Erreur lors du chargement des cours");
+        setTimeout(() => setErrorMessage(""), 3000);
       }
     };
     fetchCourses();
@@ -73,8 +100,16 @@ export default function DocumentsProfesseur() {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!selectedCourse) return alert("Choisis un cours.");
-    if (!file && !videoUrl.trim()) return alert("Choisis un fichier ou entre une URL vidéo.");
+    if (!selectedCourse) {
+      setErrorMessage("❌ Veuillez choisir un cours");
+      setTimeout(() => setErrorMessage(""), 3000);
+      return;
+    }
+    if (!file && !videoUrl.trim()) {
+      setErrorMessage("❌ Veuillez choisir un fichier ou entrer une URL vidéo");
+      setTimeout(() => setErrorMessage(""), 3000);
+      return;
+    }
 
     setUploading(true);
     try {
@@ -125,9 +160,14 @@ export default function DocumentsProfesseur() {
       setFile(null);
       setVideoUrl("");
       setMessage("");
+      setShowAddForm(false);
       e.target.reset();
+      
+      setSuccessMessage("✅ Document ajouté avec succès !");
+      setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
-      alert(err.message);
+      setErrorMessage("❌ " + err.message);
+      setTimeout(() => setErrorMessage(""), 3000);
     } finally {
       setUploading(false);
     }
@@ -141,8 +181,11 @@ export default function DocumentsProfesseur() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDocuments((prev) => prev.filter((doc) => doc._id !== id));
+      setSuccessMessage("✅ Document supprimé avec succès !");
+      setTimeout(() => setSuccessMessage(""), 3000);
     } catch {
-      alert("Erreur suppression document");
+      setErrorMessage("❌ Erreur lors de la suppression");
+      setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 
@@ -154,169 +197,420 @@ export default function DocumentsProfesseur() {
   };
 
   const getIconForFile = (fileName) => {
-    if (!fileName) return <FileCheck className="text-gray-400" />;
+    if (!fileName) return <FileCheck className="text-gray-400 w-8 h-8" />;
     const ext = fileName.split(".").pop().toLowerCase();
-    if (["pdf", "doc", "docx", "txt"].includes(ext)) return <FileText className="text-blue-600" />;
-    if (["jpg", "jpeg", "png", "gif"].includes(ext)) return <FileImage className="text-pink-600" />;
-    if (["mp4", "webm", "avi"].includes(ext)) return <FileVideo2 className="text-purple-600" />;
-    if (["zip", "rar"].includes(ext)) return <FileArchive className="text-yellow-600" />;
-    return <FileCheck className="text-gray-400" />;
+    if (["pdf", "doc", "docx", "txt"].includes(ext)) return <FileText className="text-blue-600 w-8 h-8" />;
+    if (["jpg", "jpeg", "png", "gif", "svg", "webp"].includes(ext)) return <FileImage className="text-pink-600 w-8 h-8" />;
+    if (["mp4", "webm", "avi", "mov", "mkv"].includes(ext)) return <FileVideo2 className="text-purple-600 w-8 h-8" />;
+    if (["zip", "rar", "7z", "tar", "gz"].includes(ext)) return <FileArchive className="text-yellow-600 w-8 h-8" />;
+    if (["ppt", "pptx", "key"].includes(ext)) return <FileText className="text-orange-600 w-8 h-8" />;
+    if (["xls", "xlsx", "csv"].includes(ext)) return <FileText className="text-green-600 w-8 h-8" />;
+    return <FileCheck className="text-gray-400 w-8 h-8" />;
   };
 
-  return (
-    <div className="p-10 bg-gradient-to-br from-indigo-50 via-white to-indigo-100 min-h-screen max-w-6xl mx-auto">
-      <div className="flex items-center gap-3 mb-8">
-        <FolderPlus className="text-indigo-700" size={36} />
-        <h1 className="text-4xl font-extrabold text-indigo-900 tracking-wide">Documents de Cours</h1>
-      </div>
+  const getDocumentStats = () => {
+    const stats = {
+      total: documents.length,
+      pdf: documents.filter(doc => ["pdf", "doc", "docx", "txt"].includes(doc.fileName?.split(".").pop().toLowerCase())).length,
+      images: documents.filter(doc => ["jpg", "jpeg", "png", "gif"].includes(doc.fileName?.split(".").pop().toLowerCase())).length,
+      videos: documents.filter(doc => ["mp4", "webm", "avi"].includes(doc.fileName?.split(".").pop().toLowerCase())).length,
+      archives: documents.filter(doc => ["zip", "rar"].includes(doc.fileName?.split(".").pop().toLowerCase())).length,
+      youtube: documents.filter(doc => doc.fileUrl && (doc.fileUrl.includes("youtube.com") || doc.fileUrl.includes("youtu.be"))).length
+    };
+    return stats;
+  };
 
-      {error && <p className="text-red-600 mb-8 text-center font-semibold">{error}</p>}
-
-      {/* FORMULAIRE D'UPLOAD */}
-      <form
-        onSubmit={handleUpload}
-        className="bg-white p-8 rounded-2xl shadow-xl max-w-3xl mx-auto space-y-8"
+    return (
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-blue-50'}`}>
+      {/* Header avec notifications */}
+      <motion.div 
+      className={`sticky top-0 z-50 backdrop-blur-md border-b ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-blue-200'}`}
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 100 }}
       >
-        <div>
-          <label className="block font-semibold mb-3 text-indigo-700 text-lg">Cours :</label>
-          <select
-            value={selectedCourse}
-            onChange={(e) => {
-              setSelectedCourse(e.target.value);
-              localStorage.setItem("lastCourse", e.target.value);
-            }}
-            className="w-full rounded-lg border border-indigo-300 p-4 text-lg focus:outline-none focus:ring-4 focus:ring-indigo-500 transition"
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-between"
           >
-            <option value="">-- Sélectionner un cours --</option>
-            {courses.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.classe} — {c.matiere?.nom || "Inconnu"}
-              </option>
-            ))}
-          </select>
+            <div className="flex items-center gap-4">
+              <motion.div 
+                className="p-3 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl"
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <FolderPlus className="w-8 h-8 text-white" />
+              </motion.div>
+              <div>
+                <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'bg-gradient-to-r from-blue-800 to-blue-900 bg-clip-text text-transparent'}`}>
+                  Documents de Cours
+                </h1>
+                <p className={`font-medium ${darkMode ? 'text-gray-300' : 'text-blue-600'}`}>Gestion des ressources pédagogiques</p>
+              </div>
+            </div>
+            
+            <motion.button
+              onClick={() => setShowAddForm(!showAddForm)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              <Plus className="w-5 h-5" />
+              Ajouter Document
+            </motion.button>
+          </motion.div>
         </div>
+      </motion.div>
 
-        <div>
-          <label className="block font-semibold mb-3 text-indigo-700 text-lg">Fichier :</label>
-          <input
-            type="file"
-            onChange={(e) => {
-              setFile(e.target.files[0]);
-              setVideoUrl("");
-            }}
-            accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.mp4,.webm,.avi,.zip,.rar"
-            className="w-full rounded-lg border border-indigo-300 p-4 cursor-pointer focus:outline-none focus:ring-4 focus:ring-indigo-500 transition"
-          />
-        </div>
+      {/* Messages de notification */}
+      <AnimatePresence>
+        {successMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -50, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -50, scale: 0.8 }}
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50"
+          >
+            <motion.div 
+              className="bg-emerald-100 border border-emerald-400 text-emerald-700 px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
+              whileHover={{ scale: 1.05 }}
+            >
+              <CheckCircle className="w-5 h-5" />
+              {successMessage}
+            </motion.div>
+          </motion.div>
+        )}
+        
+        {errorMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -50, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -50, scale: 0.8 }}
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50"
+          >
+            <motion.div 
+              className="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
+              whileHover={{ scale: 1.05 }}
+            >
+              <AlertCircle className="w-5 h-5" />
+              {errorMessage}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        <div>
-          <label className="block font-semibold mb-3 text-indigo-700 text-lg">Ou URL vidéo YouTube :</label>
-          <input
-            type="url"
-            placeholder="Coller une URL vidéo YouTube"
-            value={videoUrl}
-            onChange={(e) => {
-              setVideoUrl(e.target.value);
-              setFile(null);
-            }}
-            className="w-full rounded-lg border border-indigo-300 p-4 focus:outline-none focus:ring-4 focus:ring-indigo-500 transition"
-          />
-        </div>
-
-        <div>
-          <label className="block font-semibold mb-3 text-indigo-700 text-lg">Message (optionnel) :</label>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Ex : Support du chapitre 3"
-            className="w-full rounded-lg border border-indigo-300 p-4 resize-none h-28 text-lg focus:outline-none focus:ring-4 focus:ring-indigo-500 transition"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={uploading}
-          className={`inline-flex items-center gap-3 ${
-            uploading ? "bg-indigo-400" : "bg-indigo-700 hover:bg-indigo-900"
-          } text-white font-bold px-8 py-4 rounded-2xl shadow-2xl transition-transform active:scale-95`}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-8"
         >
-          <UploadCloud size={24} /> {uploading ? "Ajout en cours..." : "Ajouter"}
-        </button>
-      </form>
-
-      {/* LISTE DES DOCUMENTS */}
-      {selectedCourse && (
-        <>
-          <h2 className="text-3xl font-semibold text-indigo-800 mt-16 mb-8 flex items-center gap-3">
-            <FolderPlus size={28} className="text-indigo-700" />
-            Documents pour :{" "}
-            <span className="text-indigo-700 font-bold cursor-default select-none">
-              {getCourseName(selectedCourse)}
-            </span>
-          </h2>
-
-          {documents.length === 0 ? (
-            <p className="text-center text-indigo-400 italic text-lg">Aucun document trouvé.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {documents.map((doc) => {
-                const isYoutube =
-                  doc.fileUrl &&
-                  (doc.fileUrl.includes("youtube.com") || doc.fileUrl.includes("youtu.be"));
-
-                return (
-                  <div
-                    key={doc._id}
-                    className="bg-white border border-indigo-300 p-6 rounded-3xl shadow-lg hover:shadow-2xl transition cursor-default flex flex-col justify-between"
-                  >
-                    <div className="flex items-center gap-5 mb-4">
-                      <div className="text-5xl">
-                        {isYoutube ? <Youtube className="text-red-600" /> : getIconForFile(doc.fileName)}
-                      </div>
-                      <div className="overflow-hidden">
-                        <p className="font-bold text-indigo-900 truncate" title={doc.fileName}>
-                          {isYoutube ? "Vidéo YouTube" : doc.fileName}
-                        </p>
-                        <p className="text-md text-indigo-600 truncate">{doc.message || "-"}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between items-center text-base text-indigo-700">
-                      {isYoutube ? (
-                        <a
-                          href={doc.fileUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-2 hover:text-indigo-900 font-semibold transition"
-                        >
-                          <FileVideo2 size={20} /> Voir la vidéo
-                        </a>
-                      ) : (
-                        <a
-                          href={`${API_URL}${doc.fileUrl}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-2 hover:text-indigo-900 font-semibold transition"
-                        >
-                          <DownloadCloud size={20} /> Voir
-                        </a>
-                      )}
-
-                      <button
-                        onClick={() => handleDelete(doc._id)}
-                        title="Supprimer"
-                        className="text-red-700 hover:text-red-900 transition"
-                      >
-                        <Trash2 size={22} />
-                      </button>
+          {/* Formulaire d'ajout */}
+          {showAddForm && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
+            >
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <motion.div 
+                      className="p-3 bg-white/20 rounded-xl"
+                      whileHover={{ scale: 1.1, rotate: 10 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <UploadCloud className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">Ajouter un Document</h2>
+                      <p className="text-blue-100 font-medium">Partagez des ressources avec vos étudiants</p>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                  <motion.button
+                    onClick={() => setShowAddForm(false)}
+                    whileHover={{ scale: 1.1 }}
+                    className="text-white hover:text-blue-100 transition-colors"
+                  >
+                    <XCircle className="w-6 h-6" />
+                  </motion.button>
+                </div>
+              </div>
+
+              <form onSubmit={handleUpload} className="p-8 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <motion.select
+                    value={selectedCourse}
+                    onChange={(e) => {
+                      setSelectedCourse(e.target.value);
+                      localStorage.setItem("lastCourse", e.target.value);
+                    }}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-lg font-medium"
+                    whileFocus={{ scale: 1.02 }}
+                  >
+                    <option value="">-- Sélectionner un cours --</option>
+                    {courses.map((c) => (
+                      <option key={c._id} value={c._id}>
+                        {c.classe} — {c.matiere?.nom || "Inconnu"}
+                      </option>
+                    ))}
+                  </motion.select>
+
+                  <motion.input
+                    type="file"
+                    onChange={(e) => {
+                      setFile(e.target.files[0]);
+                      setVideoUrl("");
+                    }}
+                    accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.mp4,.webm,.avi,.zip,.rar"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-lg font-medium"
+                    whileFocus={{ scale: 1.02 }}
+                  />
+                </div>
+
+                <motion.input
+                  type="url"
+                  placeholder="Ou coller une URL vidéo YouTube"
+                  value={videoUrl}
+                  onChange={(e) => {
+                    setVideoUrl(e.target.value);
+                    setFile(null);
+                  }}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-lg font-medium"
+                  whileFocus={{ scale: 1.02 }}
+                />
+
+                <motion.textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Message (optionnel) - Ex : Support du chapitre 3"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-lg font-medium resize-none h-28"
+                  whileFocus={{ scale: 1.02 }}
+                />
+
+                <motion.button
+                  type="submit"
+                  disabled={uploading}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`w-full py-4 px-6 rounded-xl font-bold text-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 ${
+                    uploading
+                      ? "bg-gray-400 text-white cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800"
+                  }`}
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Ajout en cours...
+                    </>
+                  ) : (
+                    <>
+                      <UploadCloud className="w-5 h-5" />
+                      Ajouter le Document
+                    </>
+                  )}
+                </motion.button>
+              </form>
+            </motion.div>
           )}
-        </>
-      )}
+
+          {/* Statistiques des documents */}
+          {selectedCourse && documents.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
+            >
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+                <div className="flex items-center gap-4">
+                  <motion.div 
+                    className="p-3 bg-white/20 rounded-xl"
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  >
+                    <BarChart3 className="w-6 h-6 text-white" />
+                  </motion.div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Statistiques des Documents</h2>
+                    <p className="text-blue-100 font-medium">Cours : {getCourseName(selectedCourse)}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8">
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
+                  {(() => {
+                    const stats = getDocumentStats();
+                    return [
+                      { label: "Total", value: stats.total, color: "blue", icon: FileCheck },
+                      { label: "PDF", value: stats.pdf, color: "blue", icon: FileText },
+                      { label: "Images", value: stats.images, color: "pink", icon: FileImage },
+                      { label: "Vidéos", value: stats.videos, color: "purple", icon: FileVideo2 },
+                      { label: "Archives", value: stats.archives, color: "yellow", icon: FileArchive },
+                      { label: "YouTube", value: stats.youtube, color: "red", icon: Youtube }
+                    ].map((stat, index) => (
+                      <motion.div
+                        key={stat.label}
+                        className={`bg-gradient-to-br from-${stat.color}-50 to-${stat.color}-100 p-6 rounded-xl border border-${stat.color}-200`}
+                        whileHover={{ scale: 1.05, y: -5 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className={`p-3 bg-${stat.color}-600 rounded-lg`}>
+                            <stat.icon className="w-6 h-6 text-white" />
+                          </div>
+                          <h3 className={`font-semibold text-${stat.color}-800`}>{stat.label}</h3>
+                        </div>
+                        <motion.div 
+                          className={`text-3xl font-bold text-${stat.color}-600`}
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: 0.7 + index * 0.1, type: "spring", stiffness: 200 }}
+                        >
+                          {stat.value}
+                        </motion.div>
+                      </motion.div>
+                    ));
+                  })()}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Liste des documents */}
+          {selectedCourse && (
+            <>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
+              >
+                <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+                  <div className="flex items-center gap-4">
+                    <motion.div 
+                      className="p-3 bg-white/20 rounded-xl"
+                      whileHover={{ scale: 1.1, rotate: 10 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <BookOpen className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">Documents</h2>
+                      <p className="text-blue-100 font-medium">Cours : {getCourseName(selectedCourse)}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-8">
+                  {documents.length === 0 ? (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-center py-12"
+                    >
+                      <motion.div
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        <BookOpen className="w-20 h-20 text-blue-300 mx-auto mb-4" />
+                      </motion.div>
+                      <h3 className="text-xl text-blue-600 font-medium mb-2">Aucun document trouvé</h3>
+                      <p className="text-blue-400">Aucun document n'a encore été ajouté pour ce cours</p>
+                    </motion.div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {documents.map((doc, index) => {
+                        const isYoutube = doc.fileUrl && (doc.fileUrl.includes("youtube.com") || doc.fileUrl.includes("youtu.be"));
+
+                        return (
+                          <motion.div
+                            key={doc._id}
+                            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ 
+                              delay: index * 0.1,
+                              type: "spring",
+                              stiffness: 100
+                            }}
+                            whileHover={{ y: -5, scale: 1.02 }}
+                            className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
+                          >
+                            <div className="p-6">
+                              <div className="flex items-center gap-4 mb-4">
+                                <motion.div 
+                                  className="p-4 bg-gradient-to-r from-blue-100 to-blue-200 rounded-xl flex-shrink-0"
+                                  whileHover={{ scale: 1.1, rotate: 10 }}
+                                  transition={{ type: "spring", stiffness: 300 }}
+                                >
+                                  {isYoutube ? (
+                                    <Youtube className="text-red-600 w-8 h-8" />
+                                  ) : (
+                                    getIconForFile(doc.fileName)
+                                  )}
+                                </motion.div>
+                                <div className="overflow-hidden flex-1">
+                                  <h3 className="font-bold text-blue-900 text-sm truncate" title={doc.fileName}>
+                                    {isYoutube ? "Vidéo YouTube" : doc.fileName}
+                                  </h3>
+                                  <p className="text-sm text-blue-600 truncate">{doc.message || "-"}</p>
+                                </div>
+                              </div>
+
+                              <div className="flex justify-between items-center">
+                                {isYoutube ? (
+                                  <motion.a
+                                    href={doc.fileUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-2 rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transition-all duration-200"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                    Voir la vidéo
+                                  </motion.a>
+                                ) : (
+                                  <motion.a
+                                    href={`${API_URL}${doc.fileUrl}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                    Voir
+                                  </motion.a>
+                                )}
+
+                                <motion.button
+                                  onClick={() => handleDelete(doc._id)}
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  className="p-2 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-all duration-200"
+                                  title="Supprimer"
+                                >
+                                  <Trash2 className="w-5 h-5" />
+                                </motion.button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            </>
+          )}
+        </motion.div>
+      </div>
     </div>
   );
 }

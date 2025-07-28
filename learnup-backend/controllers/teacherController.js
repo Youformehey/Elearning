@@ -43,6 +43,7 @@ const loginTeacher = async (req, res) => {
       email: teacher.email,
       role: "teacher", // rôle forcé
       token: generateToken(teacher._id, "teacher"), // rôle forcé
+      matiere: teacher.matiere?.nom || null   // on renvoie le nom de la matière
     });
   } else {
     res.status(401).json({ message: "Invalid credentials" });

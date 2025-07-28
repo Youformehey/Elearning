@@ -1,8 +1,10 @@
 // src/components/AddCourseForm.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const AddCourseForm = ({ user }) => {
+  const { darkMode } = useContext(ThemeContext);
   const [formData, setFormData] = useState({
     horaire: "",
     date: "",
@@ -51,8 +53,8 @@ const AddCourseForm = ({ user }) => {
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">➕ Ajouter un cours</h2>
+    <div className={`p-6 max-w-md mx-auto ${darkMode ? 'bg-gray-900 text-white' : ''}`}>
+      <h2 className={`text-xl font-bold mb-4 ${darkMode ? 'text-white' : ''}`}>➕ Ajouter un cours</h2>
       {success && <p className="text-green-600 mb-2">Cours ajouté avec succès !</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <input

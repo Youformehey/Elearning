@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ThemeContext } from "../../context/ThemeContext";
+import { useDashboard } from "../../context/DashboardContext";
 
 export default function AddCourse() {
   const navigate = useNavigate();
+  const { darkMode } = useContext(ThemeContext);
+  const { triggerRefresh } = useDashboard();
 
   const [form, setForm] = useState({
     matiere: "",
@@ -57,19 +61,25 @@ export default function AddCourse() {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("Cours ajouté !");
+      
+      console.log("✅ Cours ajouté avec succès, déclenchement du rafraîchissement du dashboard...");
+      
+      // Déclencher le rafraîchissement du dashboard
+      triggerRefresh();
+      
+      alert("Cours ajouté ! Le dashboard a été mis à jour.");
       navigate("/prof/cours");
     } catch (error) {
       console.error("Erreur ajout cours:", error);
-      alert("Erreur lors de l’ajout du cours.");
+      alert("Erreur lors de l'ajout du cours.");
     }
   };
 
   return (
-    <div className="flex justify-center mt-10">
+    <div className={`flex justify-center mt-10 ${darkMode ? 'bg-gray-900' : ''}`}>
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded p-6 w-full max-w-md"
+        className={`shadow-md rounded p-6 w-full max-w-md ${darkMode ? 'bg-gray-800 text-white' : 'bg-white'}`}
       >
         <div className="flex items-center mb-4">
           <ArrowLeft onClick={() => navigate(-1)} className="cursor-pointer mr-2" />

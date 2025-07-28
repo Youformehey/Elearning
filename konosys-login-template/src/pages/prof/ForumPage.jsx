@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiSend, FiTrash2 } from "react-icons/fi";
 import { motion } from "framer-motion";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const ForumPage = () => {
   const { id } = useParams();
@@ -9,6 +10,7 @@ const ForumPage = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
+  const { darkMode } = useContext(ThemeContext);
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const token = userInfo?.token;
@@ -75,15 +77,15 @@ const ForumPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-white via-blue-50 to-blue-100 py-10 px-4">
+    <div className={`min-h-screen py-10 px-4 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-tr from-white via-blue-50 to-blue-100'}`}>
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-8"
+        className={`max-w-5xl mx-auto rounded-3xl shadow-xl p-8 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}
       >
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-extrabold text-blue-700">📚 Forum de Classe</h1>
+          <h1 className={`text-4xl font-extrabold ${darkMode ? 'text-white' : 'text-blue-700'}`}>📚 Forum de Classe</h1>
           <button
             onClick={() => navigate(-1)}
             className="text-sm text-blue-500 hover:underline"

@@ -7,7 +7,12 @@ const studentSchema = new mongoose.Schema({
   password: { type: String, required: true },
   classe: { type: String, required: true },
   role: { type: String, default: "student", enum: ["student"] },
+  photo: { type: String, default: "" },
+  tel: { type: String, default: "" },
+  adresse: { type: String, default: "" },
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course", default: [] }],
+  // Relation avec les parents
+  parents: [{ type: mongoose.Schema.Types.ObjectId, ref: "Parent", default: [] }],
 }, { timestamps: true });
 
 studentSchema.pre("save", async function (next) {

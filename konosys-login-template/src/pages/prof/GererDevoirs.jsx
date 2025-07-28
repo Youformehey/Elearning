@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Upload, FileText, ArrowLeft } from "lucide-react";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const API_URL = "http://localhost:5001";
 
@@ -12,6 +13,7 @@ export default function GererDevoirs() {
   const [homeworkSubmissions, setHomeworkSubmissions] = useState({});
   const [showSubmissionsFor, setShowSubmissionsFor] = useState(null);
   const navigate = useNavigate();
+  const { darkMode } = useContext(ThemeContext);
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const token = userInfo?.token;
@@ -90,9 +92,9 @@ export default function GererDevoirs() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto font-sans">
+    <div className={`p-8 max-w-4xl mx-auto font-sans ${darkMode ? 'bg-gray-900 text-white' : ''}`}>
       <button
-        onClick={() => navigate("/prof")}
+        onClick={() => navigate("/prof/cours")}
         className="mb-6 inline-flex items-center gap-2 text-indigo-700 hover:text-indigo-900 font-semibold"
       >
         <ArrowLeft size={20} />
