@@ -23,7 +23,8 @@ const protect = async (req, res, next) => {
 
     // Gérer les différents formats d'ID dans le token
     const id = decoded._id || decoded.id || decoded.userId;
-    const role = decoded.role ? decoded.role.toLowerCase() : 'admin'; // Par défaut admin si pas de rôle
+    const role = decoded.role ? decoded.role.toLowerCase() : 'admin'; // Par défaut admin si pas de rôle (TOTALEMENT FAUX )
+  
 
     console.log('🔍 Token décodé:', { id, role, decoded });
 

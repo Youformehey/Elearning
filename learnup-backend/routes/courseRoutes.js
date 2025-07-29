@@ -24,6 +24,9 @@ router.get('/student/all', protect, authorizeRoles('student'), courseController.
 // Récupérer les cours pour la classe de l'étudiant
 router.get('/student/class', protect, authorizeRoles('student'), courseController.getCoursesByStudentClass);
 
+// Récupérer les chapitres d'un cours (pour les étudiants)
+router.get('/:courseId/chapitres', protect, courseController.getChapitresByCourse);
+
 // Récupérer la liste des étudiants d'un cours (pour interface prof par ex)
 router.get('/:id/students', protect, courseController.getStudentsForCourse);
 
@@ -84,6 +87,26 @@ router.delete('/:id/chapitres/:chapId', protect, authorizeRoles('teacher', 'prof
 
 // Supprimer un chapitre (route spécialisée)
 router.delete('/:courseId/chapitres/:chapitreId', protect, authorizeRoles('teacher', 'prof'), courseController.deleteChapitreFromCourse);
+
+// ----------- ROUTES DEVOIRS -----------
+
+// Upload global de devoir (pour tous les cours du prof)
+router.post('/devoirs/global', protect, authorizeRoles('teacher', 'prof'), upload.single('file'), courseController.uploadGlobalDevoir);
+
+// Récupérer les devoirs d'un cours (pour les étudiants)
+router.get('/:courseId/devoirs', protect, courseController.getDevoirsByCourse);
+
+// Uploader un devoir pour un cours (professeur)
+router.post('/:courseId/devoirs', protect, authorizeRoles('teacher', 'prof'), upload.single('file'), courseController.uploadDevoir);
+
+// Soumettre un devoir (étudiant)
+router.post('/:courseId/devoirs/:devoirId/submit', protect, authorizeRoles('student'), upload.single('file'), courseController.submitDevoir);
+
+// Récupérer les soumissions d'un devoir (professeur)
+router.get('/:courseId/devoirs/:devoirId/submissions', protect, authorizeRoles('teacher', 'prof'), courseController.getDevoirSubmissions);
+
+// Noter une soumission (professeur)
+router.post('/:courseId/devoirs/:devoirId/submissions/:submissionId/grade', protect, authorizeRoles('teacher', 'prof'), courseController.gradeSubmission);
 
 // ----------- ROUTES QUIZ -----------
 

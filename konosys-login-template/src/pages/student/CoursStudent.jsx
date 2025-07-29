@@ -15,7 +15,11 @@ import {
   Building,
   Trophy,
   BarChart3,
-  AlertCircle
+  AlertCircle,
+  Target,
+  Play,
+  CheckCircle,
+  XCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeContext } from "../../context/ThemeContext";
@@ -63,6 +67,8 @@ export default function CoursStudent() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [quizData, setQuizData] = useState({});
+  const [quizLoading, setQuizLoading] = useState({});
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const token = userInfo?.token;
@@ -109,6 +115,52 @@ export default function CoursStudent() {
     if (!cours.matiere) return "Matière non renseignée";
     if (!cours.matiere.nom?.trim()) return "Matière inconnue";
     return cours.matiere.nom;
+  };
+
+  // Fonction pour récupérer les quiz d'un cours
+  const fetchQuizForCourse = async (courseId) => {
+    if (quizLoading[courseId]) return;
+    
+    setQuizLoading(prev => ({ ...prev, [courseId]: true }));
+    
+    try {
+      const response = await fetch(`${API_URL}/api/courses/${courseId}/chapitres`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (response.ok) {
+        const chapitres = await response.json();
+        const quizPromises = chapitres.map(async (chapitre) => {
+          try {
+            const quizResponse = await fetch(`${API_URL}/api/quiz/chapitre/${chapitre._id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            
+            if (quizResponse.ok) {
+              const quizData = await quizResponse.json();
+              return {
+                chapitreId: chapitre._id,
+                chapitreName: chapitre.titre,
+                quiz: quizData.exists ? quizData.quiz : null
+              };
+            }
+            return null;
+          } catch (error) {
+            console.error(`Erreur quiz pour chapitre ${chapitre._id}:`, error);
+            return null;
+          }
+        });
+        
+        const quizResults = await Promise.all(quizPromises);
+        const validQuizzes = quizResults.filter(result => result && result.quiz);
+        
+        setQuizData(prev => ({ ...prev, [courseId]: validQuizzes }));
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des quiz:", error);
+    } finally {
+      setQuizLoading(prev => ({ ...prev, [courseId]: false }));
+    }
   };
 
   // Grouper les cours par matière
@@ -416,6 +468,9 @@ export default function CoursStudent() {
                       formatDate={formatDate}
                       getMatiereNom={getMatiereNom}
                       darkMode={darkMode}
+                      fetchQuizForCourse={fetchQuizForCourse}
+                      quizData={quizData}
+                      quizLoading={quizLoading}
                     />
                   ))}
                 </div>
@@ -446,7 +501,22 @@ export default function CoursStudent() {
   );
 }
 
-function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode }) {
+function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetchQuizForCourse, quizData, quizLoading }) {
+  const [showQuizzes, setShowQuizzes] = useState(false);
+  
+  const handleQuizClick = (e, chapitreId) => {
+    e.stopPropagation();
+    navigate(`/student/quiz/${chapitreId}`);
+  };
+
+  const handleToggleQuizzes = (e) => {
+    e.stopPropagation();
+    if (!showQuizzes && !quizData[cours._id]) {
+      fetchQuizForCourse(cours._id);
+    }
+    setShowQuizzes(!showQuizzes);
+  };
+
   return (
     <motion.div
       whileHover={{ scale: 1.02, y: -5 }}
@@ -507,6 +577,174 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode }) {
           <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
             {cours.etudiants?.length || 0} étudiants
           </span>
+        </div>
+        
+        {/* Section Quiz */}
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+          <motion.button
+            onClick={handleToggleQuizzes}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-full flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-pink-100 to-red-100 dark:from-pink-900/30 dark:to-red-900/30 hover:from-pink-200 hover:to-red-200 dark:hover:from-pink-800/40 dark:hover:to-red-800/40 transition-all duration-300 shadow-lg hover:shadow-xl"
+          >
+            <div className="flex items-center gap-3">
+              <motion.div
+                className={`p-2 rounded-lg ${darkMode ? 'bg-pink-800/40' : 'bg-pink-200'}`}
+                whileHover={{ scale: 1.1, rotate: 10 }}
+                animate={{ 
+                  scale: [1, 1.05, 1],
+                  rotate: [0, 2, -2, 0]
+                }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300,
+                  scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                }}
+              >
+                <Target className={`w-5 h-5 ${darkMode ? 'text-pink-300' : 'text-pink-600'}`} />
+              </motion.div>
+              <div className="text-left">
+                <span className={`font-bold text-sm ${darkMode ? 'text-pink-200' : 'text-pink-700'}`}>
+                  🎯 Quiz disponibles
+                </span>
+                <div className={`text-xs ${darkMode ? 'text-pink-300' : 'text-pink-600'}`}>
+                  {quizData[cours._id] ? `${quizData[cours._id].length} quiz trouvé(s)` : 'Cliquez pour voir les quiz'}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {quizData[cours._id] && quizData[cours._id].length > 0 && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className={`px-2 py-1 rounded-full text-xs font-bold ${
+                    darkMode 
+                      ? 'bg-pink-600 text-white' 
+                      : 'bg-pink-500 text-white'
+                  }`}
+                >
+                  {quizData[cours._id].length}
+                </motion.div>
+              )}
+              <motion.div
+                animate={{ rotate: showQuizzes ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+                className={`p-2 rounded-lg ${darkMode ? 'bg-pink-800/40' : 'bg-pink-200'}`}
+              >
+                <ArrowRight className={`w-4 h-4 ${darkMode ? 'text-pink-300' : 'text-pink-600'}`} />
+              </motion.div>
+            </div>
+          </motion.button>
+          
+          {/* Liste des quiz */}
+          <AnimatePresence>
+            {showQuizzes && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-3 space-y-2"
+              >
+                {quizLoading[cours._id] ? (
+                  <div className="flex items-center justify-center py-4">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="w-6 h-6 border-2 border-pink-500 border-t-transparent rounded-full"
+                    />
+                  </div>
+                ) : quizData[cours._id] && quizData[cours._id].length > 0 ? (
+                  quizData[cours._id].map((quizInfo, index) => (
+                    <motion.div
+                      key={quizInfo.chapitreId}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="p-4 rounded-xl bg-gradient-to-r from-pink-50 to-red-50 dark:from-pink-900/20 dark:to-red-900/20 border border-pink-200 dark:border-pink-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <motion.div
+                              className={`p-2 rounded-lg ${darkMode ? 'bg-pink-800/30' : 'bg-pink-200'}`}
+                              whileHover={{ scale: 1.1, rotate: 10 }}
+                              animate={{ 
+                                scale: [1, 1.05, 1],
+                                rotate: [0, 2, -2, 0]
+                              }}
+                              transition={{ 
+                                type: "spring", 
+                                stiffness: 300,
+                                scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                                rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                              }}
+                            >
+                              <Target className={`w-4 h-4 ${darkMode ? 'text-pink-300' : 'text-pink-600'}`} />
+                            </motion.div>
+                            <h5 className={`font-bold text-sm ${darkMode ? 'text-pink-200' : 'text-pink-800'}`}>
+                              {quizInfo.chapitreName}
+                            </h5>
+                          </div>
+                          <div className="flex items-center gap-4 text-xs">
+                            <div className={`flex items-center gap-1 ${darkMode ? 'text-pink-300' : 'text-pink-600'}`}>
+                              <FileText className="w-3 h-3" />
+                              <span>{quizInfo.quiz.questions?.length || 0} questions</span>
+                            </div>
+                            <div className={`flex items-center gap-1 ${darkMode ? 'text-pink-300' : 'text-pink-600'}`}>
+                              <Clock className="w-3 h-3" />
+                              <span>~{Math.ceil((quizInfo.quiz.questions?.length || 0) * 1.5)} min</span>
+                            </div>
+                          </div>
+                        </div>
+                        <motion.button
+                          onClick={(e) => handleQuizClick(e, quizInfo.chapitreId)}
+                          whileHover={{ scale: 1.1, y: -2, rotate: 5 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="p-3 rounded-xl bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+                        >
+                          <motion.div
+                            animate={{ scale: [1, 1.1, 1] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          >
+                            <Play className="w-4 h-4" />
+                          </motion.div>
+                          <span className="text-xs font-bold">JOUER</span>
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  ))
+                ) : (
+                  <motion.div 
+                    className="text-center py-6"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 5, -5, 0]
+                      }}
+                      transition={{ 
+                        scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                        rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                      }}
+                      className={`w-12 h-12 mx-auto mb-3 p-3 rounded-full ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}
+                    >
+                      <Target className={`w-6 h-6 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                    </motion.div>
+                    <h4 className={`font-semibold text-sm mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                      Aucun quiz disponible
+                    </h4>
+                    <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      Les quiz apparaîtront ici quand ils seront créés
+                    </p>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </motion.div>

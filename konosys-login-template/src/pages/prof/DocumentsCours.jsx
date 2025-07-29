@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   FileText,
   FileImage,
@@ -27,15 +27,16 @@ import {
   Zap,
   Trophy,
   Star,
-  RefreshCw
+  RefreshCw,
+  BookOpen
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function DocumentsCours() {
-  const { id } = useParams();
   const navigate = useNavigate();
   const [documents, setDocuments] = useState([]);
-  const [course, setCourse] = useState(null);
+  const [courses, setCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
@@ -43,41 +44,55 @@ export default function DocumentsCours() {
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
   const token = JSON.parse(localStorage.getItem("userInfo"))?.token;
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const teacherEmail = userInfo?.email;
 
+  // Charger les cours du prof
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCourses = async () => {
       setLoading(true);
       setError(null);
       try {
-        const [courseRes, docsRes] = await Promise.all([
-          fetch(`${API_URL}/api/courses/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`${API_URL}/api/documents/course/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
-        if (!courseRes.ok) throw new Error("Erreur chargement cours");
-        if (!docsRes.ok) throw new Error("Erreur chargement documents");
-
-        const courseData = await courseRes.json();
-        const docsData = await docsRes.json();
-
-        setCourse(courseData);
-        setDocuments(docsData);
-        setSuccessMessage("✅ Documents chargés avec succès !");
+        const res = await fetch(`${API_URL}/api/courses`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        const profCourses = (data.courses || []).filter(
+          (course) => course?.teacher?.email === teacherEmail
+        );
+        setCourses(profCourses);
+        setSuccessMessage("✅ Cours chargés avec succès !");
         setTimeout(() => setSuccessMessage(""), 3000);
       } catch (err) {
-        console.error("Erreur :", err);
-        setError(err.message);
-        setErrorMessage("❌ Erreur lors du chargement des données");
+        console.error("Erreur chargement cours:", err);
+        setError("Impossible de charger les cours.");
+        setErrorMessage("❌ Erreur lors du chargement des cours");
         setTimeout(() => setErrorMessage(""), 3000);
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
-  }, [id, token, API_URL]);
+    fetchCourses();
+  }, [API_URL, token, teacherEmail]);
+
+  // Charger les documents quand selectedCourse change
+  useEffect(() => {
+    if (!selectedCourse) return setDocuments([]);
+    const fetchDocuments = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/documents/course/${selectedCourse._id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Erreur chargement documents");
+        const data = await res.json();
+        setDocuments(data);
+      } catch (err) {
+        console.error("Erreur chargement documents:", err);
+        setDocuments([]);
+      }
+    };
+    fetchDocuments();
+  }, [selectedCourse, API_URL, token]);
 
   const getIconForFile = (fileName) => {
     if (!fileName) return <FileCheck className="text-gray-400 w-8 h-8" />;
@@ -132,7 +147,7 @@ export default function DocumentsCours() {
             transition={{ delay: 0.5 }}
             className="text-lg text-blue-700 font-medium"
           >
-            Chargement des documents...
+            Chargement des cours...
           </motion.p>
         </motion.div>
       </div>
@@ -158,53 +173,114 @@ export default function DocumentsCours() {
   const stats = getDocumentStats();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      {/* Header avec notifications */}
+    <div className="min-h-screen bg-gradient-to-tr from-[#edf3ff] to-[#f9fcff] overflow-hidden text-gray-800">
+      
+      {/* Header simple et élégant */}
       <motion.div 
-        className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-blue-200"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 100 }}
+        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-6 px-8 shadow-xl"
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 200, damping: 25 }}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-6xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            className="flex flex-col lg:flex-row items-center justify-between gap-6"
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between"
+            transition={{ delay: 0.1, type: "spring", stiffness: 150 }}
           >
-            <div className="flex items-center gap-4">
+            {/* Titre et icône */}
+            <motion.div 
+              className="flex items-center gap-4"
+              whileHover={{ scale: 1.01 }}
+            >
               <motion.button
                 onClick={() => navigate(-1)}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-3 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl text-white hover:from-blue-700 hover:to-blue-800 transition-all duration-200"
+                className="p-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all duration-200 shadow-md"
               >
-                <ArrowLeft className="w-6 h-6" />
+                <ArrowLeft className="w-5 h-5" />
               </motion.button>
               <motion.div 
-                className="p-3 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl"
+                className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20"
                 whileHover={{ scale: 1.05, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ 
+                  y: [0, -2, 0]
+                }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 400,
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                }}
               >
                 <BookOpenCheck className="w-8 h-8 text-white" />
               </motion.div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-800 to-blue-900 bg-clip-text text-transparent">
+                <motion.h1 
+                  className="text-3xl md:text-4xl font-bold text-white mb-1"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                >
                   Documents du Cours
-                </h1>
-                <p className="text-blue-600 font-medium">Gestion des ressources pédagogiques</p>
+                </motion.h1>
+                <motion.p 
+                  className="text-blue-100 font-medium text-base"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+                >
+                  Gestion des ressources pédagogiques
+                </motion.p>
               </div>
-            </div>
+            </motion.div>
             
-            <motion.button
-              onClick={() => window.location.reload()}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-2 px-4 py-3 rounded-xl font-semibold bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200"
+            {/* Statistiques simples */}
+            <motion.div 
+              className="flex items-center gap-4"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, type: "spring", stiffness: 150 }}
             >
-              <RefreshCw className="w-5 h-5" />
-              Actualiser
-            </motion.button>
+              <motion.div 
+                className="text-center p-3 bg-white/15 rounded-xl backdrop-blur-sm border border-white/20 shadow-md"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -1, 0] }}
+                transition={{ 
+                  y: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                }}
+              >
+                <div className="text-2xl font-bold text-white mb-1">{courses.length}</div>
+                <div className="text-blue-100 text-xs font-medium">Cours</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-3 bg-white/15 rounded-xl backdrop-blur-sm border border-white/20 shadow-md"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -1, 0] }}
+                transition={{ 
+                  y: { duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.3 }
+                }}
+              >
+                <div className="text-2xl font-bold text-white mb-1">{documents.length}</div>
+                <div className="text-blue-100 text-xs font-medium">Documents</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-3 bg-white/15 rounded-xl backdrop-blur-sm border border-white/20 shadow-md"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -1, 0] }}
+                transition={{ 
+                  y: { duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.6 }
+                }}
+              >
+                <div className="text-2xl font-bold text-white mb-1">{stats.pdf}</div>
+                <div className="text-blue-100 text-xs font-medium">PDF</div>
+              </motion.div>
+            </motion.div>
           </motion.div>
         </div>
       </motion.div>
@@ -246,264 +322,309 @@ export default function DocumentsCours() {
         )}
       </AnimatePresence>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-6 py-6">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="space-y-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
+          className="space-y-6"
         >
-          {/* Infos du cours */}
-          {course && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
-            >
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
-                <div className="flex items-center gap-4">
-                  <motion.div 
-                    className="p-3 bg-white/20 rounded-xl"
-                    whileHover={{ scale: 1.1, rotate: 10 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <GraduationCap className="w-6 h-6 text-white" />
-                  </motion.div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">
-                      {course.nom} — {course.classe}
-                    </h2>
-                    <p className="text-blue-100 font-medium">
-                      {typeof course.matiere === "object" ? course.matiere.nom : course.matiere || "Matière inconnue"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Statistiques des documents */}
+          {/* Sélection du cours */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
             className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
           >
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
               <div className="flex items-center gap-4">
                 <motion.div 
                   className="p-3 bg-white/20 rounded-xl"
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 3, repeat: Infinity }}
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <FileType className="w-6 h-6 text-white" />
+                  <BookOpen className="w-6 h-6 text-white" />
                 </motion.div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white">Statistiques des Documents</h2>
-                  <p className="text-blue-100 font-medium">Répartition par type de fichier</p>
+                  <h2 className="text-2xl font-bold text-white">Sélectionner un Cours</h2>
+                  <p className="text-blue-100 font-medium">Choisissez le cours pour voir ses documents</p>
                 </div>
               </div>
             </div>
 
             <div className="p-8">
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-                <motion.div
-                  className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200"
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 bg-blue-600 rounded-lg">
-                      <FileText className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-blue-800">PDF</h3>
-                  </div>
-                  <motion.div 
-                    className="text-3xl font-bold text-blue-600"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.7, type: "spring", stiffness: 200 }}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {courses.map((course, index) => (
+                  <motion.div
+                    key={course._id}
+                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ scale: 1.02, y: -3 }}
+                    className={`bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer ${
+                      selectedCourse?._id === course._id ? 'ring-2 ring-blue-500 bg-blue-100' : ''
+                    }`}
+                    onClick={() => setSelectedCourse(course)}
                   >
-                    {stats.pdf}
-                  </motion.div>
-                </motion.div>
-
-                <motion.div
-                  className="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-xl border border-pink-200"
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 bg-pink-600 rounded-lg">
-                      <ImgIcon className="w-6 h-6 text-white" />
+                    <div className="flex items-center gap-4">
+                      <motion.div
+                        className="p-3 bg-white/80 rounded-2xl shadow-md"
+                        whileHover={{ scale: 1.1, rotate: 10 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <BookOpen className="w-6 h-6 text-blue-600" />
+                      </motion.div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-blue-800 text-lg mb-1">
+                          {course.nom} — {course.classe}
+                        </h3>
+                        <p className="text-blue-600 text-sm">
+                          {course.matiere?.nom || "Matière non définie"}
+                        </p>
+                        <p className="text-blue-500 text-xs mt-1">
+                          {course.etudiants?.length || 0} étudiants
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="font-semibold text-pink-800">Images</h3>
-                  </div>
-                  <motion.div 
-                    className="text-3xl font-bold text-pink-600"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
-                  >
-                    {stats.images}
                   </motion.div>
-                </motion.div>
-
-                <motion.div
-                  className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200"
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 bg-purple-600 rounded-lg">
-                      <Film className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-purple-800">Vidéos</h3>
-                  </div>
-                  <motion.div 
-                    className="text-3xl font-bold text-purple-600"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.9, type: "spring", stiffness: 200 }}
-                  >
-                    {stats.videos}
-                  </motion.div>
-                </motion.div>
-
-                <motion.div
-                  className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-xl border border-yellow-200"
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 bg-yellow-600 rounded-lg">
-                      <Archive className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-yellow-800">Archives</h3>
-                  </div>
-                  <motion.div 
-                    className="text-3xl font-bold text-yellow-600"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 1.0, type: "spring", stiffness: 200 }}
-                  >
-                    {stats.archives}
-                  </motion.div>
-                </motion.div>
-
-                <motion.div
-                  className="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl border border-red-200"
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 bg-red-600 rounded-lg">
-                      <Youtube className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-red-800">YouTube</h3>
-                  </div>
-                  <motion.div 
-                    className="text-3xl font-bold text-red-600"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 1.1, type: "spring", stiffness: 200 }}
-                  >
-                    {stats.youtube}
-                  </motion.div>
-                </motion.div>
+                ))}
               </div>
             </div>
           </motion.div>
 
-          {/* Liste des documents */}
-          {documents.length === 0 ? (
+          {/* Statistiques des documents - Style simple */}
+          {selectedCourse && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-xl border border-blue-100 p-12 text-center"
+              transition={{ delay: 0.3 }}
+              className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
             >
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <BookOpenCheck className="w-20 h-20 text-blue-300 mx-auto mb-4" />
-              </motion.div>
-              <h3 className="text-xl text-blue-600 font-medium mb-2">Aucun document trouvé</h3>
-              <p className="text-blue-400">Aucun document n'a encore été publié pour ce cours</p>
-            </motion.div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {documents.map((doc, index) => {
-                const youtubeId = getYoutubeId(doc.fileUrl);
-                const isYoutube = youtubeId !== null;
-
-                return (
-                  <motion.div
-                    key={doc._id}
-                    initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ 
-                      delay: index * 0.1,
-                      type: "spring",
-                      stiffness: 100
-                    }}
-                    whileHover={{ y: -5, scale: 1.02 }}
-                    className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+                <div className="flex items-center gap-4">
+                  <motion.div 
+                    className="p-3 bg-white/20 rounded-xl"
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
                   >
-                    <div className="p-6">
-                      <div className="flex items-start gap-4 mb-4">
-                        <motion.div 
-                          className="p-4 bg-gradient-to-r from-blue-100 to-blue-200 rounded-xl flex-shrink-0"
-                          whileHover={{ scale: 1.1, rotate: 10 }}
-                          transition={{ type: "spring", stiffness: 300 }}
-                        >
-                          {isYoutube ? (
-                            <Youtube className="text-red-600 w-8 h-8" />
-                          ) : (
-                            getIconForFile(doc.fileName)
-                          )}
-                        </motion.div>
-                        <div className="overflow-hidden flex-1">
-                          <h3 className="font-bold text-blue-900 text-sm truncate" title={doc.fileName}>
-                            {isYoutube ? "Vidéo YouTube" : doc.fileName}
-                          </h3>
-                          {doc.message && (
-                            <p className="text-xs text-blue-600 italic mt-1 truncate">
-                              {doc.message}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      {isYoutube ? (
-                        <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden mb-4">
-                          <iframe
-                            className="w-full h-32"
-                            src={`https://www.youtube.com/embed/${youtubeId}`}
-                            title="YouTube video player"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          />
-                        </div>
-                      ) : (
-                        <motion.a
-                          href={`${API_URL}${doc.fileUrl}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200"
-                        >
-                          <Eye className="w-4 h-4" />
-                          Voir le fichier
-                        </motion.a>
-                      )}
-                    </div>
+                    <FileType className="w-6 h-6 text-white" />
                   </motion.div>
-                );
-              })}
-            </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Statistiques des Documents</h2>
+                    <p className="text-blue-100 font-medium">Cours : {selectedCourse.nom} — {selectedCourse.classe}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+                  <motion.div
+                    className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200"
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 bg-blue-600 rounded-lg">
+                        <FileText className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="font-semibold text-blue-800">PDF</h3>
+                    </div>
+                    <motion.div 
+                      className="text-3xl font-bold text-blue-600"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.7, type: "spring", stiffness: 200 }}
+                    >
+                      {stats.pdf}
+                    </motion.div>
+                  </motion.div>
+
+                  <motion.div
+                    className="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-xl border border-pink-200"
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 bg-pink-600 rounded-lg">
+                        <ImgIcon className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="font-semibold text-pink-800">Images</h3>
+                    </div>
+                    <motion.div 
+                      className="text-3xl font-bold text-pink-600"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
+                    >
+                      {stats.images}
+                    </motion.div>
+                  </motion.div>
+
+                  <motion.div
+                    className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200"
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 bg-purple-600 rounded-lg">
+                        <Film className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="font-semibold text-purple-800">Vidéos</h3>
+                    </div>
+                    <motion.div 
+                      className="text-3xl font-bold text-purple-600"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.9, type: "spring", stiffness: 200 }}
+                    >
+                      {stats.videos}
+                    </motion.div>
+                  </motion.div>
+
+                  <motion.div
+                    className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-xl border border-yellow-200"
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 bg-yellow-600 rounded-lg">
+                        <Archive className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="font-semibold text-yellow-800">Archives</h3>
+                    </div>
+                    <motion.div 
+                      className="text-3xl font-bold text-yellow-600"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 1.0, type: "spring", stiffness: 200 }}
+                    >
+                      {stats.archives}
+                    </motion.div>
+                  </motion.div>
+
+                  <motion.div
+                    className="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl border border-red-200"
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 bg-red-600 rounded-lg">
+                        <Youtube className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="font-semibold text-red-800">YouTube</h3>
+                    </div>
+                    <motion.div 
+                      className="text-3xl font-bold text-red-600"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 1.1, type: "spring", stiffness: 200 }}
+                    >
+                      {stats.youtube}
+                    </motion.div>
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Liste des documents - Style simple */}
+          {selectedCourse && (
+            <>
+              {documents.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-2xl shadow-xl border border-blue-100 p-12 text-center"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <BookOpenCheck className="w-20 h-20 text-blue-300 mx-auto mb-4" />
+                  </motion.div>
+                  <h3 className="text-xl text-blue-600 font-medium mb-2">Aucun document trouvé</h3>
+                  <p className="text-blue-400">Aucun document n'a encore été publié pour ce cours</p>
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-2xl shadow-xl border border-blue-100 p-8"
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {documents.map((doc, index) => {
+                      const youtubeId = getYoutubeId(doc.fileUrl);
+                      const isYoutube = youtubeId !== null;
+
+                      return (
+                        <motion.div
+                          key={doc._id}
+                          initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          transition={{ 
+                            delay: index * 0.1,
+                            type: "spring",
+                            stiffness: 100
+                          }}
+                          whileHover={{ y: -5, scale: 1.02 }}
+                          className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden hover:shadow-2xl transition-all duration-300"
+                        >
+                          <div className="p-6">
+                            <div className="flex items-start gap-4 mb-4">
+                              <motion.div 
+                                className="p-4 bg-gradient-to-r from-blue-100 to-blue-200 rounded-xl flex-shrink-0"
+                                whileHover={{ scale: 1.1, rotate: 10 }}
+                                transition={{ type: "spring", stiffness: 300 }}
+                              >
+                                {isYoutube ? (
+                                  <Youtube className="text-red-600 w-8 h-8" />
+                                ) : (
+                                  getIconForFile(doc.fileName)
+                                )}
+                              </motion.div>
+                              <div className="overflow-hidden flex-1">
+                                <h3 className="font-bold text-blue-900 text-sm truncate" title={doc.fileName}>
+                                  {isYoutube ? "Vidéo YouTube" : doc.fileName}
+                                </h3>
+                                {doc.message && (
+                                  <p className="text-xs text-blue-600 italic mt-1 truncate">
+                                    {doc.message}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+
+                            {isYoutube ? (
+                              <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden mb-4">
+                                <iframe
+                                  className="w-full h-32"
+                                  src={`https://www.youtube.com/embed/${youtubeId}`}
+                                  title="YouTube video player"
+                                  frameBorder="0"
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                  allowFullScreen
+                                />
+                              </div>
+                            ) : (
+                              <motion.a
+                                href={`${API_URL}${doc.fileUrl}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200"
+                              >
+                                <Eye className="w-4 h-4" />
+                                Voir le fichier
+                              </motion.a>
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </>
           )}
         </motion.div>
       </div>

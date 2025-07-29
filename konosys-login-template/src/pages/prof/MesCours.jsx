@@ -31,7 +31,8 @@ import {
   GraduationCap,
   Award,
   Star,
-  RefreshCw
+  RefreshCw,
+  User
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeContext } from "../../context/ThemeContext";
@@ -502,75 +503,133 @@ export default function MesCoursProf() {
   }
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
-    return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-blue-50'}`}>
-      {/* Header avec notifications */}
+  return (
+    <div className="min-h-screen bg-gradient-to-tr from-[#edf3ff] to-[#f9fcff] overflow-hidden text-gray-800">
+      
+      {/* Header ultra-moderne avec effets 3D */}
       <motion.div 
-      className={`sticky top-0 z-50 backdrop-blur-md border-b ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-blue-200'}`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 100 }}
+        className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-8 px-10 shadow-2xl relative overflow-hidden"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
       >
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
+        {/* Effet de brillance amélioré */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+          animate={{ x: [-200, 400] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        
+        {/* Effet de particules */}
+        <motion.div 
+          className="absolute inset-0 opacity-30"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        >
+          <div className="absolute top-4 left-1/4 w-2 h-2 bg-white rounded-full" />
+          <div className="absolute top-8 right-1/3 w-1 h-1 bg-white rounded-full" />
+          <div className="absolute bottom-6 left-1/2 w-1.5 h-1.5 bg-white rounded-full" />
+        </motion.div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
+            className="flex flex-col lg:flex-row items-center justify-between gap-10"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4"
+            transition={{ delay: 0.2 }}
           >
-            <div className="flex items-center gap-2 sm:gap-4">
+            {/* Titre et icône avec effets 3D */}
+            <motion.div 
+              className="flex items-center gap-8"
+              whileHover={{ scale: 1.02 }}
+            >
               <motion.div 
-                className="p-2 sm:p-3 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl"
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                className="p-5 bg-white/25 backdrop-blur-md rounded-3xl shadow-2xl border border-white/30 relative overflow-hidden"
+                whileHover={{ scale: 1.2, rotate: 15, y: -10 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ 
+                  y: [0, -8, 0],
+                  rotate: [0, 2, -2, 0]
+                }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300,
+                  y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                }}
               >
-                <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                {/* Effet de brillance sur l'icône */}
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  animate={{ x: [-50, 50] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <BookOpen className="w-12 h-12 text-white relative z-10" />
               </motion.div>
               <div>
-                <h1 className={`text-xl sm:text-2xl md:text-3xl font-bold ${darkMode ? 'text-white' : 'bg-gradient-to-r from-blue-800 to-blue-900 bg-clip-text text-transparent'}`}>
+                <motion.h1 
+                  className="text-5xl md:text-6xl font-bold text-white mb-3 bg-gradient-to-r from-white to-blue-100 bg-clip-text"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
                   Mes Cours
-                </h1>
-                <p className={`text-sm sm:text-base font-medium ${darkMode ? 'text-gray-300' : 'text-blue-600'}`}>Gestion de vos cours et étudiants</p>
+                </motion.h1>
+                <motion.p 
+                  className="text-blue-100 font-medium text-xl"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  Gestion de vos cours et étudiants
+                </motion.p>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="flex flex-wrap gap-2 sm:gap-3">
-              <motion.button
-                onClick={() => setShowAddCourse((s) => !s)}
-                whileHover={{ scale: 1.05 }}
+            {/* Statistiques avec effets 3D */}
+            <motion.div 
+              className="flex items-center gap-10"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <motion.div 
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
                 whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-200 text-xs sm:text-sm"
-              >
-                <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Ajouter un cours</span>
-                <span className="sm:hidden">Ajouter</span>
-              </motion.button>
-              
-              <motion.button
-                onClick={() => fetchCourses()}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl font-semibold bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200 text-xs sm:text-sm"
-              >
-                <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Actualiser</span>
-                <span className="sm:hidden">Refresh</span>
-              </motion.button>
-              
-              <motion.button
-                onClick={() => {
-                  fetchCourses();
-                  setSuccessMessage("🔄 Données actualisées !");
-                  setTimeout(() => setSuccessMessage(""), 2000);
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
                 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl font-semibold bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 text-xs sm:text-sm"
               >
-                <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Rafraîchir Séances</span>
-                <span className="sm:hidden">Séances</span>
-              </motion.button>
-            </div>
+                <div className="text-4xl font-bold text-white mb-1">{coursProf.length}</div>
+                <div className="text-blue-100 text-sm font-medium">Cours</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
+                }}
+              >
+                <div className="text-4xl font-bold text-white mb-1">{Object.values(courseStats).reduce((sum, stats) => sum + (stats.totalStudents || 0), 0)}</div>
+                <div className="text-blue-100 text-sm font-medium">Étudiants</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }
+                }}
+              >
+                <div className="text-4xl font-bold text-white mb-1">{Object.values(courseStats).reduce((sum, stats) => sum + (stats.totalChapitres || 0), 0)}</div>
+                <div className="text-blue-100 text-sm font-medium">Chapitres</div>
+              </motion.div>
+            </motion.div>
           </motion.div>
         </div>
       </motion.div>
@@ -582,13 +641,13 @@ export default function MesCoursProf() {
             initial={{ opacity: 0, y: -50, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -50, scale: 0.8 }}
-            className="fixed top-16 sm:top-20 left-1/2 transform -translate-x-1/2 z-50"
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50"
           >
             <motion.div 
-              className="bg-emerald-100 border border-emerald-400 text-emerald-700 px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-lg flex items-center gap-2 text-sm sm:text-base"
+              className="bg-emerald-100 border border-emerald-400 text-emerald-700 px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-base backdrop-blur-sm"
               whileHover={{ scale: 1.05 }}
             >
-              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+              <CheckCircle className="w-5 h-5" />
               {successMessage}
             </motion.div>
           </motion.div>
@@ -599,10 +658,10 @@ export default function MesCoursProf() {
             initial={{ opacity: 0, y: -50, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -50, scale: 0.8 }}
-            className="fixed top-16 sm:top-20 left-1/2 transform -translate-x-1/2 z-50"
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50"
           >
             <motion.div 
-              className="bg-red-100 border border-red-400 text-red-700 px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-lg flex items-center gap-2 text-sm sm:text-base"
+              className="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-base backdrop-blur-sm"
               whileHover={{ scale: 1.05 }}
             >
               <AlertCircle className="w-5 h-5" />
@@ -612,48 +671,49 @@ export default function MesCoursProf() {
         )}
       </AnimatePresence>
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto px-6 py-6">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="space-y-4 sm:space-y-8"
+          className="space-y-6 sm:space-y-8"
         >
           {/* Formulaire ajout de cours */}
           {showAddCourse && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100/50 overflow-hidden"
             >
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 sm:px-8 py-4 sm:py-6">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 sm:px-8 py-6">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 sm:gap-4">
+                  <div className="flex items-center gap-4">
                     <motion.div 
-                      className="p-2 sm:p-3 bg-white/20 rounded-xl"
+                      className="p-3 bg-white/20 rounded-2xl"
                       whileHover={{ scale: 1.1, rotate: 10 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <UserPlus className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                      <UserPlus className="w-6 h-6 text-white" />
                     </motion.div>
                     <div>
-                      <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white">Ajouter un Cours</h2>
-                      <p className="text-blue-100 font-medium text-sm sm:text-base">Créez un nouveau cours</p>
+                      <h2 className="text-xl sm:text-2xl font-bold text-white">Ajouter un Cours</h2>
+                      <p className="text-blue-100 font-medium">Créez un nouveau cours</p>
                     </div>
                   </div>
                   <motion.button
                     type="button"
                     onClick={() => setShowAddCourse(false)}
-                    whileHover={{ scale: 1.1 }}
+                    whileHover={{ scale: 1.1, rotate: 90 }}
                     className="text-white hover:text-blue-100 transition-colors"
                   >
-                    <XCircle className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <XCircle className="w-6 h-6" />
                   </motion.button>
                 </div>
               </div>
 
-              <form onSubmit={handleAddCourse} className="p-4 sm:p-8 space-y-4 sm:space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <form onSubmit={handleAddCourse} className="p-6 sm:p-8 space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   <motion.input
                     type="text"
                     name="nom"
@@ -661,7 +721,7 @@ export default function MesCoursProf() {
                     value={form.nom}
                     onChange={(e) => setForm((f) => ({ ...f, nom: e.target.value }))}
                     required
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-sm sm:text-lg font-medium"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-blue-200 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none text-base font-medium transition-all duration-300"
                     whileFocus={{ scale: 1.02 }}
                   />
                   
@@ -670,7 +730,7 @@ export default function MesCoursProf() {
                     value={form.matiere}
                     onChange={(e) => setForm((f) => ({ ...f, matiere: e.target.value }))}
                     required
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-sm sm:text-lg font-medium"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-blue-200 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none text-base font-medium transition-all duration-300"
                     whileFocus={{ scale: 1.02 }}
                   >
                     <option value="">-- Sélectionnez une matière --</option>
@@ -688,7 +748,7 @@ export default function MesCoursProf() {
                     value={form.classe}
                     onChange={(e) => setForm((f) => ({ ...f, classe: e.target.value }))}
                     required
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-sm sm:text-lg font-medium"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-blue-200 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none text-base font-medium transition-all duration-300"
                     whileFocus={{ scale: 1.02 }}
                   />
                   
@@ -698,7 +758,7 @@ export default function MesCoursProf() {
                     placeholder="Semestre"
                     value={form.semestre}
                     onChange={(e) => setForm((f) => ({ ...f, semestre: e.target.value }))}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-sm sm:text-lg font-medium"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-blue-200 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none text-base font-medium transition-all duration-300"
                     whileFocus={{ scale: 1.02 }}
                   />
                   
@@ -708,7 +768,7 @@ export default function MesCoursProf() {
                     placeholder="Horaire (ex: 14h)"
                     value={form.horaire}
                     onChange={(e) => setForm((f) => ({ ...f, horaire: e.target.value }))}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-sm sm:text-lg font-medium"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-blue-200 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none text-base font-medium transition-all duration-300"
                     whileFocus={{ scale: 1.02 }}
                   />
                   
@@ -717,7 +777,7 @@ export default function MesCoursProf() {
                     name="date"
                     value={form.date}
                     onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-sm sm:text-lg font-medium"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-blue-200 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none text-base font-medium transition-all duration-300"
                     whileFocus={{ scale: 1.02 }}
                   />
                   
@@ -727,7 +787,7 @@ export default function MesCoursProf() {
                     placeholder="Salle"
                     value={form.salle}
                     onChange={(e) => setForm((f) => ({ ...f, salle: e.target.value }))}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-sm sm:text-lg font-medium"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-blue-200 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none text-base font-medium transition-all duration-300"
                     whileFocus={{ scale: 1.02 }}
                   />
                   
@@ -737,7 +797,7 @@ export default function MesCoursProf() {
                     placeholder="Groupe"
                     value={form.groupe}
                     onChange={(e) => setForm((f) => ({ ...f, groupe: e.target.value }))}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-sm sm:text-lg font-medium"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-blue-200 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none text-base font-medium transition-all duration-300"
                     whileFocus={{ scale: 1.02 }}
                   />
                   
@@ -747,18 +807,18 @@ export default function MesCoursProf() {
                     placeholder="Durée en minutes"
                     value={form.duree}
                     onChange={(e) => setForm((f) => ({ ...f, duree: e.target.value }))}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-sm sm:text-lg font-medium"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-blue-200 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none text-base font-medium transition-all duration-300"
                     whileFocus={{ scale: 1.02 }}
                   />
                 </div>
                 
                 <motion.button
                   type="submit"
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none rounded-xl py-3 sm:py-4 font-bold text-sm sm:text-lg shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none rounded-2xl py-4 font-bold text-lg shadow-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center gap-3"
                 >
-                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <CheckCircle className="w-5 h-5" />
                   Ajouter le Cours
                 </motion.button>
               </form>
@@ -766,7 +826,7 @@ export default function MesCoursProf() {
           )}
 
           {/* Liste des cours */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
             {coursProf.map((cours, index) => (
               <motion.div
                 key={cours._id}
@@ -777,44 +837,54 @@ export default function MesCoursProf() {
                   type: "spring",
                   stiffness: 100
                 }}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
+                whileHover={{ y: -8, scale: 1.02 }}
+                className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100/50 overflow-hidden hover:shadow-3xl transition-all duration-500"
               >
                 {/* Header du cours */}
-                <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 sm:px-8 py-4 sm:py-6">
+                <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 sm:px-8 py-6">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 sm:gap-4">
+                    <div className="flex items-center gap-4">
                       <motion.div 
-                        className="p-2 sm:p-3 bg-white/20 rounded-xl"
+                        className="p-3 bg-white/20 rounded-2xl shadow-lg"
                         whileHover={{ scale: 1.1, rotate: 10 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
-                        <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                        <GraduationCap className="w-6 h-6 text-white" />
                       </motion.div>
                       <div>
-                        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white">
+                        <h2 className="text-xl sm:text-2xl font-bold text-white">
                           {cours.nom} — {cours.classe}
                         </h2>
-                        <p className="text-blue-100 font-medium text-sm sm:text-base">
+                        <p className="text-blue-100 font-medium">
                           {cours.matiere?.nom || "Matière non définie"}
                         </p>
                         {/* Indicateur de séances terminées */}
                         {courseStats[cours._id]?.completedSeances > 0 && (
-                          <div className="flex items-center gap-2 mt-2">
+                          <motion.div 
+                            className="flex items-center gap-2 mt-2"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.5 }}
+                          >
                             <CheckCircle className="w-4 h-4 text-emerald-300" />
                             <span className="text-emerald-300 text-sm font-medium">
                               {courseStats[cours._id]?.completedSeances} séance(s) terminée(s)
                             </span>
-                          </div>
+                          </motion.div>
                         )}
                         {/* Indicateur de séances totales */}
                         {courseStats[cours._id]?.totalSeances > 0 && (
-                          <div className="flex items-center gap-2 mt-1">
+                          <motion.div 
+                            className="flex items-center gap-2 mt-1"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.6 }}
+                          >
                             <Calendar className="w-4 h-4 text-blue-300" />
                             <span className="text-blue-300 text-sm font-medium">
                               {courseStats[cours._id]?.totalSeances} séance(s) au total
                             </span>
-                          </div>
+                          </motion.div>
                         )}
                       </div>
                     </div>
@@ -833,8 +903,9 @@ export default function MesCoursProf() {
                 <div className="p-6 bg-gradient-to-r from-blue-50 to-blue-100">
                   <div className="grid grid-cols-4 gap-4">
                     <motion.div 
-                      className="text-center"
-                      whileHover={{ scale: 1.05 }}
+                      className="text-center p-3 rounded-2xl bg-white/50 backdrop-blur-sm shadow-lg"
+                      whileHover={{ scale: 1.05, y: -3 }}
+                      transition={{ type: "spring", stiffness: 300 }}
                     >
                       <div className="text-2xl font-bold text-blue-600">
                         {courseStats[cours._id]?.totalChapitres || 0}
@@ -842,8 +913,9 @@ export default function MesCoursProf() {
                       <div className="text-sm text-blue-600 font-medium">Chapitres</div>
                     </motion.div>
                     <motion.div 
-                      className="text-center"
-                      whileHover={{ scale: 1.05 }}
+                      className="text-center p-3 rounded-2xl bg-white/50 backdrop-blur-sm shadow-lg"
+                      whileHover={{ scale: 1.05, y: -3 }}
+                      transition={{ type: "spring", stiffness: 300 }}
                     >
                       <div className="text-2xl font-bold text-emerald-600">
                         {courseStats[cours._id]?.totalStudents || 0}
@@ -851,8 +923,9 @@ export default function MesCoursProf() {
                       <div className="text-sm text-emerald-600 font-medium">Étudiants</div>
                     </motion.div>
                     <motion.div 
-                      className="text-center"
-                      whileHover={{ scale: 1.05 }}
+                      className="text-center p-3 rounded-2xl bg-white/50 backdrop-blur-sm shadow-lg"
+                      whileHover={{ scale: 1.05, y: -3 }}
+                      transition={{ type: "spring", stiffness: 300 }}
                     >
                       <div className="text-2xl font-bold text-purple-600">
                         {courseStats[cours._id]?.totalSeances || 0}
@@ -870,8 +943,9 @@ export default function MesCoursProf() {
                       )}
                     </motion.div>
                     <motion.div 
-                      className="text-center"
-                      whileHover={{ scale: 1.05 }}
+                      className="text-center p-3 rounded-2xl bg-white/50 backdrop-blur-sm shadow-lg"
+                      whileHover={{ scale: 1.05, y: -3 }}
+                      transition={{ type: "spring", stiffness: 300 }}
                     >
                       <div className="text-2xl font-bold text-amber-600">
                         {courseStats[cours._id]?.averageAbsences || 0}
@@ -882,31 +956,70 @@ export default function MesCoursProf() {
                 </div>
 
                 {/* Actions principales */}
-                <div className="p-6 space-y-4">
-                  <div className="flex gap-3">
+                <div className="p-6 space-y-6">
+                  <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
                     <motion.button
                       onClick={() => setOpenInscription((prev) => ({ ...prev, [cours._id]: !prev[cours._id] }))}
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 flex items-center justify-center gap-2"
+                      className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-3 px-4 rounded-2xl font-semibold shadow-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm"
                     >
                       <UserPlus className="w-4 h-4" />
-                      Inscrire élèves
+                      <span className="hidden lg:inline">Inscrire élèves</span>
+                      <span className="lg:hidden">Inscrire</span>
                     </motion.button>
+                    
                     <motion.button
                       onClick={() => navigate(`/prof/cours/forum/${cours._id}`)}
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center gap-2"
+                      className="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-2xl font-semibold shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm"
                     >
                       <MessageCircle className="w-4 h-4" />
-                      Forum
+                      <span className="hidden lg:inline">Forum</span>
+                      <span className="lg:hidden">Forum</span>
                     </motion.button>
+                    
+                    <motion.button
+                      onClick={() => navigate(`/prof/cours/quiz/${cours._id}`)}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 px-4 rounded-2xl font-semibold shadow-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm"
+                    >
+                      <FileQuestion className="w-4 h-4" />
+                      <span className="hidden lg:inline">Quiz</span>
+                      <span className="lg:hidden">Quiz</span>
+                    </motion.button>
+                    
+                    <motion.button
+                      onClick={() => navigate(`/prof/gerer-devoirs`)}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-gradient-to-r from-red-500 to-red-600 text-white py-3 px-4 rounded-2xl font-semibold shadow-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm"
+                    >
+                      <FileText className="w-4 h-4" />
+                      <span className="hidden lg:inline">Devoirs</span>
+                      <span className="lg:hidden">Devoirs</span>
+                    </motion.button>
+                    
+                    <motion.button
+                      onClick={() => navigate(`/prof/documents-cours/${cours._id}`)}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-2xl font-semibold shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm"
+                    >
+                      <FolderOpen className="w-4 h-4" />
+                      <span className="hidden lg:inline">Documents</span>
+                      <span className="lg:hidden">Docs</span>
+                    </motion.button>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                     <motion.button
                       onClick={() => generateSeancesForCourse(cours)}
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`flex-1 py-3 px-4 rounded-xl font-semibold shadow-lg transition-all duration-200 flex items-center justify-center gap-2 ${
+                      className={`py-3 px-4 rounded-2xl font-semibold shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm ${
                         courseStats[cours._id]?.completedSeances > 0
                           ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700"
                           : courseStats[cours._id]?.totalSeances > 0
@@ -915,46 +1028,66 @@ export default function MesCoursProf() {
                       }`}
                     >
                       <Calendar className="w-4 h-4" />
-                      {courseStats[cours._id]?.completedSeances > 0 
-                        ? `✅ Terminé (${courseStats[cours._id]?.completedSeances}/${courseStats[cours._id]?.totalSeances})` 
-                        : courseStats[cours._id]?.totalSeances > 0 
-                        ? `🔄 Regénérer (${courseStats[cours._id]?.totalSeances})` 
-                        : "➕ Générer Séance"
-                      }
+                      <span className="hidden lg:inline">
+                        {courseStats[cours._id]?.completedSeances > 0 
+                          ? `✅ Terminé` 
+                          : courseStats[cours._id]?.totalSeances > 0 
+                          ? `🔄 Regénérer` 
+                          : "➕ Générer"
+                        }
+                      </span>
+                      <span className="lg:hidden">
+                        {courseStats[cours._id]?.completedSeances > 0 
+                          ? `✅` 
+                          : courseStats[cours._id]?.totalSeances > 0 
+                          ? `🔄` 
+                          : "➕"
+                        }
+                      </span>
                     </motion.button>
+                    
                     <motion.button
-                      onClick={() => deleteAllSeancesForCourse(cours)}
-                      whileHover={{ scale: 1.05 }}
+                      onClick={() => setOpenAbsence((prev) => ({ ...prev, [cours._id]: !prev[cours._id] }))}
+                      whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 flex items-center justify-center gap-2"
+                      className="bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 px-4 rounded-2xl font-semibold shadow-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm"
                     >
-                      <Trash2 className="w-4 h-4" />
-                      Supprimer Séances
+                      <UserCheck className="w-4 h-4" />
+                      <span className="hidden lg:inline">Absences</span>
+                      <span className="lg:hidden">Abs.</span>
                     </motion.button>
+                    
                     <motion.button
-                      onClick={() => deleteCourse(cours._id)}
-                      whileHover={{ scale: 1.05 }}
+                      onClick={() => setOpenChapitres((prev) => ({ ...prev, [cours._id]: !prev[cours._id] }))}
+                      whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-gradient-to-r from-red-500 to-red-600 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 flex items-center justify-center gap-2"
+                      className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-3 px-4 rounded-2xl font-semibold shadow-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <BookOpen className="w-4 h-4" />
+                      <span className="hidden lg:inline">Chapitres</span>
+                      <span className="lg:hidden">Chap.</span>
                     </motion.button>
                   </div>
 
                   {/* Section inscription élève */}
                   {openInscription[cours._id] && (
                     <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200"
+                      initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, height: "auto", scale: 1 }}
+                      exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                      className="bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-2xl p-6 border border-emerald-200 shadow-lg"
                     >
-                      <h4 className="text-emerald-800 font-bold mb-3 flex items-center gap-2">
-                        <UserPlus className="w-4 h-4" />
+                      <h4 className="text-emerald-800 font-bold mb-4 flex items-center gap-3">
+                        <motion.div
+                          whileHover={{ scale: 1.1, rotate: 5 }}
+                          className="p-2 bg-emerald-200 rounded-xl"
+                        >
+                          <UserPlus className="w-5 h-5 text-emerald-600" />
+                        </motion.div>
                         Inscrire un élève par email
                       </h4>
-                      <div className="flex gap-3 mb-4">
-                        <input
+                      <div className="flex gap-3 mb-6">
+                        <motion.input
                           type="email"
                           placeholder="Email de l'élève"
                           value={emailInputByCourse[cours._id] || ""}
@@ -964,13 +1097,14 @@ export default function MesCoursProf() {
                               [cours._id]: e.target.value,
                             }))
                           }
-                          className="flex-1 px-4 py-2 rounded-lg border border-emerald-300 focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 focus:outline-none"
+                          className="flex-1 px-4 py-3 rounded-2xl border-2 border-emerald-300 focus:ring-4 focus:ring-emerald-400/30 focus:border-emerald-400 focus:outline-none transition-all duration-300"
+                          whileFocus={{ scale: 1.02 }}
                         />
                         <motion.button
                           onClick={() => handleInscrireEleve(cours._id)}
-                          whileHover={{ scale: 1.05 }}
+                          whileHover={{ scale: 1.05, y: -2 }}
                           whileTap={{ scale: 0.95 }}
-                          className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-2"
+                          className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-3 rounded-2xl font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 flex items-center gap-2 shadow-lg"
                         >
                           <CheckCircle className="w-4 h-4" />
                           Ajouter
@@ -979,8 +1113,11 @@ export default function MesCoursProf() {
                       
                       {/* Liste des étudiants */}
                       <div>
-                        <h5 className="text-emerald-800 font-semibold mb-2">Élèves inscrits :</h5>
-                        <div className="space-y-2 max-h-32 overflow-y-auto">
+                        <h5 className="text-emerald-800 font-semibold mb-4 flex items-center gap-2">
+                          <Users className="w-4 h-4" />
+                          Élèves inscrits ({studentsByCourse[cours._id]?.length || 0})
+                        </h5>
+                        <div className="space-y-3 max-h-40 overflow-y-auto">
                           {(() => {
                             const seen = new Set();
                             return (studentsByCourse[cours._id] || [])
@@ -996,30 +1133,48 @@ export default function MesCoursProf() {
                                 return (
                                   <motion.div
                                     key={el._id || idx}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    className="bg-white rounded-lg p-3 flex items-center justify-between shadow-sm"
+                                    initial={{ opacity: 0, x: -20, scale: 0.9 }}
+                                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                                    transition={{ delay: idx * 0.1 }}
+                                    whileHover={{ scale: 1.02, y: -2 }}
+                                    className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 flex items-center justify-between shadow-lg border border-emerald-100"
                                   >
-                                    <div>
-                                      <div className="font-semibold text-gray-900">
-                                        {el.name || el.email}
+                                    <div className="flex items-center gap-3">
+                                      <motion.div
+                                        className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                          isDanger ? 'bg-red-100' : 'bg-emerald-100'
+                                        }`}
+                                        whileHover={{ scale: 1.1, rotate: 360 }}
+                                        transition={{ type: "spring", stiffness: 300 }}
+                                      >
+                                        <User className={`w-5 h-5 ${isDanger ? 'text-red-600' : 'text-emerald-600'}`} />
+                                      </motion.div>
+                                      <div>
+                                        <div className="font-semibold text-gray-900">
+                                          {el.name || el.email}
+                                        </div>
+                                        <div className="text-sm text-gray-500">{el.email}</div>
                                       </div>
-                                      <div className="text-sm text-gray-500">{el.email}</div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                      <span className={`text-sm font-medium ${
-                                        isDanger ? "text-red-600" : "text-emerald-600"
-                                      }`}>
+                                    <div className="flex items-center gap-3">
+                                      <motion.span 
+                                        className={`text-sm font-medium px-3 py-1 rounded-full ${
+                                          isDanger 
+                                            ? "bg-red-100 text-red-600 border border-red-200" 
+                                            : "bg-emerald-100 text-emerald-600 border border-emerald-200"
+                                        }`}
+                                        whileHover={{ scale: 1.05 }}
+                                      >
                                         {abs ? `${totalHours}h absences` : "0h absence"}
-                                      </span>
+                                      </motion.span>
                                       <motion.button
                                         onClick={() => handleRemoveStudent(cours._id, el._id)}
-                                        whileHover={{ scale: 1.1 }}
+                                        whileHover={{ scale: 1.1, rotate: 90 }}
                                         whileTap={{ scale: 0.9 }}
-                                        className="bg-red-100 text-red-600 p-1 rounded hover:bg-red-200 transition-colors"
+                                        className="bg-red-100 text-red-600 p-2 rounded-xl hover:bg-red-200 transition-all duration-300 shadow-md"
                                         title="Supprimer l'élève"
                                       >
-                                        <Trash2 className="w-3 h-3" />
+                                        <Trash2 className="w-4 h-4" />
                                       </motion.button>
                                     </div>
                                   </motion.div>
@@ -1027,9 +1182,15 @@ export default function MesCoursProf() {
                               });
                           })()}
                           {(!studentsByCourse[cours._id] || studentsByCourse[cours._id].length === 0) && (
-                            <div className="text-gray-500 text-center py-2 italic">
+                            <motion.div 
+                              className="text-gray-500 text-center py-6 italic bg-white/50 rounded-2xl"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 0.5 }}
+                            >
+                              <Users className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                               Aucun élève inscrit
-                            </div>
+                            </motion.div>
                           )}
                         </div>
                       </div>
@@ -1038,125 +1199,201 @@ export default function MesCoursProf() {
 
                   {/* Chapitres */}
                   <div>
-                    <h3 className="text-blue-800 font-bold text-lg mb-4 flex items-center gap-2">
-                      <FileText className="w-5 h-5" />
+                    <motion.h3 
+                      className="text-blue-800 font-bold text-lg mb-6 flex items-center gap-3"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        className="p-2 bg-blue-100 rounded-xl"
+                      >
+                        <FileText className="w-5 h-5 text-blue-600" />
+                      </motion.div>
                       Chapitres ({cours.chapitres?.length || 0})
-                    </h3>
+                    </motion.h3>
                     {cours.chapitres?.length > 0 ? (
-                      <div className="space-y-3">
-                        {cours.chapitres.map((chap) => (
+                      <div className="space-y-4">
+                        {cours.chapitres.map((chap, idx) => (
                           <motion.div
                             key={chap._id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200"
+                            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ delay: idx * 0.1 }}
+                            whileHover={{ scale: 1.02, y: -3 }}
+                            className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300"
                           >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <FolderOpen className="w-5 h-5 text-blue-600" />
-                                <div>
-                                  <div className="font-semibold text-blue-800">{chap.titre}</div>
-                                  <div className="text-sm text-blue-600">{chap.description || "Pas de description"}</div>
+                            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                              <div className="flex items-start gap-4 flex-1 min-w-0">
+                                <motion.div
+                                  className="p-3 bg-white/80 rounded-2xl shadow-md flex-shrink-0"
+                                  whileHover={{ scale: 1.1, rotate: 10 }}
+                                  transition={{ type: "spring", stiffness: 300 }}
+                                >
+                                  <FolderOpen className="w-6 h-6 text-blue-600" />
+                                </motion.div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="font-semibold text-blue-800 text-lg mb-2 break-words">
+                                    {chap.titre}
+                                  </div>
+                                  <div className="text-sm text-blue-600 break-words">
+                                    {chap.description || "Pas de description"}
+                                  </div>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-blue-600 bg-blue-200 px-2 py-1 rounded">Ordre: {chap.order}</span>
-                                <motion.button
-                                  onClick={() => navigate(`/prof/cours/quiz/${chap._id}`)}
+                              <div className="flex items-center gap-3 flex-wrap">
+                                <motion.span 
+                                  className="text-xs text-blue-600 bg-blue-200 px-3 py-2 rounded-full font-medium whitespace-nowrap"
                                   whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors"
-                                  title="Gérer les quiz"
                                 >
-                                  <FileQuestion className="w-4 h-4" />
-                                </motion.button>
-                                <motion.button
-                                  onClick={() => navigate(`/prof/documents-cours/${cours._id}`)}
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  className="bg-emerald-600 text-white p-2 rounded-lg hover:bg-emerald-700 transition-colors"
-                                  title="Gérer les documents"
-                                >
-                                  <FileText className="w-4 h-4" />
-                                </motion.button>
-                                <motion.button
-                                  onClick={() => deleteChapitre(cours._id, chap._id)}
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  className="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 transition-colors"
-                                  title="Supprimer le chapitre"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </motion.button>
+                                  Ordre: {chap.order}
+                                </motion.span>
+                                <div className="flex items-center gap-2">
+                                  <motion.button
+                                    onClick={() => navigate(`/prof/cours/quiz/${chap._id}`)}
+                                    whileHover={{ scale: 1.1, y: -2 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-3 rounded-2xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg"
+                                    title="Gérer les quiz"
+                                  >
+                                    <FileQuestion className="w-4 h-4" />
+                                  </motion.button>
+                                  <motion.button
+                                    onClick={() => navigate(`/prof/documents-cours/${cours._id}`)}
+                                    whileHover={{ scale: 1.1, y: -2 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white p-3 rounded-2xl hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-lg"
+                                    title="Gérer les documents"
+                                  >
+                                    <FileText className="w-4 h-4" />
+                                  </motion.button>
+                                  <motion.button
+                                    onClick={() => deleteChapitre(cours._id, chap._id)}
+                                    whileHover={{ scale: 1.1, y: -2 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="bg-gradient-to-r from-red-500 to-red-600 text-white p-3 rounded-2xl hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg"
+                                    title="Supprimer le chapitre"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </motion.button>
+                                </div>
                               </div>
                             </div>
                           </motion.div>
                         ))}
                       </div>
                     ) : (
-                      <div className="text-gray-500 text-center py-4 italic">
-                        Pas encore de chapitres associés
-                      </div>
+                      <motion.div 
+                        className="text-gray-500 text-center py-12 italic bg-white/50 rounded-2xl"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        <motion.div
+                          animate={{ scale: [1, 1.1, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          <FolderOpen className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                        </motion.div>
+                        <h4 className="text-lg font-medium text-gray-600 mb-2">Pas encore de chapitres</h4>
+                        <p className="text-gray-500">Créez votre premier chapitre pour commencer</p>
+                      </motion.div>
                     )}
 
                     {/* Bouton ajout chapitre */}
                     <motion.button
                       onClick={() => toggleAddChapForm(cours._id)}
-                      whileHover={{ scale: 1.02 }}
+                      whileHover={{ scale: 1.02, y: -2 }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full mt-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 flex items-center justify-center gap-2"
+                      className="w-full mt-8 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-6 rounded-2xl font-semibold shadow-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center gap-3"
                     >
-                      <PlusCircle className="w-4 h-4" />
+                      <PlusCircle className="w-5 h-5" />
                       {showAddChap[cours._id] ? "Annuler ajout chapitre" : "Ajouter un chapitre"}
                     </motion.button>
 
                     {showAddChap[cours._id] && (
                       <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="mt-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200"
+                        initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, height: "auto", scale: 1 }}
+                        exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                        className="mt-6 bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200 shadow-lg"
                       >
-                        <div className="space-y-3">
-                          <input
+                        <div className="space-y-4">
+                          <motion.input
                             type="text"
                             placeholder="Titre du chapitre"
                             value={newChapData[cours._id]?.titre || ""}
                             onChange={(e) =>
                               handleNewChapChange(cours._id, "titre", e.target.value)
                             }
-                            className="w-full px-4 py-2 rounded-lg border border-blue-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
+                            className="w-full px-4 py-3 rounded-2xl border-2 border-blue-300 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none transition-all duration-300"
+                            whileFocus={{ scale: 1.02 }}
                           />
-                          <input
-                            type="text"
+                          <motion.textarea
                             placeholder="Description (optionnel)"
                             value={newChapData[cours._id]?.description || ""}
                             onChange={(e) =>
                               handleNewChapChange(cours._id, "description", e.target.value)
                             }
-                            className="w-full px-4 py-2 rounded-lg border border-blue-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
+                            rows={3}
+                            className="w-full px-4 py-3 rounded-2xl border-2 border-blue-300 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none transition-all duration-300 resize-none"
+                            whileFocus={{ scale: 1.02 }}
                           />
-                          <input
+                          <motion.input
                             type="number"
                             placeholder="Ordre (optionnel)"
                             value={newChapData[cours._id]?.order || 0}
                             onChange={(e) =>
                               handleNewChapChange(cours._id, "order", Number(e.target.value))
                             }
-                            className="w-full px-4 py-2 rounded-lg border border-blue-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
+                            className="w-full px-4 py-3 rounded-2xl border-2 border-blue-300 focus:ring-4 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none transition-all duration-300"
+                            whileFocus={{ scale: 1.02 }}
                           />
                           <motion.button
                             onClick={() => addChapitre(cours._id)}
-                            whileHover={{ scale: 1.02 }}
+                            whileHover={{ scale: 1.02, y: -2 }}
                             whileTap={{ scale: 0.98 }}
-                            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
+                            className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-3 px-6 rounded-2xl font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg"
                           >
-                            <CheckCircle className="w-4 h-4" />
+                            <CheckCircle className="w-5 h-5" />
                             Ajouter le chapitre
                           </motion.button>
                         </div>
                       </motion.div>
                     )}
+                  </div>
+                </div>
+                
+                {/* Section actions dangereuses */}
+                <div className="p-6 bg-gradient-to-r from-red-50 to-red-100 border-t border-red-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <motion.div
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        className="p-2 bg-red-200 rounded-xl"
+                      >
+                        <AlertCircle className="w-5 h-5 text-red-600" />
+                      </motion.div>
+                      <div>
+                        <h4 className="text-red-800 font-bold">Actions dangereuses</h4>
+                        <p className="text-red-600 text-sm">Ces actions sont irréversibles</p>
+                      </div>
+                    </div>
+                    <motion.button
+                      onClick={() => {
+                        if (window.confirm("Êtes-vous sûr de vouloir supprimer ce cours ? Cette action est irréversible.")) {
+                          deleteCourse(cours._id);
+                        }
+                      }}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-gradient-to-r from-red-500 to-red-600 text-white py-3 px-6 rounded-2xl font-semibold shadow-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center gap-2"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span className="hidden lg:inline">Supprimer le cours</span>
+                      <span className="lg:hidden">Supprimer</span>
+                    </motion.button>
                   </div>
                 </div>
               </motion.div>
@@ -1168,16 +1405,16 @@ export default function MesCoursProf() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-xl border border-blue-100 p-12 text-center"
+              className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100/50 p-12 text-center"
             >
               <motion.div
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                <BookOpen className="w-20 h-20 text-blue-300 mx-auto mb-4" />
+                <BookOpen className="w-24 h-24 text-blue-300 mx-auto mb-6" />
               </motion.div>
-              <h3 className="text-xl text-blue-600 font-medium mb-2">Aucun cours trouvé</h3>
-              <p className="text-blue-400">Vous n'avez pas encore créé de cours</p>
+              <h3 className="text-2xl text-blue-600 font-medium mb-3">Aucun cours trouvé</h3>
+              <p className="text-blue-400 text-lg">Vous n'avez pas encore créé de cours</p>
             </motion.div>
           )}
         </motion.div>

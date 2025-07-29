@@ -172,7 +172,7 @@ export default function NotesProfesseur() {
   const handleSave = async (courseId, studentId) => {
     const values = notes[courseId]?.[studentId];
     if (!values) return;
-    setSaving((prev) => ({ ...prev, [studentId]: true }));
+    setSaving((prev) => ({ ...prev, [`${courseId}_${studentId}`]: true }));
     setSuccessMessage("");
     setErrorMessage("");
 
@@ -204,7 +204,7 @@ export default function NotesProfesseur() {
       setErrorMessage("❌ Erreur lors de l'enregistrement des notes");
       setTimeout(() => setErrorMessage(""), 2000);
     } finally {
-      setSaving((prev) => ({ ...prev, [studentId]: false }));
+      setSaving((prev) => ({ ...prev, [`${courseId}_${studentId}`]: false }));
     }
   };
 
@@ -291,45 +291,132 @@ export default function NotesProfesseur() {
   ];
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-blue-50'}`}>
-      {/* Header avec notifications */}
+    <div className="min-h-screen bg-gradient-to-tr from-[#edf3ff] to-[#f9fcff] overflow-hidden text-gray-800">
+      
+      {/* Header ultra-moderne avec effets 3D */}
       <motion.div 
-        className={`sticky top-0 z-50 backdrop-blur-md border-b ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-blue-200'}`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 100 }}
+        className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-6 px-8 shadow-2xl relative overflow-hidden"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        {/* Effet de brillance amélioré */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+          animate={{ x: [-200, 400] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        
+        {/* Effet de particules */}
+        <motion.div 
+          className="absolute inset-0 opacity-30"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        >
+          <div className="absolute top-4 left-1/4 w-2 h-2 bg-white rounded-full" />
+          <div className="absolute top-8 right-1/3 w-1 h-1 bg-white rounded-full" />
+          <div className="absolute bottom-6 left-1/2 w-1.5 h-1.5 bg-white rounded-full" />
+        </motion.div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
+            className="flex flex-col lg:flex-row items-center justify-between gap-10"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between"
+            transition={{ delay: 0.2 }}
           >
-            <div className="flex items-center gap-4">
+            {/* Titre et icône avec effets 3D */}
+            <motion.div 
+              className="flex items-center gap-8"
+              whileHover={{ scale: 1.02 }}
+            >
               <motion.div 
-                className="p-3 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl"
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                className="p-5 bg-white/25 backdrop-blur-md rounded-3xl shadow-2xl border border-white/30 relative overflow-hidden"
+                whileHover={{ scale: 1.2, rotate: 15, y: -10 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ 
+                  y: [0, -8, 0],
+                  rotate: [0, 2, -2, 0]
+                }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300,
+                  y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                }}
               >
-                <ClipboardList className="w-8 h-8 text-white" />
+                {/* Effet de brillance sur l'icône */}
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  animate={{ x: [-50, 50] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <ClipboardList className="w-12 h-12 text-white relative z-10" />
               </motion.div>
               <div>
-                <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'bg-gradient-to-r from-blue-800 to-blue-900 bg-clip-text text-transparent'}`}>
+                <motion.h1 
+                  className="text-4xl md:text-5xl font-bold text-white mb-2 bg-gradient-to-r from-white to-blue-100 bg-clip-text"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
                   Gestion des Notes
-                </h1>
-                <p className={`font-medium ${darkMode ? 'text-gray-300' : 'text-blue-600'}`}>Suivi et évaluation des étudiants</p>
+                </motion.h1>
+                <motion.p 
+                  className="text-blue-100 font-medium text-lg"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  Suivi et évaluation des étudiants
+                </motion.p>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="flex items-center gap-3">
+            {/* Statistiques avec effets 3D */}
+            <motion.div 
+              className="flex items-center gap-10"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+            >
               <motion.div 
-                className="text-right"
-                whileHover={{ scale: 1.05 }}
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                }}
               >
-                <p className="text-sm text-blue-600 font-medium">{courses.length} cours</p>
-                <p className="text-xs text-blue-400">En cours de gestion</p>
+                <div className="text-4xl font-bold text-white mb-1">{courses.length}</div>
+                <div className="text-blue-100 text-sm font-medium">Cours</div>
               </motion.div>
-            </div>
+              <motion.div 
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
+                }}
+              >
+                <div className="text-4xl font-bold text-white mb-1">{globalStats.totalStudents}</div>
+                <div className="text-blue-100 text-sm font-medium">Étudiants</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }
+                }}
+              >
+                <div className="text-4xl font-bold text-white mb-1">{globalStats.globalAverage}</div>
+                <div className="text-blue-100 text-sm font-medium">Moyenne</div>
+              </motion.div>
+            </motion.div>
           </motion.div>
         </div>
       </motion.div>
@@ -344,7 +431,7 @@ export default function NotesProfesseur() {
             className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50"
           >
             <motion.div 
-              className="bg-emerald-100 border border-emerald-400 text-emerald-700 px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
+              className="bg-emerald-100 border border-emerald-400 text-emerald-700 px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-base backdrop-blur-sm"
               whileHover={{ scale: 1.05 }}
             >
               <CheckCircle className="w-5 h-5" />
@@ -361,7 +448,7 @@ export default function NotesProfesseur() {
             className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50"
           >
             <motion.div 
-              className="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
+              className="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-base backdrop-blur-sm"
               whileHover={{ scale: 1.05 }}
             >
               <AlertCircle className="w-5 h-5" />
@@ -371,12 +458,12 @@ export default function NotesProfesseur() {
         )}
       </AnimatePresence>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-6 py-6">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="space-y-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
+          className="space-y-6"
         >
           {courses.map((course, courseIndex) => {
             // On filtre les doublons d'étudiants
@@ -394,207 +481,198 @@ export default function NotesProfesseur() {
                   type: "spring",
                   stiffness: 100
                 }}
-                whileHover={{ y: -5 }}
-                className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
+                whileHover={{ y: -12, scale: 1.03, rotateY: 2 }}
+                className="bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl border border-blue-200/50 overflow-hidden hover:shadow-3xl transition-all duration-500 relative group"
               >
-                {/* Header du cours */}
-                <motion.div 
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6"
-                  whileHover={{ background: "linear-gradient(to right, #2563eb, #1d4ed8)" }}
-                >
-                  <div className="flex items-center justify-between">
+                {/* Header du cours avec effets 3D */}
+                <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 px-6 py-6 relative overflow-hidden">
+                  {/* Effet de brillance sur le header */}
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                    animate={{ x: [-100, 200] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                  
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
                     <div className="flex items-center gap-4">
                       <motion.div 
-                        className="p-3 bg-white/20 rounded-xl"
-                        whileHover={{ scale: 1.1, rotate: 10 }}
-                        transition={{ type: "spring", stiffness: 300 }}
+                        className="p-3 bg-white/25 backdrop-blur-md rounded-2xl shadow-xl border border-white/20"
+                        whileHover={{ scale: 1.15, rotate: 15, y: -5 }}
+                        whileTap={{ scale: 0.95 }}
+                        animate={{ y: [0, -3, 0] }}
+                        transition={{ 
+                          type: "spring", 
+                          stiffness: 300,
+                          y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                        }}
                       >
-                        <FileText className="w-6 h-6 text-white" />
+                        <BookOpen className="w-6 h-6 text-white" />
                       </motion.div>
                       <div>
-                        <h2 className="text-2xl font-bold text-white">
-                          {course.matiere?.nom || "Matière inconnue"}
+                        <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
+                          {course.nom} — {course.classe}
                         </h2>
-                        <p className="text-blue-100 font-medium">
-                          Classe {course.classe} • {uniqueStudents.length} étudiants
+                        <p className="text-blue-100 font-medium text-base">
+                          {course.matiere?.nom || "Matière non définie"}
                         </p>
                       </div>
                     </div>
                     
                     <motion.div 
-                      className="text-right text-white"
-                      whileHover={{ scale: 1.05 }}
+                      className="text-right text-white p-3 bg-white/15 rounded-2xl backdrop-blur-sm"
+                      whileHover={{ scale: 1.1, y: -5 }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       <div className="text-3xl font-bold">{uniqueStudents.length}</div>
-                      <div className="text-blue-100 text-sm">Étudiants</div>
+                      <div className="text-blue-100 text-sm font-medium">Étudiants</div>
                     </motion.div>
                   </div>
-                </motion.div>
+                </div>
 
-                {/* Tableau des notes */}
-                <div className="p-8">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead className="bg-gradient-to-r from-blue-50 to-blue-100">
-                        <tr>
-                          <th className="py-4 px-6 text-left font-bold text-blue-800 flex items-center gap-2">
-                            <UserCheck className="w-5 h-5" />
-                            Étudiant
-                          </th>
-                          {critères.map((c) => (
-                            <th key={c.key} className="py-4 px-4 text-center">
-                              <motion.div 
-                                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg ${c.color}`}
-                                whileHover={{ scale: 1.05 }}
-                              >
-                                <c.icon className="w-4 h-4" />
-                                <span className="font-semibold text-sm">{c.label}</span>
-                              </motion.div>
-                            </th>
-                          ))}
-                          <th className="py-4 px-6 text-center font-bold text-blue-800">
-                            <div className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
-                              <BarChart3 className="w-4 h-4" />
-                              <span className="font-semibold text-sm">Moyenne</span>
-                            </div>
-                          </th>
-                          <th className="py-4 px-6 text-center font-bold text-blue-800">
-                            <div className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
-                              <Target className="w-4 h-4" />
-                              <span className="font-semibold text-sm">Action</span>
-                            </div>
-                          </th>
-                        </tr>
-                      </thead>
+                {/* Contenu du cours */}
+                <div className="p-6 sm:p-8">
+                  {uniqueStudents.length === 0 ? (
+                    <motion.div 
+                      className="text-center py-12"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <motion.div
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        <Users className="w-16 h-16 text-blue-300 mx-auto mb-4" />
+                      </motion.div>
+                      <h3 className="text-lg text-blue-600 font-medium mb-2">Aucun étudiant inscrit</h3>
+                      <p className="text-blue-400">Les étudiants apparaîtront ici une fois inscrits</p>
+                    </motion.div>
+                  ) : (
+                    <div className="space-y-6">
+                      {/* Navigation des critères */}
+                      <div className="flex flex-wrap gap-2 sm:gap-3">
+                        {critères.map((critère, idx) => (
+                          <motion.button
+                            key={critère.key}
+                            whileHover={{ scale: 1.05, y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`flex items-center gap-2 px-4 py-3 rounded-2xl font-semibold shadow-lg transition-all duration-300 ${critère.color}`}
+                          >
+                            <critère.icon className="w-4 h-4" />
+                            <span className="text-sm">{critère.label}</span>
+                          </motion.button>
+                        ))}
+                      </div>
 
-                      <tbody className="divide-y divide-blue-100">
-                        {uniqueStudents.length === 0 && (
-                          <tr>
-                            <td colSpan={critères.length + 3} className="py-12 text-center">
-                              <motion.div 
-                                className="text-blue-400"
-                                animate={{ scale: [1, 1.05, 1] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                              >
-                                <Users className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                                <p className="text-lg font-medium">Aucun étudiant inscrit</p>
-                                <p className="text-sm">Les étudiants apparaîtront ici une fois inscrits</p>
-                              </motion.div>
-                            </td>
-                          </tr>
-                        )}
+                      {/* Tableau des étudiants */}
+                      <div className="overflow-x-auto">
+                        <div className="min-w-full bg-white/50 backdrop-blur-sm rounded-2xl shadow-lg border border-blue-100/50">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-6">
+                            {uniqueStudents.map((student, studentIndex) => {
+                              const studentNotes = notes[course._id]?.[student._id] || {};
+                              const average = calculateAverage(studentNotes);
+                              const status = getPerformanceStatus(average);
 
-                        {uniqueStudents.map((etudiant, studentIndex) => {
-                          const studentNotes = notes[course._id]?.[etudiant._id] || {};
-                          const moyenne = calculateAverage(studentNotes);
-                          const performance = getPerformanceStatus(moyenne);
-                          
-                          return (
-                            <motion.tr
-                              key={`${course._id}-${etudiant._id}`}
-                              initial={{ opacity: 0, x: -50 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ 
-                                delay: studentIndex * 0.05,
-                                type: "spring",
-                                stiffness: 100
-                              }}
-                              whileHover={{ 
-                                backgroundColor: "rgba(59, 130, 246, 0.05)",
-                                scale: 1.01
-                              }}
-                              className="transition-all duration-200"
-                            >
-                              <td className="py-4 px-6">
-                                <div className="flex items-center gap-3">
-                                  <motion.div 
-                                    className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                                    whileHover={{ scale: 1.1, rotate: 360 }}
-                                    transition={{ type: "spring", stiffness: 300 }}
-                                  >
-                                    {etudiant.name.charAt(0).toUpperCase()}
-                                  </motion.div>
-                                  <div>
-                                    <p className="font-semibold text-gray-900">{etudiant.name}</p>
-                                    <p className="text-sm text-gray-500">Étudiant</p>
+                              return (
+                                <motion.div
+                                  key={student._id}
+                                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                                  transition={{ delay: studentIndex * 0.1 }}
+                                  whileHover={{ scale: 1.02, y: -3 }}
+                                  className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-blue-100/50 hover:shadow-xl transition-all duration-300"
+                                >
+                                  <div className="flex items-center gap-3 mb-4">
+                                    <motion.div
+                                      className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                                        status === 'excellent' ? 'bg-emerald-100' :
+                                        status === 'bon' ? 'bg-blue-100' :
+                                        status === 'moyen' ? 'bg-amber-100' : 'bg-red-100'
+                                      }`}
+                                      whileHover={{ scale: 1.1, rotate: 360 }}
+                                      transition={{ type: "spring", stiffness: 300 }}
+                                    >
+                                      <UserCheck className={`w-6 h-6 ${
+                                        status === 'excellent' ? 'text-emerald-600' :
+                                        status === 'bon' ? 'text-blue-600' :
+                                        status === 'moyen' ? 'text-amber-600' : 'text-red-600'
+                                      }`} />
+                                    </motion.div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="font-semibold text-gray-900 truncate">
+                                        {student.name || student.email}
+                                      </div>
+                                      <div className="text-sm text-gray-500 truncate">
+                                        {student.email}
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
-                              </td>
-                              
-                              {critères.map((c) => (
-                                <td key={c.key} className="py-4 px-4 text-center">
-                                  <div className="flex justify-center">
-                                    <motion.input
-                                      type="number"
-                                      min={0}
-                                      max={20}
-                                      step={0.5}
-                                      className={`w-20 px-3 py-2 rounded-lg border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-center font-semibold transition-all duration-200 ${getNoteColor(studentNotes[c.key])}`}
-                                      value={studentNotes[c.key] ?? ""}
-                                      onChange={(e) =>
-                                        handleChange(
-                                          course._id,
-                                          etudiant._id,
-                                          c.key,
-                                          e.target.value
-                                        )
-                                      }
-                                      placeholder="0-20"
-                                      whileFocus={{ scale: 1.05 }}
-                                    />
-                                  </div>
-                                </td>
-                              ))}
 
-                              <td className="py-4 px-6 text-center">
-                                <motion.div 
-                                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-lg ${getNoteColor(moyenne)}`}
-                                  whileHover={{ scale: 1.05 }}
-                                >
-                                  <performance.icon className="w-5 h-5" />
-                                  {moyenne}
+                                  {/* Notes par critère */}
+                                  <div className="space-y-3">
+                                    {critères.map((critère) => (
+                                      <div key={critère.key} className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                          <critère.icon className="w-4 h-4 text-gray-500" />
+                                          <span className="text-sm text-gray-600">{critère.label}</span>
+                                        </div>
+                                        <motion.input
+                                          type="number"
+                                          min="0"
+                                          max="20"
+                                          step="0.5"
+                                          value={studentNotes[critère.key] || ""}
+                                          onChange={(e) => handleChange(course._id, student._id, critère.key, e.target.value)}
+                                          className={`w-16 px-2 py-1 text-center rounded-lg border-2 focus:ring-2 focus:outline-none transition-all duration-300 ${
+                                            getNoteColor(studentNotes[critère.key] || 0)
+                                          }`}
+                                          whileFocus={{ scale: 1.05 }}
+                                        />
+                                      </div>
+                                    ))}
+                                  </div>
+
+                                  {/* Moyenne et actions */}
+                                  <div className="mt-4 pt-4 border-t border-gray-200">
+                                    <div className="flex items-center justify-between mb-3">
+                                      <span className="text-sm font-medium text-gray-600">Moyenne</span>
+                                      <motion.span 
+                                        className={`text-lg font-bold px-3 py-1 rounded-full ${
+                                          getNoteColor(average)
+                                        }`}
+                                        whileHover={{ scale: 1.05 }}
+                                      >
+                                        {typeof average === 'number' ? average.toFixed(1) : parseFloat(average || 0).toFixed(1)}
+                                      </motion.span>
+                                    </div>
+                                    <motion.button
+                                      onClick={() => handleSave(course._id, student._id)}
+                                      disabled={saving[`${course._id}_${student._id}`]}
+                                      whileHover={{ scale: 1.02, y: -2 }}
+                                      whileTap={{ scale: 0.98 }}
+                                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 px-4 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
+                                    >
+                                      {saving[`${course._id}_${student._id}`] ? (
+                                        <>
+                                          <Loader2 className="w-4 h-4 animate-spin" />
+                                          Sauvegarde...
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Save className="w-4 h-4" />
+                                          Sauvegarder
+                                        </>
+                                      )}
+                                    </motion.button>
+                                  </div>
                                 </motion.div>
-                                <motion.div 
-                                  className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium mt-1 ${performance.color}`}
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{ delay: 0.5 }}
-                                >
-                                  {performance.text}
-                                </motion.div>
-                              </td>
-                              
-                              <td className="py-4 px-6 text-center">
-                                <motion.button
-                                  onClick={() => handleSave(course._id, etudiant._id)}
-                                  disabled={saving[etudiant._id]}
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-                                    saving[etudiant._id]
-                                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                      : "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl"
-                                  }`}
-                                >
-                                  {saving[etudiant._id] ? (
-                                    <>
-                                      <Loader2 className="w-4 h-4 animate-spin" />
-                                      Enregistrement...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Save className="w-4 h-4" />
-                                      Enregistrer
-                                    </>
-                                  )}
-                                </motion.button>
-                              </td>
-                            </motion.tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             );

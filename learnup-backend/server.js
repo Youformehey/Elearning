@@ -41,6 +41,8 @@ mongoose
     require("./models/Seance");
     require("./models/Formation");
     require("./models/Parent");
+    require("./models/Quiz");
+    require("./models/QuizResponse");
 
     // Import des routes
     const routes = {
@@ -68,6 +70,7 @@ mongoose
     const matiereRoutes = require("./routes/matieres");
     const chapitresRoutes = require("./routes/chapitres");
     const userRoutes = require("./routes/userRoutes");
+    const quizResponseRoutes = require("./routes/quizResponseRoutes");
 
     // Vérification des routes valides
     Object.entries(routes).forEach(([name, route]) => {
@@ -101,6 +104,12 @@ mongoose
     app.use("/api/rappels-faits", rappelFaitRoutes);
     app.use("/api/matieres", matiereRoutes);
     app.use("/api/users", userRoutes);
+    app.use("/api/quiz-responses", quizResponseRoutes);
+
+    // Route de test simple
+    app.get("/api/test", (req, res) => {
+      res.json({ message: "Serveur fonctionne !", timestamp: new Date().toISOString() });
+    });
 
     // Uploads publics
     app.use("/uploads", express.static(path.join(__dirname, "uploads")));

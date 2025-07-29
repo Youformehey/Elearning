@@ -3,6 +3,57 @@ const Chapitre = require("../models/Chapitre");
 const Course   = require("../models/Course");
 
 /**
+ * Récupérer un chapitre par ID avec vérification des permissions
+ */
+const getChapitreById = async (req, res) => {
+  try {
+    const { chapitreId } = req.params;
+    const userId = req.user._id;
+    const userRole = req.user.role;
+
+    console.log("🔍 getChapitreById - chapitreId:", chapitreId);
+    console.log("🔍 getChapitreById - user:", { id: userId, role: userRole });
+
+    // Récupérer le chapitre avec son cours
+    const chapitre = await Chapitre.findById(chapitreId).populate({
+      path: "course",
+      populate: ["matiere", "teacher", "etudiants"]
+    });
+
+    if (!chapitre) {
+      console.log("❌ Chapitre introuvable:", chapitreId);
+      return res.status(404).json({ message: "Chapitre introuvable" });
+    }
+
+    console.log("✅ Chapitre trouvé:", chapitre.titre);
+
+    // Vérifier les permissions selon le rôle
+    if (userRole === "teacher" || userRole === "prof") {
+      // Professeur : vérifier qu'il enseigne le cours
+      if (chapitre.course.teacher.toString() !== userId.toString()) {
+        console.log("❌ Professeur n'enseigne pas ce cours");
+        return res.status(403).json({ message: "Vous n'enseignez pas ce cours" });
+      }
+    } else if (userRole === "student" || userRole === "etudiant") {
+      // Étudiant : vérifier qu'il est inscrit au cours
+      const isEnrolled = chapitre.course.etudiants.some(studentId => 
+        studentId.toString() === userId.toString()
+      );
+      if (!isEnrolled) {
+        console.log("❌ Étudiant non inscrit au cours");
+        return res.status(403).json({ message: "Vous n'êtes pas inscrit à ce cours" });
+      }
+    }
+
+    console.log("✅ Permissions OK pour l'utilisateur");
+    res.json(chapitre);
+  } catch (err) {
+    console.error("❌ Erreur getChapitreById:", err);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+/**
  * Récupérer tous les chapitres pour le prof connecté,
  * en filtrant sur les cours qu’il enseigne.
  */
@@ -157,6 +208,7 @@ const deleteChapitre = async (req, res) => {
 };
 
 module.exports = {
+  getChapitreById,
   getChapitresByTeacher,
   createChapitre,
   updateChapitre,

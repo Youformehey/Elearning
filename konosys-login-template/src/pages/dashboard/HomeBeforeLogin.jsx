@@ -64,7 +64,7 @@ const HomeBeforeLogin = () => {
 
   const acceptCookies = () => {
     setShowCookieBanner(false);
-    // Ici vous pouvez ajouter la logique pour sauvegarder les préférences
+    // Ici vous pouvez ajouter la logique pour sauvegarder les préférencesla part
   };
 
   const dropdownItems = {

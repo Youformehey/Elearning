@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
+import {
   Plus, 
-  Search, 
-  Filter, 
-  Edit, 
-  Trash2, 
-  Eye, 
+  Search,
+  Filter,
+  Edit,
+  Trash2,
+  Eye,
   MoreVertical,
   User,
   Mail,
@@ -254,10 +254,10 @@ export default function AdminStudents() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={`w-full pl-10 pr-4 py-2 border rounded-lg ${
-              darkMode 
+          darkMode 
                 ? 'bg-gray-800 border-gray-600 text-white' 
                 : 'bg-white border-gray-300'
-            }`}
+        }`}
           />
         </div>
         
@@ -323,8 +323,8 @@ export default function AdminStudents() {
             <GraduationCap className="w-8 h-8 text-purple-500" />
           </div>
         </div>
-      </div>
-
+            </div>
+            
       {/* Students Table */}
       <div className={`rounded-lg shadow-sm overflow-hidden ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <div className="overflow-x-auto">
@@ -358,7 +358,7 @@ export default function AdminStudents() {
                     />
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
                         <User className="w-5 h-5 text-white" />
                       </div>
@@ -409,24 +409,24 @@ export default function AdminStudents() {
                         <Eye size={16} />
                       </motion.button>
                       
-                      <motion.button
+              <motion.button
                         onClick={() => openEditModal(student)}
                         className="p-1 text-green-500 hover:bg-green-100 rounded"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                      >
+              >
                         <Edit size={16} />
-                      </motion.button>
-                      
-                      <motion.button
+              </motion.button>
+              
+              <motion.button
                         onClick={() => openDeleteModal(student)}
                         className="p-1 text-red-500 hover:bg-red-100 rounded"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                      >
+              >
                         <Trash2 size={16} />
-                      </motion.button>
-                    </div>
+              </motion.button>
+        </div>
                   </td>
                 </tr>
               ))}
@@ -474,7 +474,7 @@ export default function AdminStudents() {
                     onChange={handleFormChange}
                     required
                     className={`w-full px-3 py-2 border rounded-lg ${
-                      darkMode 
+                darkMode 
                         ? 'bg-gray-700 border-gray-600 text-white' 
                         : 'bg-white border-gray-300'
                     }`}
@@ -511,7 +511,7 @@ export default function AdminStudents() {
                         : 'bg-white border-gray-300'
                     }`}
                   />
-                </div>
+              </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1">Téléphone</label>
@@ -573,7 +573,7 @@ export default function AdminStudents() {
                   >
                     {modalLoading ? <Loader className="w-4 h-4 animate-spin mx-auto" /> : "Ajouter"}
                   </button>
-                </div>
+              </div>
               </form>
             </motion.div>
           </motion.div>
@@ -596,9 +596,9 @@ export default function AdminStudents() {
               exit={{ scale: 0.9, opacity: 0 }}
               className={`w-full max-w-md p-6 rounded-lg shadow-xl ${
                 darkMode ? 'bg-gray-800' : 'bg-white'
-              }`}
+            }`}
               onClick={(e) => e.stopPropagation()}
-            >
+          >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold">Modifier l'étudiant</h2>
                 <button
@@ -650,10 +650,10 @@ export default function AdminStudents() {
                     value={formData.password}
                     onChange={handleFormChange}
                     className={`w-full px-3 py-2 border rounded-lg ${
-                      darkMode 
+                        darkMode 
                         ? 'bg-gray-700 border-gray-600 text-white' 
                         : 'bg-white border-gray-300'
-                    }`}
+                      }`}
                   />
                 </div>
                 
@@ -671,7 +671,7 @@ export default function AdminStudents() {
                     }`}
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-1">Adresse</label>
                   <textarea
@@ -782,15 +782,15 @@ export default function AdminStudents() {
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
             onClick={() => setShowViewModal(false)}
           >
-            <motion.div
+                    <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className={`w-full max-w-lg p-6 rounded-lg shadow-xl ${
                 darkMode ? 'bg-gray-800' : 'bg-white'
-              }`}
+                      }`}
               onClick={(e) => e.stopPropagation()}
-            >
+                    >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold">Détails de l'étudiant</h2>
                 <button
@@ -799,19 +799,19 @@ export default function AdminStudents() {
                 >
                   <X size={20} />
                 </button>
-              </div>
+                          </div>
               
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center">
                     <User className="w-8 h-8 text-white" />
-                  </div>
+                        </div>
                   <div>
                     <h3 className="text-lg font-bold">{selectedStudent.name}</h3>
                     <p className="text-gray-500">{selectedStudent.email}</p>
-                  </div>
-                </div>
-                
+                        </div>
+                      </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-gray-500" />
@@ -821,12 +821,12 @@ export default function AdminStudents() {
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-gray-500" />
                     <span>{selectedStudent.adresse || "Non renseigné"}</span>
-                  </div>
+                        </div>
                   
                   <div className="flex items-center gap-2">
                     <GraduationCap className="w-4 h-4 text-gray-500" />
                     <span>{selectedStudent.classe?.name || "Non assigné"}</span>
-                  </div>
+                        </div>
                   
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-1 rounded-full text-xs ${
@@ -835,10 +835,10 @@ export default function AdminStudents() {
                         : 'bg-green-100 text-green-800'
                     }`}>
                       {selectedStudent.status === "inactive" ? "Inactif" : "Actif"}
-                    </span>
-                  </div>
-                </div>
-                
+                          </span>
+                        </div>
+                      </div>
+
                 <div className="pt-4 border-t">
                   <button
                     onClick={() => {

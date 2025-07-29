@@ -659,3 +659,291 @@ exports.getCoursesByStudentClass = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
+// GET CHAPITRES D'UN COURS (pour les étudiants)
+exports.getChapitresByCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    
+    if (!courseId) {
+      return res.status(400).json({ message: "ID du cours requis" });
+    }
+
+    // Vérifier que le cours existe
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Cours non trouvé" });
+    }
+
+    // Récupérer les chapitres du cours
+    const chapitres = await Chapitre.find({ course: courseId })
+      .sort({ ordre: 1 })
+      .populate('course', 'nom classe');
+
+    res.json(chapitres);
+  } catch (err) {
+    console.error("Erreur getChapitresByCourse:", err);
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
+  }
+};
+
+// === GESTION DEVOIRS ===
+
+// Récupérer les devoirs d'un cours
+exports.getDevoirsByCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId).populate('teacher', 'name');
+    
+    if (!course) {
+      return res.status(404).json({ message: "Cours introuvable" });
+    }
+
+    // Vérifier que l'étudiant est inscrit dans ce cours
+    if (req.user.role === 'student') {
+      const isEnrolled = course.etudiants.includes(req.user.id);
+      if (!isEnrolled) {
+        return res.status(403).json({ message: "Vous n'êtes pas inscrit dans ce cours" });
+      }
+    }
+
+    res.json(course.devoirs || []);
+  } catch (err) {
+    console.error("Erreur getDevoirsByCourse:", err);
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
+  }
+};
+
+// Uploader un devoir pour un cours
+exports.uploadDevoir = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { title } = req.body;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ message: "Aucun fichier fourni" });
+    }
+
+    if (!title) {
+      return res.status(400).json({ message: "Titre du devoir requis" });
+    }
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Cours introuvable" });
+    }
+
+    // Vérifier que le professeur est le propriétaire du cours
+    if (course.teacher.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Vous n'êtes pas autorisé à modifier ce cours" });
+    }
+
+    const devoir = {
+      fileName: title,
+      fileUrl: `/uploads/homeworks/${file.filename}`,
+      dateEnvoi: new Date()
+    };
+
+    course.devoirs.push(devoir);
+    await course.save();
+
+    res.status(201).json({
+      message: "Devoir uploadé avec succès",
+      devoir
+    });
+  } catch (err) {
+    console.error("Erreur uploadDevoir:", err);
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
+  }
+};
+
+// Soumettre un devoir (étudiant)
+exports.submitDevoir = async (req, res) => {
+  try {
+    const { courseId, devoirId } = req.params;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ message: "Aucun fichier fourni" });
+    }
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Cours introuvable" });
+    }
+
+    // Vérifier que l'étudiant est inscrit dans ce cours
+    const isEnrolled = course.etudiants.includes(req.user.id);
+    if (!isEnrolled) {
+      return res.status(403).json({ message: "Vous n'êtes pas inscrit dans ce cours" });
+    }
+
+    // Vérifier que le devoir existe
+    const devoir = course.devoirs.id(devoirId);
+    if (!devoir) {
+      return res.status(404).json({ message: "Devoir introuvable" });
+    }
+
+    // Vérifier si l'étudiant a déjà soumis ce devoir
+    const existingSubmission = course.soumissions.find(
+      sub => sub.student.toString() === req.user.id && sub.devoirId === devoirId
+    );
+
+    if (existingSubmission) {
+      return res.status(400).json({ message: "Vous avez déjà soumis ce devoir" });
+    }
+
+    const soumission = {
+      student: req.user.id,
+      fileName: file.originalname,
+      fileUrl: `/uploads/homeworks/${file.filename}`,
+      dateSoumission: new Date(),
+      devoirId: devoirId
+    };
+
+    course.soumissions.push(soumission);
+    await course.save();
+
+    res.status(201).json({
+      message: "Devoir soumis avec succès",
+      soumission
+    });
+  } catch (err) {
+    console.error("Erreur submitDevoir:", err);
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
+  }
+};
+
+// Récupérer les soumissions d'un devoir
+exports.getDevoirSubmissions = async (req, res) => {
+  try {
+    const { courseId, devoirId } = req.params;
+
+    const course = await Course.findById(courseId)
+      .populate('soumissions.student', 'name email')
+      .populate('teacher', 'name');
+
+    if (!course) {
+      return res.status(404).json({ message: "Cours introuvable" });
+    }
+
+    // Vérifier que le professeur est le propriétaire du cours
+    if (course.teacher._id.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Vous n'êtes pas autorisé à voir les soumissions de ce cours" });
+    }
+
+    // Vérifier que le devoir existe
+    const devoir = course.devoirs.id(devoirId);
+    if (!devoir) {
+      return res.status(404).json({ message: "Devoir introuvable" });
+    }
+
+    // Filtrer les soumissions pour ce devoir spécifique
+    const submissions = course.soumissions.filter(
+      sub => sub.devoirId === devoirId
+    );
+
+    res.json({
+      devoir,
+      submissions
+    });
+  } catch (err) {
+    console.error("Erreur getDevoirSubmissions:", err);
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
+  }
+};
+
+// Noter une soumission
+exports.gradeSubmission = async (req, res) => {
+  try {
+    const { courseId, devoirId, submissionId } = req.params;
+    const { grade, comment } = req.body;
+
+    if (!grade) {
+      return res.status(400).json({ message: "Note requise" });
+    }
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Cours introuvable" });
+    }
+
+    // Vérifier que le professeur est le propriétaire du cours
+    if (course.teacher.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Vous n'êtes pas autorisé à noter ce cours" });
+    }
+
+    // Trouver la soumission
+    const soumission = course.soumissions.id(submissionId);
+    if (!soumission) {
+      return res.status(404).json({ message: "Soumission introuvable" });
+    }
+
+    // Vérifier que la soumission correspond au bon devoir
+    if (soumission.devoirId !== devoirId) {
+      return res.status(400).json({ message: "Soumission ne correspond pas au devoir" });
+    }
+
+    // Ajouter la note
+    soumission.grade = grade;
+    soumission.comment = comment;
+    soumission.dateNotation = new Date();
+
+    await course.save();
+
+    res.json({
+      message: "Note ajoutée avec succès",
+      soumission
+    });
+  } catch (err) {
+    console.error("Erreur gradeSubmission:", err);
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
+  }
+};
+
+// Upload global de devoir pour tous les cours du prof
+exports.uploadGlobalDevoir = async (req, res) => {
+  try {
+    const { title } = req.body;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ message: "Aucun fichier fourni" });
+    }
+
+    if (!title) {
+      return res.status(400).json({ message: "Titre du devoir requis" });
+    }
+
+    // Récupérer tous les cours du professeur
+    const courses = await Course.find({ teacher: req.user.id });
+    
+    if (courses.length === 0) {
+      return res.status(404).json({ message: "Aucun cours trouvé pour ce professeur" });
+    }
+
+    const devoir = {
+      fileName: title,
+      fileUrl: `/uploads/homeworks/${file.filename}`,
+      dateEnvoi: new Date()
+    };
+
+    // Ajouter le devoir à tous les cours du professeur
+    const updatePromises = courses.map(course => {
+      course.devoirs.push(devoir);
+      return course.save();
+    });
+
+    await Promise.all(updatePromises);
+
+    res.status(201).json({
+      message: `Devoir uploadé avec succès pour ${courses.length} cours`,
+      devoir,
+      coursesCount: courses.length
+    });
+  } catch (err) {
+    console.error("Erreur uploadGlobalDevoir:", err);
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
+  }
+};

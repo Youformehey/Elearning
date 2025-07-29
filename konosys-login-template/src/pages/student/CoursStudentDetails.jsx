@@ -398,7 +398,7 @@ export default function CoursStudentDetails() {
           transition={{ delay: 0.8 }}
           className="mb-8"
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <motion.button
               onClick={() => navigate(`/student/cours/forum/${course._id}`)}
               whileHover={{ scale: 1.05 }}
@@ -425,6 +425,20 @@ export default function CoursStudentDetails() {
             >
               <FileQuestion size={32} />
               <span>Quiz</span>
+            </motion.button>
+            
+            <motion.button
+              onClick={() => navigate(`/student/cours/devoirs/${course._id}`)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`p-6 rounded-2xl font-semibold shadow-lg transition-all duration-300 flex flex-col items-center gap-3 ${
+                darkMode 
+                  ? 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800' 
+                  : 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700'
+              }`}
+            >
+              <FileText size={32} />
+              <span>Devoir à rendre</span>
             </motion.button>
             
             <motion.button

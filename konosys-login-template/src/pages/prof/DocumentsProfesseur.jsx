@@ -221,45 +221,132 @@ export default function DocumentsProfesseur() {
   };
 
     return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-blue-50'}`}>
-      {/* Header avec notifications */}
+    <div className="min-h-screen bg-gradient-to-tr from-[#edf3ff] to-[#f9fcff] overflow-hidden text-gray-800">
+      
+      {/* Header ultra-moderne avec effets 3D */}
       <motion.div 
-      className={`sticky top-0 z-50 backdrop-blur-md border-b ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-blue-200'}`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 100 }}
+        className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-8 px-10 shadow-2xl relative overflow-hidden"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        {/* Effet de brillance amélioré */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+          animate={{ x: [-200, 400] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        
+        {/* Effet de particules */}
+        <motion.div 
+          className="absolute inset-0 opacity-30"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        >
+          <div className="absolute top-4 left-1/4 w-2 h-2 bg-white rounded-full" />
+          <div className="absolute top-8 right-1/3 w-1 h-1 bg-white rounded-full" />
+          <div className="absolute bottom-6 left-1/2 w-1.5 h-1.5 bg-white rounded-full" />
+        </motion.div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
+            className="flex flex-col lg:flex-row items-center justify-between gap-10"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between"
+            transition={{ delay: 0.2 }}
           >
-            <div className="flex items-center gap-4">
+            {/* Titre et icône avec effets 3D */}
+            <motion.div 
+              className="flex items-center gap-8"
+              whileHover={{ scale: 1.02 }}
+            >
               <motion.div 
-                className="p-3 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl"
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                className="p-5 bg-white/25 backdrop-blur-md rounded-3xl shadow-2xl border border-white/30 relative overflow-hidden"
+                whileHover={{ scale: 1.2, rotate: 15, y: -10 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ 
+                  y: [0, -8, 0],
+                  rotate: [0, 2, -2, 0]
+                }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300,
+                  y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                }}
               >
-                <FolderPlus className="w-8 h-8 text-white" />
+                {/* Effet de brillance sur l'icône */}
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  animate={{ x: [-50, 50] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <FolderPlus className="w-12 h-12 text-white relative z-10" />
               </motion.div>
               <div>
-                <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'bg-gradient-to-r from-blue-800 to-blue-900 bg-clip-text text-transparent'}`}>
+                <motion.h1 
+                  className="text-5xl md:text-6xl font-bold text-white mb-3 bg-gradient-to-r from-white to-blue-100 bg-clip-text"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
                   Documents de Cours
-                </h1>
-                <p className={`font-medium ${darkMode ? 'text-gray-300' : 'text-blue-600'}`}>Gestion des ressources pédagogiques</p>
+                </motion.h1>
+                <motion.p 
+                  className="text-blue-100 font-medium text-xl"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  Gestion des ressources pédagogiques
+                </motion.p>
               </div>
-            </div>
+            </motion.div>
             
-            <motion.button
-              onClick={() => setShowAddForm(!showAddForm)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-200"
+            {/* Statistiques avec effets 3D */}
+            <motion.div 
+              className="flex items-center gap-10"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
             >
-              <Plus className="w-5 h-5" />
-              Ajouter Document
-            </motion.button>
+              <motion.div 
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                }}
+              >
+                <div className="text-4xl font-bold text-white mb-1">{courses.length}</div>
+                <div className="text-blue-100 text-sm font-medium">Cours</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
+                }}
+              >
+                <div className="text-4xl font-bold text-white mb-1">{documents.length}</div>
+                <div className="text-blue-100 text-sm font-medium">Documents</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }
+                }}
+              >
+                <div className="text-4xl font-bold text-white mb-1">{selectedCourse ? documents.filter(d => d.course === selectedCourse).length : 0}</div>
+                <div className="text-blue-100 text-sm font-medium">Sélectionné</div>
+              </motion.div>
+            </motion.div>
           </motion.div>
         </div>
       </motion.div>
@@ -308,6 +395,22 @@ export default function DocumentsProfesseur() {
           transition={{ delay: 0.2 }}
           className="space-y-8"
         >
+          {/* Bouton Ajouter Document */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-center"
+          >
+            <motion.button
+              onClick={() => setShowAddForm(!showAddForm)}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-xl hover:shadow-2xl transition-all duration-300"
+            >
+              <Plus className="w-6 h-6" />
+              Ajouter Document
+            </motion.button>
+          </motion.div>
           {/* Formulaire d'ajout */}
           {showAddForm && (
             <motion.div

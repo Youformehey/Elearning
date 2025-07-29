@@ -374,457 +374,367 @@ export default function PlanningProfesseur() {
   }
 
     return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-blue-50'}`}>
-      {/* Header avec notifications */}
+    <div className="min-h-screen bg-gradient-to-tr from-[#edf3ff] to-[#f9fcff] overflow-hidden text-gray-800">
+      
+      {/* Header ultra-moderne avec effets 3D */}
       <motion.div 
-      className={`sticky top-0 z-50 backdrop-blur-md border-b ${darkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-blue-200'}`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 100 }}
+        className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-8 px-10 shadow-2xl relative overflow-hidden"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        {/* Effet de brillance amélioré */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+          animate={{ x: [-200, 400] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        
+        {/* Effet de particules */}
+        <motion.div 
+          className="absolute inset-0 opacity-30"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        >
+          <div className="absolute top-4 left-1/4 w-2 h-2 bg-white rounded-full" />
+          <div className="absolute top-8 right-1/3 w-1 h-1 bg-white rounded-full" />
+          <div className="absolute bottom-6 left-1/2 w-1.5 h-1.5 bg-white rounded-full" />
+        </motion.div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
+            className="flex flex-col lg:flex-row items-center justify-between gap-10"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between"
+            transition={{ delay: 0.2 }}
           >
-            <div className="flex items-center gap-4">
+            {/* Titre et icône avec effets 3D */}
+            <motion.div 
+              className="flex items-center gap-8"
+              whileHover={{ scale: 1.02 }}
+            >
               <motion.div 
-                className="p-3 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl"
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                className="p-5 bg-white/25 backdrop-blur-md rounded-3xl shadow-2xl border border-white/30 relative overflow-hidden"
+                whileHover={{ scale: 1.2, rotate: 15, y: -10 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ 
+                  y: [0, -8, 0],
+                  rotate: [0, 2, -2, 0]
+                }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300,
+                  y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                }}
               >
-                <CalendarDays className="w-8 h-8 text-white" />
+                {/* Effet de brillance sur l'icône */}
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  animate={{ x: [-50, 50] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <CalendarDays className="w-12 h-12 text-white relative z-10" />
               </motion.div>
               <div>
-                <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'bg-gradient-to-r from-blue-800 to-blue-900 bg-clip-text text-transparent'}`}>
-                  Planning des Séances
-                </h1>
-                <p className={`font-medium ${darkMode ? 'text-gray-300' : 'text-blue-600'}`}>Gestion et suivi de vos cours</p>
+                <motion.h1 
+                  className="text-5xl md:text-6xl font-bold text-white mb-3 bg-gradient-to-r from-white to-blue-100 bg-clip-text"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  Planning des Cours
+                </motion.h1>
+                <motion.p 
+                  className="text-blue-100 font-medium text-xl"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  Gestion de vos séances et planning
+                </motion.p>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="flex items-center gap-4">
-              <motion.button
-          onClick={generatePDF}
-                disabled={filteredSeances.length === 0}
-                whileHover={{ scale: 1.05 }}
+            {/* Statistiques avec effets 3D */}
+            <motion.div 
+              className="flex items-center gap-10"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <motion.div 
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
                 whileTap={{ scale: 0.95 }}
-                className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-                  filteredSeances.length === 0
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl"
-                }`}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                }}
               >
-                <Download className="w-5 h-5" />
-                Télécharger PDF
-              </motion.button>
-            </div>
+                <div className="text-4xl font-bold text-white mb-1">{seances?.length || 0}</div>
+                <div className="text-blue-100 text-sm font-medium">Séances</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
+                }}
+              >
+                <div className="text-4xl font-bold text-white mb-1">{seances?.filter(s => s.fait).length || 0}</div>
+                <div className="text-blue-100 text-sm font-medium">Terminées</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }
+                }}
+              >
+                <div className="text-4xl font-bold text-white mb-1">{seances?.filter(s => !s.fait).length || 0}</div>
+                <div className="text-blue-100 text-sm font-medium">À faire</div>
+              </motion.div>
+            </motion.div>
           </motion.div>
         </div>
       </motion.div>
 
-      {/* Messages de notification */}
-      <AnimatePresence>
-        {successMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -50, scale: 0.8 }}
-            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50"
-          >
-            <motion.div 
-              className="bg-emerald-100 border border-emerald-400 text-emerald-700 px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
-              whileHover={{ scale: 1.05 }}
-            >
-              <CheckCircle className="w-5 h-5" />
-              {successMessage}
-            </motion.div>
-          </motion.div>
-        )}
-        
-        {errorMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -50, scale: 0.8 }}
-            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50"
-          >
-            <motion.div 
-              className="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
-              whileHover={{ scale: 1.05 }}
-            >
-              <AlertCircle className="w-5 h-5" />
-              {errorMessage}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-6 py-6">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="space-y-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
+          className="space-y-6"
         >
-          {/* Statistiques du planning */}
+          {/* Statistiques du planning ultra-modernes */}
           <motion.div
+            className="bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl border border-blue-200/50 p-6 relative overflow-hidden"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
-          >
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
-              <div className="flex items-center gap-4">
-                <motion.div 
-                  className="p-3 bg-white/20 rounded-xl"
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  <Calculator className="w-6 h-6 text-white" />
-                </motion.div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white">Statistiques du Planning</h2>
-                  <p className="text-blue-100 font-medium">Vue d'ensemble de vos séances</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                {/* Total séances */}
-                <motion.div
-                  className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200"
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-blue-600 rounded-lg">
-                      <Calendar className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-blue-800">Total Séances</h3>
-                  </div>
-                  <motion.div 
-                    className="text-3xl font-bold text-blue-600"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.7, type: "spring", stiffness: 200 }}
-                  >
-                    {planningStats.totalSeances}
-                  </motion.div>
-                  <p className="text-blue-600 text-sm mt-2">
-                    Séances programmées
-                  </p>
-                </motion.div>
-
-                {/* Séances terminées */}
-                <motion.div
-                  className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-6 rounded-xl border border-emerald-200"
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-emerald-600 rounded-lg">
-                      <CheckCircle className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-emerald-800">Terminées</h3>
-                  </div>
-                  <motion.div 
-                    className="text-3xl font-bold text-emerald-600"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
-                  >
-                    {planningStats.completedSeances}
-                  </motion.div>
-                  <p className="text-emerald-600 text-sm mt-2">
-                    Séances effectuées
-                  </p>
-                </motion.div>
-
-                {/* Séances à venir */}
-                <motion.div
-                  className="bg-gradient-to-br from-amber-50 to-amber-100 p-6 rounded-xl border border-amber-200"
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-amber-600 rounded-lg">
-                      <Clock className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-amber-800">À Venir</h3>
-                  </div>
-                  <motion.div 
-                    className="text-3xl font-bold text-amber-600"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.9, type: "spring", stiffness: 200 }}
-                  >
-                    {planningStats.upcomingSeances}
-                  </motion.div>
-                  <p className="text-amber-600 text-sm mt-2">
-                    Séances futures
-                  </p>
-                </motion.div>
-
-                {/* Séances aujourd'hui */}
-                <motion.div
-                  className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200"
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-purple-600 rounded-lg">
-                      <Target className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-purple-800">Aujourd'hui</h3>
-                  </div>
-                  <motion.div 
-                    className="text-3xl font-bold text-purple-600"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 1.0, type: "spring", stiffness: 200 }}
-                  >
-                    {planningStats.todaySeances}
-                  </motion.div>
-                  <p className="text-purple-600 text-sm mt-2">
-                    Séances du jour
-                  </p>
-                </motion.div>
-
-                {/* Durée moyenne */}
-                <motion.div
-                  className="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-xl border border-pink-200"
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-pink-600 rounded-lg">
-                      <Clock3 className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-pink-800">Durée Moy.</h3>
-                  </div>
-                  <motion.div 
-                    className="text-3xl font-bold text-pink-600"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 1.1, type: "spring", stiffness: 200 }}
-                  >
-                    {planningStats.averageDuration}min
-                  </motion.div>
-                  <p className="text-pink-600 text-sm mt-2">
-                    Par séance
-                  </p>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Filtre par cours */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
           >
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
-              <div className="flex items-center gap-4">
-                <motion.div 
-                  className="p-3 bg-white/20 rounded-xl"
-                  whileHover={{ scale: 1.1, rotate: 10 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <BookOpen className="w-6 h-6 text-white" />
-                </motion.div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white">Filtrer par Cours</h2>
-                  <p className="text-blue-100 font-medium">Sélectionnez un cours pour voir ses séances</p>
-                </div>
-              </div>
-      </div>
-
-            <div className="p-8">
-              <motion.select
-                value={selectedCourse}
-                onChange={(e) => setSelectedCourse(e.target.value)}
-                className="w-full px-6 py-4 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-lg font-semibold bg-white shadow-lg"
-                whileFocus={{ scale: 1.02 }}
+            {/* Effet de brillance sur les stats */}
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-50/20 to-transparent"
+              animate={{ x: [-100, 200] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            />
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+              <motion.div 
+                className="text-center p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-blue-100 shadow-xl border border-blue-200/50 backdrop-blur-sm"
+                whileHover={{ scale: 1.08, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300,
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                }}
               >
-                <option value="all">📚 Tous les cours ({seances.length} séances)</option>
-                {courses.map((course) => {
-                  const courseSeances = seances.filter(s => {
-                    const courseId = typeof s.course === 'object' ? s.course._id : s.course;
-                    return courseId === course._id;
-                  });
-                  const courseName = course.nom || 'Cours sans nom';
-                  const courseClass = course.classe || 'Classe non définie';
-                  const courseSubject = course.matiere?.nom || 'Matière non définie';
-                  
-                  console.log(`Cours ${courseName}: ${courseSeances.length} séances trouvées`);
-                  
-                  return (
-                    <option key={course._id} value={course._id}>
-                      📖 {courseName} - {courseClass} ({courseSubject}) - {courseSeances.length} séance(s)
-                    </option>
-                  );
-                })}
-              </motion.select>
+                <div className="text-3xl font-bold text-blue-600 mb-1">{planningStats?.totalSeances || 0}</div>
+                <div className="text-sm text-blue-600 font-medium">Total Séances</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-emerald-100 shadow-xl border border-emerald-200/50 backdrop-blur-sm"
+                whileHover={{ scale: 1.08, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300,
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
+                }}
+              >
+                <div className="text-3xl font-bold text-emerald-600 mb-1">{planningStats?.completedSeances || 0}</div>
+                <div className="text-sm text-emerald-600 font-medium">Terminées</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-amber-100 shadow-xl border border-amber-200/50 backdrop-blur-sm"
+                whileHover={{ scale: 1.08, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300,
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }
+                }}
+              >
+                <div className="text-3xl font-bold text-amber-600 mb-1">{planningStats?.todaySeances || 0}</div>
+                <div className="text-sm text-amber-600 font-medium">Aujourd'hui</div>
+              </motion.div>
+              <motion.div 
+                className="text-center p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-purple-100 shadow-xl border border-purple-200/50 backdrop-blur-sm"
+                whileHover={{ scale: 1.08, y: -8, rotateY: 5 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300,
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1.5 }
+                }}
+              >
+                <div className="text-3xl font-bold text-purple-600 mb-1">{planningStats?.upcomingSeances || 0}</div>
+                <div className="text-sm text-purple-600 font-medium">À venir</div>
+              </motion.div>
             </div>
           </motion.div>
+
+          {/* Actions */}
+          <div className="flex flex-wrap gap-3">
+            <motion.button
+              onClick={generatePDF}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-2xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center gap-2 shadow-lg"
+            >
+              <FileText className="w-5 h-5" />
+              Exporter PDF
+            </motion.button>
+          </div>
 
           {/* Liste des séances */}
-          {filteredSeances.length === 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {seances?.map((seance, index) => (
+              <motion.div
+                key={seance._id}
+                initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -5, scale: 1.02 }}
+                className={`bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border transition-all duration-500 ${
+                  seance.fait 
+                    ? 'border-emerald-200 hover:shadow-emerald-200/50' 
+                    : 'border-blue-100/50 hover:shadow-3xl'
+                }`}
+              >
+                <div className={`px-6 sm:px-8 py-6 rounded-t-3xl ${
+                  seance.fait 
+                    ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
+                    : 'bg-gradient-to-r from-blue-600 to-blue-700'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <motion.div 
+                        className="p-3 bg-white/20 rounded-2xl shadow-lg"
+                        whileHover={{ scale: 1.1, rotate: 10 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        {getStatusIcon(seance) === Calendar ? (
+                          <Calendar className="w-6 h-6 text-white" />
+                        ) : getStatusIcon(seance) === Clock ? (
+                          <Clock className="w-6 h-6 text-white" />
+                        ) : (
+                          <CheckCircle className="w-6 h-6 text-white" />
+                        )}
+                      </motion.div>
+                      <div>
+                        <h3 className="text-xl font-bold text-white">
+                          {getCourseName(seance)}
+                        </h3>
+                        <p className="text-white/80 font-medium">
+                          {new Date(seance.date).toLocaleDateString('fr-FR', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <motion.div 
+                      className={`px-4 py-2 rounded-2xl font-semibold text-sm ${
+                        seance.fait 
+                          ? 'bg-emerald-400/20 text-emerald-100' 
+                          : getStatusColor(seance)
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      {getStatusText(seance)}
+                    </motion.div>
+                  </div>
+                </div>
+
+                <div className="p-6 space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 rounded-2xl bg-blue-50">
+                      <div className="text-lg font-bold text-blue-600">
+                        {seance.heureDebut || '09:00'}
+                      </div>
+                      <div className="text-sm text-blue-600">Début</div>
+                    </div>
+                    <div className="text-center p-3 rounded-2xl bg-emerald-50">
+                      <div className="text-lg font-bold text-emerald-600">
+                        {calculateEndTime(seance.heureDebut, seance.heureFin, seance.duree)}
+                      </div>
+                      <div className="text-sm text-emerald-600">Fin</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Building className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm text-gray-600">
+                        Salle: {seance.salle || 'Non définie'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm text-gray-600">
+                        {seance.duree || 120} min
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <motion.button
+                      onClick={() => handleToggleDone(seance._id, seance.fait)}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`flex-1 py-3 px-4 rounded-2xl font-semibold transition-all duration-300 ${
+                        seance.fait
+                          ? 'bg-red-500 text-white hover:bg-red-600'
+                          : 'bg-emerald-500 text-white hover:bg-emerald-600'
+                      }`}
+                    >
+                      {seance.fait ? 'Marquer non terminée' : 'Marquer terminée'}
+                    </motion.button>
+                    <motion.button
+                      onClick={() => handleDelete(seance._id)}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-red-500 text-white p-3 rounded-2xl hover:bg-red-600 transition-all duration-300"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {(!seances || seances.length === 0) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-xl border border-blue-100 p-12 text-center"
+              className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100/50 p-12 text-center"
             >
               <motion.div
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                <Calendar className="w-20 h-20 text-blue-300 mx-auto mb-4" />
+                <Calendar className="w-24 h-24 text-blue-300 mx-auto mb-6" />
               </motion.div>
-              <h3 className="text-xl text-blue-600 font-medium mb-2">
-                {selectedCourse === "all" ? "Aucune séance trouvée" : "Aucune séance pour ce cours"}
-              </h3>
-              <p className="text-blue-400">
-                {selectedCourse === "all" 
-                  ? "Vous n'avez pas encore de séances programmées" 
-                  : "Ce cours n'a pas encore de séances programmées"
-                }
-              </p>
+              <h3 className="text-2xl text-blue-600 font-medium mb-3">Aucune séance trouvée</h3>
+              <p className="text-blue-400 text-lg">Vous n'avez pas encore de séances programmées</p>
             </motion.div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredSeances.map((seance, index) => {
-                const StatusIcon = getStatusIcon(seance);
-                const courseName = getCourseName(seance);
-                
-                return (
-                  <motion.div
-                    key={seance._id}
-                    initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ 
-                      delay: index * 0.05,
-                      type: "spring",
-                      stiffness: 100
-                    }}
-                    whileHover={{ y: -5, scale: 1.02 }}
-                    className={`relative bg-white rounded-2xl shadow-xl border-2 overflow-hidden transition-all duration-200 ${
-                      seance.fait ? "border-emerald-200" : "border-blue-200"
-              }`}
-            >
-                    {/* Badge de date */}
-                    <motion.div 
-                      className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs px-4 py-2 rounded-bl-2xl"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <div className="font-bold">
-                        {new Date(seance.date).toLocaleDateString("fr-FR", {
-                          weekday: "short",
-                          day: "2-digit",
-                          month: "short",
-                        })}
-                      </div>
-                      <div className="text-xs opacity-90">
-                        {new Date(seance.date).toLocaleDateString("fr-FR", {
-                          year: "numeric"
-                        })}
-                      </div>
-                    </motion.div>
-
-                    {/* Contenu principal */}
-                    <div className="p-6 pt-8">
-                      {/* En-tête avec statut */}
-                      <div className="flex items-center justify-between mb-4">
-                        <motion.div 
-                          className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold border ${getStatusColor(seance)}`}
-                          whileHover={{ scale: 1.05 }}
-                        >
-                          <StatusIcon className="w-4 h-4" />
-                          {getStatusText(seance)}
-                        </motion.div>
-              </div>
-
-                      {/* Titre du cours */}
-                      <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <School className="w-5 h-5 text-blue-600" />
-                        {courseName.nom} - {courseName.classe}
-                      </h3>
-
-                      {/* Matière */}
-                      <div className="flex items-center gap-3 text-gray-700 mb-3">
-                        <BookOpen className="w-4 h-4 text-purple-500" />
-                        <span className="font-medium text-purple-700">{courseName.matiere}</span>
-                      </div>
-
-                      {/* Détails de la séance */}
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-3 text-gray-700">
-                          <Clock3 className="w-4 h-4 text-blue-500" />
-                          <span className="font-medium">
-                            {seance.heureDebut && seance.heureDebut !== 'Inval' ? seance.heureDebut : '08:00'}
-                          </span>
-                        </div>
-
-                        {seance.salle && (
-                          <div className="flex items-center gap-3 text-gray-700">
-                            <Building className="w-4 h-4 text-blue-500" />
-                            <span>Salle {seance.salle}</span>
-                          </div>
-                        )}
-                        
-                        {seance.groupe && (
-                          <div className="flex items-center gap-3 text-gray-700">
-                            <Users className="w-4 h-4 text-blue-500" />
-                            <span>Groupe {seance.groupe}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center gap-3 mt-6">
-                        <motion.button
-                          onClick={() => handleToggleDone(seance._id, seance.fait)}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all duration-200 ${
-                            seance.fait
-                              ? "bg-red-100 text-red-700 hover:bg-red-200"
-                              : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-                          }`}
-                        >
-                          {seance.fait ? (
-                            <>
-                              <XCircle className="w-4 h-4 inline mr-2" />
-                              Marquer non terminée
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle className="w-4 h-4 inline mr-2" />
-                              Marquer terminée
-                            </>
-                          )}
-                        </motion.button>
-
-                        <motion.button
-                          onClick={() => handleDelete(seance._id)}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="p-3 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-all duration-200"
-                title="Supprimer la séance"
-              >
-                <Trash2 className="w-5 h-5" />
-                        </motion.button>
-                      </div>
-                    </div>
-            </motion.div>
-                );
-              })}
-        </div>
-      )}
+          )}
         </motion.div>
       </div>
     </div>

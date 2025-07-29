@@ -19,7 +19,11 @@ const courseSchema = new mongoose.Schema({
       student: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
       fileName: String,
       fileUrl: String,
-      dateSoumission: { type: Date, default: Date.now }
+      dateSoumission: { type: Date, default: Date.now },
+      devoirId: String,
+      grade: { type: Number, min: 0, max: 20 },
+      comment: String,
+      dateNotation: Date
     }
   ],
   chapitres: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Chapitre' }], // <-- Ajout ici

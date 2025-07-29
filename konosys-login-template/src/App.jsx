@@ -89,6 +89,7 @@ import NotesStudent from "./pages/student/NotesStudent";
 import ForumStudent from "./pages/student/ForumStudent";
 import DocumentsCoursStudent from "./pages/student/DocumentsCoursStudent";
 import QuizPageStudent from "./pages/student/QuizPageStudent";
+import DevoirsStudent from "./pages/student/DevoirsStudent";
 
 // --- Pages Admin
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -198,10 +199,11 @@ export default function App() {
                 <Route path="cours" element={<CoursStudent />} />
                 <Route path="cours/:id" element={<CoursStudentDetails />} />
 
-                {/* Routes forum, quiz, documents côté étudiant */}
-                <Route path="cours/forum/:id" element={<ForumStudent />} />
-                <Route path="cours/quiz/:id" element={<QuizPageStudent />} />
-                <Route path="documents-cours/:id" element={<DocumentsCoursStudent />} />
+                                  {/* Routes forum, quiz, documents côté étudiant */}
+                  <Route path="cours/forum/:id" element={<ForumStudent />} />
+                  <Route path="cours/quiz/:id" element={<QuizPageStudent />} />
+                  <Route path="cours/devoirs/:id" element={<DevoirsStudent />} />
+                  <Route path="documents-cours/:id" element={<DocumentsCoursStudent />} />
 
                 <Route path="notes" element={<NotesStudent />} />
                 <Route path="absences" element={<AbsencesStudent />} />
