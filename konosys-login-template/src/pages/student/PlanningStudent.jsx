@@ -187,130 +187,306 @@ export default function PlanningStudent() {
     </div>
   );
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="text-lg text-blue-700 font-medium"
+          >
+            Chargement de votre planning...
+          </motion.p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center max-w-md mx-auto p-8"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+          >
+            <AlertCircle className="h-20 w-20 text-red-500 mx-auto mb-6" />
+          </motion.div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Erreur de chargement</h3>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={fetchPlanning}
+            className="px-6 py-3 bg-blue-500 text-white rounded-xl font-medium hover:bg-blue-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            <RefreshCw className="h-5 w-5 inline mr-2" />
+            Réessayer
+          </motion.button>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900' : 'bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100'} relative overflow-hidden`}>
-      {/* Animated background elements */}
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Animated background elements - Animations ultra attractives */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute top-20 right-20 w-72 h-72 bg-pink-300/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -30, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 left-20 w-96 h-96 bg-purple-300/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, -50, 0],
-            y: [0, 40, 0],
+          className="absolute top-20 left-10 w-16 h-16 sm:w-20 sm:h-20 bg-blue-100 rounded-full"
+          animate={{ 
+            y: [0, -20, 0],
+            rotate: [0, 180, 360],
             scale: [1, 1.1, 1],
           }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear"
-          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 w-64 h-64 bg-yellow-300/20 rounded-full blur-3xl"
-          animate={{
+          className="absolute top-40 right-20 w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full"
+          animate={{ 
+            y: [0, 20, 0],
+            scale: [1, 1.2, 1],
+            rotate: [0, -180, -360],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute bottom-20 left-1/4 w-8 h-8 sm:w-12 sm:h-12 bg-purple-100 rounded-full"
+          animate={{ 
             x: [0, 30, 0],
-            y: [0, -20, 0],
-            scale: [1, 1.3, 1],
+            rotate: [0, 90, 180, 270, 360],
+            scale: [1, 1.15, 1],
           }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: "linear"
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute top-1/4 right-1/4 w-10 h-10 bg-pink-100 rounded-full"
+          animate={{ 
+            x: [0, -20, 0],
+            y: [0, 15, 0],
+            scale: [1, 1.1, 1],
+            rotate: [0, -90, -180, -270, -360],
           }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
         />
       </div>
 
-      <div className="relative z-10 py-12 px-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
+      {/* Floating decorative elements - Animations ultra attractives */}
+      <motion.div
+        className="absolute top-16 right-16 text-blue-400"
+        animate={{ 
+          rotate: 360,
+          scale: [1, 1.3, 1],
+          y: [0, -10, 0],
+          x: [0, 5, 0],
+        }}
+        transition={{ 
+          duration: 15, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <CalendarDays size={32} />
+      </motion.div>
+      <motion.div
+        className="absolute bottom-16 left-16 text-green-400"
+        animate={{ 
+          rotate: -360,
+          scale: [1, 1.2, 1],
+          y: [0, 10, 0],
+          x: [0, -5, 0],
+        }}
+        transition={{ 
+          duration: 20, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <Clock size={28} />
+      </motion.div>
+      <motion.div
+        className="absolute top-1/2 left-1/2 text-purple-400"
+        animate={{ 
+          rotate: 360,
+          scale: [1, 1.4, 1],
+          y: [0, -15, 0],
+          x: [0, 10, 0],
+        }}
+        transition={{ 
+          duration: 18, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <School size={24} />
+      </motion.div>
+
+      <div className="relative z-10 py-8 px-6">
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-7xl mx-auto"
+        >
+          {/* Header avec animations ultra attractives */}
           <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
             className="text-center mb-12"
           >
             <motion.div
-              className="flex items-center justify-center gap-6 mb-8"
-              initial={{ opacity: 0, y: 30 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8"
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.6 }}
             >
               <motion.div
-                className="p-4 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl shadow-2xl"
-                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="p-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl shadow-2xl"
+                whileHover={{ scale: 1.2, rotate: 15 }}
                 animate={{ 
+                  boxShadow: [
+                    "0 25px 50px -12px rgba(59, 130, 246, 0.25)",
+                    "0 25px 50px -12px rgba(147, 51, 234, 0.25)",
+                    "0 25px 50px -12px rgba(59, 130, 246, 0.25)"
+                  ],
                   scale: [1, 1.05, 1],
-                  rotate: [0, 2, -2, 0]
+                  rotate: [0, 5, 0, -5, 0],
                 }}
                 transition={{ 
-                  scale: { duration: 2, repeat: Infinity },
-                  rotate: { duration: 3, repeat: Infinity }
+                  type: "spring", 
+                  stiffness: 300,
+                  boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                  scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
                 }}
               >
-                <CalendarDays className="text-white" size={40} />
-              </motion.div>
-              <div>
-                <motion.h1 
-                  className={`text-5xl font-extrabold mb-3 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent ${darkMode ? 'drop-shadow-lg' : ''}`}
-                  animate={{
-                    backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                <motion.span 
+                  className="text-6xl"
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    rotate: [0, 10, 0, -10, 0],
                   }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "linear"
+                  transition={{ 
+                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
                   }}
                 >
-                  🎭 Mon Planning
+                  📅
+                </motion.span>
+              </motion.div>
+              <div className="text-center sm:text-left">
+                <motion.h1 
+                  className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                  animate={{ 
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                    scale: [1, 1.02, 1],
+                    y: [0, -3, 0],
+                  }}
+                  transition={{ 
+                    duration: 6, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                    y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  📅 Mon Planning Magique ✨
                 </motion.h1>
                 <motion.p 
-                  className={`text-xl font-medium ${darkMode ? 'text-purple-200' : 'text-purple-700'}`}
-                  animate={{ opacity: [0.8, 1, 0.8] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-xl sm:text-2xl font-medium text-gray-700"
+                  animate={{ 
+                    opacity: [0.8, 1, 0.8],
+                    scale: [1, 1.01, 1],
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                  }}
                 >
-                  Consulte le planning de ta classe ✨
+                  🌟 Consulte le planning de ta classe !
+                  {userInfo?.classe && (
+                    <motion.span
+                      className="block mt-2 font-semibold text-blue-600"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.8 }}
+                    >
+                      🎓 Classe : {userInfo.classe}
+                    </motion.span>
+                  )}
                 </motion.p>
-                {userInfo?.classe && (
-                  <motion.p 
-                    className={`text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'} mt-2`}
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    🎓 Classe : {userInfo.classe}
-                  </motion.p>
-                )}
               </div>
             </motion.div>
 
-            {/* Refresh Button */}
+            {/* Refresh Button - Animations ultra attractives */}
             <motion.button
               onClick={handleRefresh}
               disabled={refreshing}
-              className={`inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
+              className={`flex items-center gap-4 px-6 py-3 rounded-2xl font-bold transition-all duration-300 text-base shadow-xl mx-auto ${
                 refreshing 
                   ? 'bg-gray-400 text-white cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:from-pink-600 hover:to-purple-700 hover:scale-105 hover:shadow-2xl'
+                  : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 hover:scale-105 hover:shadow-2xl'
               }`}
-              whileHover={!refreshing ? { scale: 1.05, y: -2 } : {}}
+              whileHover={!refreshing ? { 
+                scale: 1.1, 
+                y: -5,
+                rotate: [0, 2, -2, 0],
+              } : {}}
               whileTap={!refreshing ? { scale: 0.95 } : {}}
+              animate={!refreshing ? {
+                boxShadow: [
+                  "0 10px 25px -5px rgba(59, 130, 246, 0.3)",
+                  "0 20px 40px -10px rgba(147, 51, 234, 0.4)",
+                  "0 10px 25px -5px rgba(59, 130, 246, 0.3)"
+                ],
+                scale: [1, 1.02, 1],
+              } : {}}
+              transition={{
+                boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                rotate: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+              }}
             >
               <motion.div
-                animate={refreshing ? { rotate: 360 } : {}}
-                transition={{ duration: 1, repeat: refreshing ? Infinity : 0, ease: "linear" }}
+                animate={refreshing ? { rotate: 360 } : {
+                  rotate: [0, 10, 0, -10, 0],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: refreshing ? 1 : 2,
+                  repeat: Infinity,
+                  ease: refreshing ? "linear" : "easeInOut"
+                }}
               >
-                <RefreshCw size={24} />
+                <RefreshCw size={20} />
               </motion.div>
               {refreshing ? "Actualisation..." : "🔄 Actualiser le planning"}
             </motion.button>
@@ -318,188 +494,185 @@ export default function PlanningStudent() {
             <AnimatePresence>
               {error && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="bg-red-50 border border-red-200 text-red-700 py-3 px-4 rounded-lg mt-4 flex items-center justify-center gap-2 max-w-md mx-auto"
+                  initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                  className="bg-red-50 border-2 border-red-200 text-red-700 py-5 px-8 rounded-2xl mt-6 flex items-center justify-center gap-4 max-w-md mx-auto text-lg shadow-xl"
                 >
-                  <AlertCircle size={18} />
+                  <AlertCircle size={24} />
                   {error}
                 </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
 
-          {/* Stats Cards */}
+          {/* Stats Cards - Animations ultra attractives */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mb-12"
+            transition={{ delay: 0.8 }}
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-12"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1 }}
-              whileHover={{ scale: 1.02, y: -2 }}
-              className={`p-6 rounded-xl shadow-lg ${
-                darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <Calendar className="text-blue-600" size={24} />
+            {[
+              { 
+                label: "Total des séances", 
+                count: planningStats.totalSeances, 
+                color: "blue", 
+                icon: "📚",
+                bgColor: "bg-blue-100",
+                textColor: "text-blue-600"
+              },
+              { 
+                label: "Séances terminées", 
+                count: planningStats.completedSeances, 
+                color: "green", 
+                icon: "✅",
+                bgColor: "bg-green-100",
+                textColor: "text-green-600"
+              },
+              { 
+                label: "Prochaines séances", 
+                count: planningStats.upcomingSeances, 
+                color: "orange", 
+                icon: "⏰",
+                bgColor: "bg-orange-100",
+                textColor: "text-orange-600"
+              },
+              { 
+                label: "Séances aujourd'hui", 
+                count: planningStats.todaySeances, 
+                color: "purple", 
+                icon: "🎯",
+                bgColor: "bg-purple-100",
+                textColor: "text-purple-600"
+              },
+              { 
+                label: "Séances en retard", 
+                count: planningStats.overdueSeances, 
+                color: "red", 
+                icon: "⚠️",
+                bgColor: "bg-red-100",
+                textColor: "text-red-600"
+              }
+            ].map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+                whileHover={{ 
+                  scale: 1.05, 
+                  y: -8,
+                  rotateY: [0, 5, 0],
+                  rotateX: [0, 3, 0],
+                }}
+                className="bg-white rounded-3xl shadow-2xl p-6 border-2 border-gray-200 hover:shadow-2xl transition-all duration-300"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">{stat.label}</p>
+                    <motion.p 
+                      className={`text-3xl font-bold ${stat.textColor}`}
+                      animate={{ 
+                        scale: [1, 1.02, 1],
+                        y: [0, -2, 0],
+                      }}
+                      transition={{ 
+                        duration: 3, 
+                        repeat: Infinity, 
+                        ease: "easeInOut",
+                        y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                      }}
+                    >
+                      {stat.count}
+                    </motion.p>
+                  </div>
+                  <motion.div 
+                    className={`p-4 ${stat.bgColor} rounded-2xl`}
+                    whileHover={{ scale: 1.2, rotate: 15 }}
+                    animate={{ 
+                      scale: [1, 1.05, 1],
+                      rotate: [0, 8, 0, -8, 0],
+                    }}
+                    transition={{ 
+                      type: "spring", 
+                      stiffness: 300,
+                      scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                      rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                    }}
+                  >
+                    <motion.span 
+                      className="text-3xl"
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 12, 0, -12, 0],
+                      }}
+                      transition={{ 
+                        scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                        rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                      }}
+                    >
+                      {stat.icon}
+                    </motion.span>
+                  </motion.div>
                 </div>
-                <div>
-                  <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                    {planningStats.totalSeances}
-                  </p>
-                  <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Total des séances
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              whileHover={{ scale: 1.02, y: -2 }}
-              className={`p-6 rounded-xl shadow-lg ${
-                darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <CheckCircle className="text-green-600" size={24} />
-                </div>
-                <div>
-                  <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                    {planningStats.completedSeances}
-                  </p>
-                  <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Séances terminées
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              whileHover={{ scale: 1.02, y: -2 }}
-              className={`p-6 rounded-xl shadow-lg ${
-                darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-orange-100 rounded-lg">
-                  <Clock className="text-orange-600" size={24} />
-                </div>
-                <div>
-                  <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                    {planningStats.upcomingSeances}
-                  </p>
-                  <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Prochaines séances
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 }}
-              whileHover={{ scale: 1.02, y: -2 }}
-              className={`p-6 rounded-xl shadow-lg ${
-                darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <Target className="text-purple-600" size={24} />
-                </div>
-                <div>
-                  <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                    {planningStats.todaySeances}
-                  </p>
-                  <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Séances aujourd'hui
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-              whileHover={{ scale: 1.02, y: -2 }}
-              className={`p-6 rounded-xl shadow-lg ${
-                darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-red-100 rounded-lg">
-                  <XCircle className="text-red-600" size={24} />
-                </div>
-                <div>
-                  <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                    {planningStats.overdueSeances}
-                  </p>
-                  <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Séances en retard
-                  </p>
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            ))}
           </motion.div>
 
-          {loading ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center justify-center py-20"
-            >
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"
-              />
-            </motion.div>
-          ) : seances.length === 0 ? (
+          {seances.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="text-center py-20"
             >
-              <div className="inline-block mb-6 p-4 bg-blue-100 rounded-full">
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ 
+                  scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="w-20 h-20 mx-auto mb-6 p-4 rounded-full bg-blue-100"
+              >
                 <CalendarDays className="text-blue-600" size={48} />
-              </div>
-              <p className={`text-xl font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              </motion.div>
+              <p className="text-xl font-medium text-gray-600">
                 Aucune séance planifiée pour le moment.
               </p>
             </motion.div>
           ) : (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 1.0 }}
+              className="space-y-8"
             >
               {/* Séances en retard */}
               {overdueSeances.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 }}
+                  transition={{ delay: 1.1 }}
                   className="mb-12"
                 >
-                  <h2 className={`text-2xl font-bold mb-6 text-center ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                  <motion.h2 
+                    className="text-3xl font-bold mb-8 text-center text-red-600"
+                    animate={{ 
+                      scale: [1, 1.02, 1],
+                      y: [0, -2, 0],
+                    }}
+                    transition={{ 
+                      duration: 3, 
+                      repeat: Infinity, 
+                      ease: "easeInOut",
+                      y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                    }}
+                  >
                     ⚠️ Séances en Retard
-                  </h2>
+                  </motion.h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {overdueSeances.map((seance, i) => (
                       <motion.div
@@ -507,28 +680,29 @@ export default function PlanningStudent() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        whileHover={{ scale: 1.02, y: -4 }}
-                        className={`p-6 rounded-xl shadow-lg border transition-all duration-300 ${
-                          darkMode ? 'bg-red-900/20 border-red-500/30' : 'bg-red-50 border-red-200'
-                        }`}
+                        whileHover={{ 
+                          scale: 1.05, 
+                          y: -8,
+                          rotateY: [0, 5, 0],
+                          rotateX: [0, 3, 0],
+                        }}
+                        className="p-6 rounded-3xl shadow-2xl border-2 border-red-200 bg-red-50 transition-all duration-300"
                       >
                         <div className="flex justify-between items-center mb-4">
-                          <div className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <div className="text-sm font-medium text-gray-600">
                             {formatDate(seance.date)}
                           </div>
-                          <div className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <div className="text-sm font-medium text-gray-600">
                             {formatTime(seance.heureDebut)} - {formatTime(seance.heureFin)}
                           </div>
                         </div>
 
-                        <h3 className={`text-lg font-semibold mb-4 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-red-800'
-                        }`}>
+                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-red-800">
                           <School className="w-5 h-5" />
                           {seance.matiere || "Matière inconnue"}
                         </h3>
 
-                        <div className={`mb-4 space-y-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                        <div className="mb-4 space-y-2 text-gray-600">
                           <p className="flex items-center gap-2">
                             <User className="w-4 h-4" />
                             <span className="font-medium">{seance.professeur?.name || "Inconnu"}</span>
@@ -545,7 +719,7 @@ export default function PlanningStudent() {
 
                         <div className="flex items-center gap-2 text-sm font-medium">
                           <XCircle className="w-5 h-5 text-red-500" />
-                          <span className={darkMode ? 'text-red-300' : 'text-red-600'}>
+                          <span className="text-red-600">
                             En retard
                           </span>
                         </div>
@@ -560,12 +734,24 @@ export default function PlanningStudent() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 }}
+                  transition={{ delay: 1.2 }}
                   className="mb-12"
                 >
-                  <h2 className={`text-2xl font-bold mb-6 text-center ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                  <motion.h2 
+                    className="text-3xl font-bold mb-8 text-center text-blue-600"
+                    animate={{ 
+                      scale: [1, 1.02, 1],
+                      y: [0, -2, 0],
+                    }}
+                    transition={{ 
+                      duration: 3, 
+                      repeat: Infinity, 
+                      ease: "easeInOut",
+                      y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                    }}
+                  >
                     🎯 Séances d'Aujourd'hui
-                  </h2>
+                  </motion.h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {todaySeances.map((seance, i) => (
                       <motion.div
@@ -573,28 +759,29 @@ export default function PlanningStudent() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        whileHover={{ scale: 1.02, y: -4 }}
-                        className={`p-6 rounded-xl shadow-lg border transition-all duration-300 ${
-                          darkMode ? 'bg-blue-900/20 border-blue-500/30' : 'bg-blue-50 border-blue-200'
-                        }`}
+                        whileHover={{ 
+                          scale: 1.05, 
+                          y: -8,
+                          rotateY: [0, 5, 0],
+                          rotateX: [0, 3, 0],
+                        }}
+                        className="p-6 rounded-3xl shadow-2xl border-2 border-blue-200 bg-blue-50 transition-all duration-300"
                       >
                         <div className="flex justify-between items-center mb-4">
-                          <div className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <div className="text-sm font-medium text-gray-600">
                             {formatDate(seance.date)}
                           </div>
-                          <div className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <div className="text-sm font-medium text-gray-600">
                             {formatTime(seance.heureDebut)} - {formatTime(seance.heureFin)}
                           </div>
                         </div>
 
-                        <h3 className={`text-lg font-semibold mb-4 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-blue-800'
-                        }`}>
+                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-800">
                           <School className="w-5 h-5" />
                           {seance.matiere || "Matière inconnue"}
                         </h3>
 
-                        <div className={`mb-4 space-y-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                        <div className="mb-4 space-y-2 text-gray-600">
                           <p className="flex items-center gap-2">
                             <User className="w-4 h-4" />
                             <span className="font-medium">{seance.professeur?.name || "Inconnu"}</span>
@@ -611,7 +798,7 @@ export default function PlanningStudent() {
 
                         <div className="flex items-center gap-2 text-sm font-medium">
                           <Clock className="w-5 h-5 text-blue-500" />
-                          <span className={darkMode ? 'text-blue-300' : 'text-blue-600'}>
+                          <span className="text-blue-600">
                             Aujourd'hui
                           </span>
                         </div>
@@ -626,12 +813,24 @@ export default function PlanningStudent() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.9 }}
+                  transition={{ delay: 1.3 }}
                   className="mb-12"
                 >
-                  <h2 className={`text-2xl font-bold mb-6 text-center ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                  <motion.h2 
+                    className="text-3xl font-bold mb-8 text-center text-green-600"
+                    animate={{ 
+                      scale: [1, 1.02, 1],
+                      y: [0, -2, 0],
+                    }}
+                    transition={{ 
+                      duration: 3, 
+                      repeat: Infinity, 
+                      ease: "easeInOut",
+                      y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                    }}
+                  >
                     ⏰ Prochaines Séances
-                  </h2>
+                  </motion.h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {upcomingSeances.map((seance, i) => (
                       <motion.div
@@ -639,28 +838,29 @@ export default function PlanningStudent() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        whileHover={{ scale: 1.02, y: -4 }}
-                        className={`p-6 rounded-xl shadow-lg border transition-all duration-300 ${
-                          darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                        }`}
+                        whileHover={{ 
+                          scale: 1.05, 
+                          y: -8,
+                          rotateY: [0, 5, 0],
+                          rotateX: [0, 3, 0],
+                        }}
+                        className="p-6 rounded-3xl shadow-2xl border-2 border-green-200 bg-green-50 transition-all duration-300"
                       >
                         <div className="flex justify-between items-center mb-4">
-                          <div className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <div className="text-sm font-medium text-gray-600">
                             {formatDate(seance.date)}
                           </div>
-                          <div className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <div className="text-sm font-medium text-gray-600">
                             {formatTime(seance.heureDebut)} - {formatTime(seance.heureFin)}
                           </div>
                         </div>
 
-                        <h3 className={`text-lg font-semibold mb-4 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-gray-800'
-                        }`}>
+                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-green-800">
                           <School className="w-5 h-5" />
                           {seance.matiere || "Matière inconnue"}
                         </h3>
 
-                        <div className={`mb-4 space-y-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                        <div className="mb-4 space-y-2 text-gray-600">
                           <p className="flex items-center gap-2">
                             <User className="w-4 h-4" />
                             <span className="font-medium">{seance.professeur?.name || "Inconnu"}</span>
@@ -676,8 +876,8 @@ export default function PlanningStudent() {
                         </div>
 
                         <div className="flex items-center gap-2 text-sm font-medium">
-                          <Clock className="w-5 h-5 text-orange-500" />
-                          <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
+                          <Clock className="w-5 h-5 text-green-500" />
+                          <span className="text-green-600">
                             À venir
                           </span>
                         </div>
@@ -691,11 +891,23 @@ export default function PlanningStudent() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.0 }}
+                transition={{ delay: 1.4 }}
               >
-                <h2 className={`text-2xl font-bold mb-6 text-center ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                <motion.h2 
+                  className="text-3xl font-bold mb-8 text-center text-purple-600"
+                  animate={{ 
+                    scale: [1, 1.02, 1],
+                    y: [0, -2, 0],
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
                   📚 Toutes les Séances
-                </h2>
+                </motion.h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {seances.map((seance, i) => {
                     const StatusIcon = getStatusIcon(seance);
@@ -706,34 +918,33 @@ export default function PlanningStudent() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        whileHover={{ scale: 1.02, y: -4 }}
-                        className={`p-6 rounded-xl shadow-lg border transition-all duration-300 ${
+                        whileHover={{ 
+                          scale: 1.05, 
+                          y: -8,
+                          rotateY: [0, 5, 0],
+                          rotateX: [0, 3, 0],
+                        }}
+                        className={`p-6 rounded-3xl shadow-2xl border-2 transition-all duration-300 ${
                           seance.fait 
-                            ? darkMode 
-                              ? 'bg-green-900/20 border-green-500/30' 
-                              : 'bg-green-50 border-green-200'
-                            : darkMode 
-                              ? 'bg-gray-800 border-gray-700' 
-                              : 'bg-white border-gray-200'
+                            ? 'bg-green-50 border-green-200' 
+                            : 'bg-white border-gray-200'
                         }`}
                       >
                         <div className="flex justify-between items-center mb-4">
-                          <div className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <div className="text-sm font-medium text-gray-600">
                             {formatDate(seance.date)}
                           </div>
-                          <div className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <div className="text-sm font-medium text-gray-600">
                             {formatTime(seance.heureDebut)} - {formatTime(seance.heureFin)}
                           </div>
                         </div>
 
-                        <h3 className={`text-lg font-semibold mb-4 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-gray-800'
-                        }`}>
+                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-800">
                           <School className="w-5 h-5" />
                           {seance.matiere || "Matière inconnue"}
                         </h3>
 
-                        <div className={`mb-4 space-y-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                        <div className="mb-4 space-y-2 text-gray-600">
                           <p className="flex items-center gap-2">
                             <User className="w-4 h-4" />
                             <span className="font-medium">{seance.professeur?.name || "Inconnu"}</span>
@@ -754,7 +965,7 @@ export default function PlanningStudent() {
                           ) : (
                             <XCircle className="w-5 h-5 text-red-600" title="Séance non faite" />
                           )}
-                          <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
+                          <span className="text-gray-600">
                             {seance.fait ? "Séance terminée" : "Séance à faire"}
                           </span>
                         </div>
@@ -765,7 +976,7 @@ export default function PlanningStudent() {
               </motion.div>
             </motion.div>
           )}
-        </div>
+        </motion.div>
       </div>
 
       {/* Confetti */}

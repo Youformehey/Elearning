@@ -9,6 +9,7 @@ const Rappel = require("../models/Rappel");
 const Demande = require("../models/Demande");
 const Formation = require("../models/Formation");
 const Seance = require("../models/Seance");
+const Class = require("../models/Class");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -356,21 +357,100 @@ const bulkActionTeachers = async (req, res) => {
 // === Parents ===
 const getAllParents = async (req, res) => {
   try {
-    const parents = await Parent.find().populate('enfants');
-    res.json(parents);
+    console.log('🔄 getAllParents appelé');
+    const parents = await Parent.find().select('-password');
+    console.log('✅ Parents trouvés:', parents.length);
+    
+    // Transformer les données pour correspondre au format attendu par le frontend
+    const formattedParents = parents.map(parent => {
+      console.log('🔍 Parent brut:', parent);
+
+      // Formater le nom correctement
+      let name = '';
+      if (parent.nom && parent.prenom) {
+        name = `${parent.nom} ${parent.prenom}`;
+      } else if (parent.nom) {
+        name = parent.nom;
+      } else if (parent.prenom) {
+        name = parent.prenom;
+      } else {
+        name = 'Nom non défini';
+      }
+
+      // Formater les enfants - s'assurer que c'est toujours un tableau
+      let children = [];
+      if (parent.enfants) {
+        if (Array.isArray(parent.enfants)) {
+          children = parent.enfants.filter(child => child && child.trim() !== '');
+        } else if (typeof parent.enfants === 'string') {
+          children = parent.enfants.split(',').map(child => child.trim()).filter(child => child);
+        }
+      }
+
+      // Formater la dernière connexion
+      let derniereConnexion = null;
+      if (parent.derniereConnexion) {
+        if (parent.derniereConnexion instanceof Date) {
+          derniereConnexion = parent.derniereConnexion.toISOString();
+        } else if (typeof parent.derniereConnexion === 'string') {
+          derniereConnexion = parent.derniereConnexion;
+        }
+      }
+
+      const formattedParent = {
+        _id: parent._id,
+        name: name,
+        email: parent.email || 'email@non.defini',
+        tel: parent.telephone || 'Non renseigné',
+        adresse: parent.adresse || 'Adresse non renseignée',
+        children: children,
+        status: parent.status || 'active',
+        dateInscription: parent.dateInscription,
+        derniereConnexion: derniereConnexion
+      };
+
+      console.log('✅ Parent formaté:', formattedParent);
+      console.log('✅ Nombre d\'enfants:', children.length);
+      console.log('✅ Enfants:', children);
+      return formattedParent;
+    });
+    
+    console.log('✅ Parents formatés:', formattedParents.length);
+    res.json(formattedParents);
   } catch (error) {
+    console.error('❌ Erreur getAllParents:', error);
     res.status(500).json({ message: "Erreur lors de la récupération des parents", error: error.message });
   }
 };
 
 const getParentById = async (req, res) => {
   try {
-    const parent = await Parent.findById(req.params.id).populate('enfants');
+    console.log('🔄 getParentById appelé avec:', req.params.id);
+    
+    const parent = await Parent.findById(req.params.id);
     if (!parent) {
       return res.status(404).json({ message: "Parent non trouvé" });
     }
-    res.json(parent);
+
+    console.log('✅ Parent trouvé:', parent);
+
+    // Retourner le parent dans le format attendu par le frontend
+    const formattedParent = {
+      _id: parent._id,
+      name: `${parent.nom || ''} ${parent.prenom || ''}`.trim(),
+      email: parent.email || 'email@non.defini',
+      tel: parent.telephone || 'Non renseigné',
+      adresse: parent.adresse || 'Adresse non renseignée',
+      children: Array.isArray(parent.enfants) ? parent.enfants.filter(child => child && child.trim() !== '') : [],
+      status: parent.status || 'active',
+      dateInscription: parent.dateInscription,
+      derniereConnexion: parent.derniereConnexion
+    };
+
+    console.log('✅ Parent formaté retourné:', formattedParent);
+    res.json(formattedParent);
   } catch (error) {
+    console.error('❌ Erreur getParentById:', error);
     res.status(500).json({ message: "Erreur lors de la récupération du parent", error: error.message });
   }
 };
@@ -406,24 +486,53 @@ const createParent = async (req, res) => {
 
 const updateParent = async (req, res) => {
   try {
-    const { nom, prenom, email, telephone, adresse, enfants, status } = req.body;
+    console.log('🔄 updateParent appelé avec:', req.params.id);
+    console.log('📝 Données reçues:', req.body);
+    
+    // Gérer les données du frontend (formaté) et les convertir en format base de données
+    const { name, email, tel, adresse, children, status, nom, prenom, telephone, enfants } = req.body;
     
     const parent = await Parent.findById(req.params.id);
     if (!parent) {
       return res.status(404).json({ message: "Parent non trouvé" });
     }
 
-    parent.nom = nom || parent.nom;
-    parent.prenom = prenom || parent.prenom;
+    // Si on reçoit des données formatées du frontend, les convertir
+    if (name) {
+      const nameParts = name.split(' ');
+      parent.nom = nameParts[0] || parent.nom;
+      parent.prenom = nameParts.slice(1).join(' ') || parent.prenom;
+    } else {
+      parent.nom = nom || parent.nom;
+      parent.prenom = prenom || parent.prenom;
+    }
+    
     parent.email = email || parent.email;
-    parent.telephone = telephone || parent.telephone;
+    parent.telephone = tel || telephone || parent.telephone;
     parent.adresse = adresse || parent.adresse;
-    parent.enfants = enfants || parent.enfants;
+    parent.enfants = children || enfants || parent.enfants;
     parent.status = status || parent.status;
 
     await parent.save();
-    res.json({ message: "Parent mis à jour avec succès", parent });
+    console.log('✅ Parent mis à jour:', parent);
+
+    // Retourner le parent dans le format attendu par le frontend
+    const formattedParent = {
+      _id: parent._id,
+      name: `${parent.nom || ''} ${parent.prenom || ''}`.trim(),
+      email: parent.email || 'email@non.defini',
+      tel: parent.telephone || 'Non renseigné',
+      adresse: parent.adresse || 'Adresse non renseignée',
+      children: Array.isArray(parent.enfants) ? parent.enfants.filter(child => child && child.trim() !== '') : [],
+      status: parent.status || 'active',
+      dateInscription: parent.dateInscription,
+      derniereConnexion: parent.derniereConnexion
+    };
+
+    console.log('✅ Parent formaté retourné:', formattedParent);
+    res.json(formattedParent);
   } catch (error) {
+    console.error('❌ Erreur updateParent:', error);
     res.status(500).json({ message: "Erreur lors de la mise à jour du parent", error: error.message });
   }
 };
@@ -528,49 +637,138 @@ const deleteAdmin = async (req, res) => {
 // === Classes ===
 const getAllClasses = async (req, res) => {
   try {
-    const classes = await Course.distinct('classe');
-    res.json(classes);
+    console.log('🔄 getAllClasses appelé');
+    const classes = await Class.find()
+      .populate('professeurPrincipal', 'name email')
+      .populate('etudiants', 'name email')
+      .populate('matieres', 'nom');
+    
+    console.log('✅ Classes trouvées:', classes.length);
+    
+    // Formater les données pour le frontend
+    const formattedClasses = classes.map(cls => ({
+      _id: cls._id,
+      nom: cls.nom,
+      niveau: cls.niveau,
+      section: cls.section,
+      effectif: cls.etudiants ? cls.etudiants.length : 0,
+      professeurPrincipal: cls.professeurPrincipal ? cls.professeurPrincipal.name : 'Non assigné',
+      status: cls.status,
+      capacite: cls.capacite,
+      salle: cls.salle,
+      horaire: cls.horaire,
+      noteMoyenne: cls.noteMoyenne,
+      tauxPresence: cls.tauxPresence,
+      dateCreation: cls.dateCreation,
+      dateModification: cls.dateModification
+    }));
+    
+    console.log('✅ Classes formatées:', formattedClasses.length);
+    res.json(formattedClasses);
   } catch (error) {
+    console.error('❌ Erreur getAllClasses:', error);
     res.status(500).json({ message: "Erreur lors de la récupération des classes", error: error.message });
   }
 };
 
 const getClassById = async (req, res) => {
   try {
-    const classe = req.params.id;
-    const students = await Student.find({ classe });
-    const courses = await Course.find({ classe });
-    res.json({ classe, students, courses });
+    console.log('🔄 getClassById appelé avec:', req.params.id);
+    const cls = await Class.findById(req.params.id)
+      .populate('professeurPrincipal', 'name email')
+      .populate('etudiants', 'name email')
+      .populate('matieres', 'nom');
+    
+    if (!cls) {
+      return res.status(404).json({ message: "Classe non trouvée" });
+    }
+    
+    console.log('✅ Classe trouvée:', cls);
+    res.json(cls);
   } catch (error) {
+    console.error('❌ Erreur getClassById:', error);
     res.status(500).json({ message: "Erreur lors de la récupération de la classe", error: error.message });
   }
 };
 
 const createClass = async (req, res) => {
   try {
-    const { nom, niveau, capacite, professeurPrincipal } = req.body;
-    // Logique de création de classe
-    res.status(201).json({ message: "Classe créée avec succès" });
+    console.log('🔄 createClass appelé avec:', req.body);
+    const { nom, niveau, section, effectif, professeurPrincipal, status, salle, horaire, capacite } = req.body;
+    
+    const newClass = new Class({
+      nom,
+      niveau,
+      section,
+      effectif,
+      professeurPrincipal,
+      status,
+      salle,
+      horaire,
+      capacite
+    });
+    
+    await newClass.save();
+    console.log('✅ Classe créée:', newClass);
+    res.status(201).json({ message: "Classe créée avec succès", class: newClass });
   } catch (error) {
+    console.error('❌ Erreur createClass:', error);
     res.status(500).json({ message: "Erreur lors de la création de la classe", error: error.message });
   }
 };
 
 const updateClass = async (req, res) => {
   try {
-    const { nom, niveau, capacite, professeurPrincipal } = req.body;
-    // Logique de mise à jour de classe
-    res.json({ message: "Classe mise à jour avec succès" });
+    console.log('🔄 updateClass appelé avec:', req.params.id);
+    console.log('📝 Données reçues:', req.body);
+    
+    const cls = await Class.findById(req.params.id);
+    if (!cls) {
+      return res.status(404).json({ message: "Classe non trouvée" });
+    }
+    
+    const { nom, niveau, section, effectif, professeurPrincipal, status, salle, horaire, capacite } = req.body;
+    
+    if (nom) cls.nom = nom;
+    if (niveau) cls.niveau = niveau;
+    if (section) cls.section = section;
+    if (effectif) cls.effectif = effectif;
+    if (professeurPrincipal) cls.professeurPrincipal = professeurPrincipal;
+    if (status) cls.status = status;
+    if (salle) cls.salle = salle;
+    if (horaire) cls.horaire = horaire;
+    if (capacite) cls.capacite = capacite;
+    
+    await cls.save();
+    console.log('✅ Classe mise à jour:', cls);
+    res.json({ message: "Classe mise à jour avec succès", class: cls });
   } catch (error) {
+    console.error('❌ Erreur updateClass:', error);
     res.status(500).json({ message: "Erreur lors de la mise à jour de la classe", error: error.message });
   }
 };
 
 const deleteClass = async (req, res) => {
   try {
-    // Logique de suppression de classe
+    console.log('🔄 deleteClass appelé avec:', req.params.id);
+    
+    const cls = await Class.findById(req.params.id);
+    if (!cls) {
+      return res.status(404).json({ message: "Classe non trouvée" });
+    }
+    
+    // Vérifier s'il y a des étudiants dans la classe
+    if (cls.etudiants && cls.etudiants.length > 0) {
+      return res.status(400).json({ 
+        message: "Impossible de supprimer cette classe car elle contient des étudiants. Veuillez d'abord transférer les étudiants." 
+      });
+    }
+    
+    await Class.findByIdAndDelete(req.params.id);
+    console.log('✅ Classe supprimée:', req.params.id);
     res.json({ message: "Classe supprimée avec succès" });
   } catch (error) {
+    console.error('❌ Erreur deleteClass:', error);
     res.status(500).json({ message: "Erreur lors de la suppression de la classe", error: error.message });
   }
 };

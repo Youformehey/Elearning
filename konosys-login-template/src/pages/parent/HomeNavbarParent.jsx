@@ -157,7 +157,7 @@ const HomeNavbarParent = () => {
             time: 'Il y a 1 jour',
             read: false,
             priority: 'low',
-            icon: <Award size={18} className="text-green-500" />
+            icon: <Award size={18} className="text-blue-600" />
           }
         );
       }
@@ -217,17 +217,17 @@ const HomeNavbarParent = () => {
     <motion.nav
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="bg-white/80 backdrop-blur-xl shadow-xl border-b border-gray-200/50 px-8 py-6 sticky top-0 z-50"
+      className="bg-white/90 backdrop-blur-xl shadow-xl border-b border-blue-200/50 px-8 py-6 sticky top-0 z-50"
     >
       <div className="flex items-center justify-between">
         {/* Left side - Search */}
         <div className="flex items-center gap-6">
           <div className="relative">
-            <Search size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-400" />
             <input
               type="text"
               placeholder="Rechercher dans l'espace parent..."
-              className="pl-12 pr-6 py-3 border border-gray-300/50 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 w-80 bg-white/50 backdrop-blur-sm transition-all duration-300"
+              className="pl-12 pr-6 py-3 border border-blue-300/50 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 w-80 bg-white/50 backdrop-blur-sm transition-all duration-300"
             />
           </div>
           
@@ -241,12 +241,12 @@ const HomeNavbarParent = () => {
                 <span className="text-sm font-semibold text-blue-700">{stats.childrenCount} Enfants</span>
               )}
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
-              <Award size={16} className="text-green-600" />
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+              <Award size={16} className="text-blue-600" />
               {loading ? (
-                <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
               ) : (
-                <span className="text-sm font-semibold text-green-700">Moy. {stats.averageGrade}</span>
+                <span className="text-sm font-semibold text-blue-700">Moy. {stats.averageGrade}</span>
               )}
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl border border-orange-200">
@@ -289,9 +289,9 @@ const HomeNavbarParent = () => {
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 mt-3 w-96 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 z-50"
+                  className="absolute right-0 mt-3 w-96 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-blue-200/50 z-50"
                 >
-                  <div className="p-6 border-b border-gray-200/50">
+                  <div className="p-6 border-b border-blue-200/50">
                     <div className="flex items-center justify-between">
                       <h3 className="font-bold text-gray-900 text-lg">Notifications</h3>
                       <span className="text-sm text-gray-500 font-medium">{unreadCount} non lue{unreadCount > 1 ? 's' : ''}</span>
@@ -309,7 +309,7 @@ const HomeNavbarParent = () => {
                           key={notification.id}
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
-                          className={`p-4 border-b border-gray-100/50 hover:bg-gray-50/50 cursor-pointer transition-all duration-200 ${
+                          className={`p-4 border-b border-gray-100/50 hover:bg-blue-50/50 cursor-pointer transition-all duration-200 ${
                             !notification.read ? 'bg-blue-50/50' : ''
                           } ${notification.priority === 'high' ? 'ring-2 ring-red-200' : ''}`}
                         >
@@ -344,7 +344,7 @@ const HomeNavbarParent = () => {
                       ))
                     )}
                   </div>
-                  <div className="p-4 border-t border-gray-200/50">
+                  <div className="p-4 border-t border-blue-200/50">
                     <button className="text-blue-600 text-sm font-semibold hover:text-blue-700 transition-colors">
                       Voir toutes les notifications →
                     </button>
@@ -360,16 +360,16 @@ const HomeNavbarParent = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setShowProfile(!showProfile)}
-              className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-slate-50 to-gray-50 hover:from-slate-100 hover:to-gray-100 transition-all duration-300 border border-gray-200/50"
+              className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 border border-blue-200/50"
             >
               <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
                 <User size={20} className="text-white" />
               </div>
               <div className="text-left">
                 <p className="text-sm font-bold text-gray-900">{userInfo.name}</p>
-                <p className="text-xs text-gray-500 font-medium">Parent • Connecté</p>
+                <p className="text-xs text-blue-600 font-medium">Parent • Connecté</p>
               </div>
-              <ChevronDown size={16} className="text-gray-400" />
+              <ChevronDown size={16} className="text-blue-400" />
             </motion.button>
 
             {/* Profile Dropdown */}
@@ -379,9 +379,9 @@ const HomeNavbarParent = () => {
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 mt-3 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 z-50"
+                  className="absolute right-0 mt-3 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-blue-200/50 z-50"
                 >
-                  <div className="p-6 border-b border-gray-200/50">
+                  <div className="p-6 border-b border-blue-200/50">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
                         <User size={24} className="text-white" />
@@ -390,26 +390,26 @@ const HomeNavbarParent = () => {
                         <p className="font-bold text-gray-900 text-lg">{userInfo.name}</p>
                         <p className="text-sm text-gray-500">{userInfo.email}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                          <span className="text-xs text-green-600 font-semibold">En ligne</span>
+                          <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                          <span className="text-xs text-blue-600 font-semibold">En ligne</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="p-3">
-                    <button className="flex items-center gap-4 w-full p-3 rounded-xl hover:bg-gray-50 transition-colors text-left">
-                      <User size={18} className="text-gray-600" />
+                    <button className="flex items-center gap-4 w-full p-3 rounded-xl hover:bg-blue-50 transition-colors text-left">
+                      <User size={18} className="text-blue-600" />
                       <span className="text-sm font-semibold text-gray-700">Mon profil</span>
                     </button>
-                    <button className="flex items-center gap-4 w-full p-3 rounded-xl hover:bg-gray-50 transition-colors text-left">
-                      <Settings size={18} className="text-gray-600" />
+                    <button className="flex items-center gap-4 w-full p-3 rounded-xl hover:bg-blue-50 transition-colors text-left">
+                      <Settings size={18} className="text-blue-600" />
                       <span className="text-sm font-semibold text-gray-700">Paramètres</span>
                     </button>
-                    <button className="flex items-center gap-4 w-full p-3 rounded-xl hover:bg-gray-50 transition-colors text-left">
-                      <Shield size={18} className="text-gray-600" />
+                    <button className="flex items-center gap-4 w-full p-3 rounded-xl hover:bg-blue-50 transition-colors text-left">
+                      <Shield size={18} className="text-blue-600" />
                       <span className="text-sm font-semibold text-gray-700">Sécurité</span>
                     </button>
-                    <div className="border-t border-gray-200/50 my-3"></div>
+                    <div className="border-t border-blue-200/50 my-3"></div>
                     <button
                       onClick={handleLogout}
                       className="flex items-center gap-4 w-full p-3 rounded-xl hover:bg-red-50 transition-colors text-left"

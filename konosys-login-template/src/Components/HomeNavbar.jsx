@@ -53,114 +53,91 @@ export default function HomeNavbar({ userName = "Professeur" }) {
 
   return (
     <motion.header 
-      className={`fixed top-0 left-0 right-0 z-[999998] transition-all duration-300 backdrop-blur-md ${
+      className={`fixed top-0 left-0 right-0 z-[999998] transition-all duration-500 ${
         isScrolled 
-          ? 'bg-white/95 shadow-2xl border-b border-gray-200' 
-          : 'bg-gradient-to-r from-blue-600 to-blue-700'
-      } ${darkMode ? 'bg-gray-900/95 text-white' : 'text-gray-800'}`}
+          ? 'bg-blue-800/95 shadow-xl border-b border-blue-700' 
+          : 'bg-gradient-to-r from-blue-800 to-blue-900 backdrop-blur-md'
+      }`}
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: "spring", stiffness: 100 }}
-      style={{ marginLeft: '320px' }} // Ajustement pour le sidebar
+      style={{ marginLeft: '320px', height: '140px' }}
     >
-      <div className="flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-10 py-6">
-        {/* Logo + Title avec animation */}
-        <motion.div 
-          className="flex items-center gap-3"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          <motion.div
-            whileHover={{ rotate: 360, scale: 1.1 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="relative"
-          >
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white shadow-xl border-2 border-white/30 flex items-center justify-center overflow-hidden">
-              <img
-                src="/image pfe.png"
-                alt="Logo LearnUp"
-                className="w-full h-full object-contain p-1"
-                style={{ background: 'none' }}
-              />
-            </div>
-            <motion.div
-              className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg"
-              animate={{ scale: [1, 1.3, 1], rotate: [0, 180, 360] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
-              <GraduationCap className="w-3 h-3 text-white" />
-            </motion.div>
-          </motion.div>
-          
-          <div className="flex flex-col">
-            <motion.span 
-              className={`text-2xl sm:text-3xl font-bold tracking-wide text-white`}
-              animate={{ opacity: [0.8, 1, 0.8] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
-              LEARNUP
-            </motion.span>
-            <motion.div 
-              className="flex items-center gap-1 text-xs text-white/90 font-medium"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <BookOpen className="w-3 h-3" />
-              <span>Professeur Premium</span>
-              <Crown className="w-3 h-3 text-yellow-300" />
-            </motion.div>
-          </div>
-        </motion.div>
+      {/* Barre de progression animée en haut */}
+      <motion.div
+        className="absolute top-0 left-0 h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600"
+        initial={{ width: 0 }}
+        animate={{ width: "100%" }}
+        transition={{ duration: 3, ease: "easeOut" }}
+      />
 
-        {/* Desktop Actions */}
-        <nav className="hidden sm:flex items-center gap-4">
-          {/* Search Bar avec animation */}
+      <div className="flex items-center justify-between px-8 h-full">
+        {/* Section gauche - Barre de recherche */}
+        <motion.div 
+          className="flex-1 max-w-md"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        >
           <motion.div 
-            className="relative"
-            whileHover={{ scale: 1.05 }}
+            className="relative group"
+            whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            {/* Effet de brillance */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-2xl"
+              animate={{
+                x: ["-100%", "100%"]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+            
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
             <input
               type="text"
               placeholder="Rechercher cours, élèves..."
-              className="pl-12 pr-6 py-3 w-80 rounded-2xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 transition-all duration-300 bg-white/90 backdrop-blur-sm shadow-lg"
+              className="w-full pl-12 pr-16 py-4 rounded-2xl border-2 border-white/30 focus:border-white focus:ring-4 focus:ring-white/50 transition-all duration-300 bg-white/20 backdrop-blur-sm shadow-xl text-white placeholder-white/70"
             />
             <motion.div
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-700 rounded-xl flex items-center justify-center shadow-lg cursor-pointer"
               whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <Search className="w-3 h-3 text-white" />
+              <Search className="w-4 h-4 text-white" />
             </motion.div>
           </motion.div>
+        </motion.div>
 
-          {/* Notifications avec animation */}
+        {/* Section droite - Actions modernes */}
+        <nav className="flex items-center gap-4">
+          {/* Notifications */}
           <div className="relative z-[999999]" ref={notifRef}>
             <motion.button
               onClick={() => setNotifOpen((o) => !o)}
               aria-label="Afficher les notifications"
-              className="relative p-4 rounded-2xl bg-white/20 hover:bg-white/30 transition-all duration-300 shadow-2xl hover:shadow-3xl group backdrop-blur-sm border border-white/20"
-              whileHover={{ scale: 1.1, y: -2 }}
-              whileTap={{ scale: 0.9 }}
+              className="relative p-5 rounded-xl bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 shadow-lg border border-white/30"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
             >
               <Bell className="text-white" size={26} />
               
-              {/* Animation de notification */}
+              {/* Badge de notification animé */}
               <motion.span 
-                className="absolute -top-1 -right-1 h-6 w-6 rounded-full ring-2 ring-white bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center text-xs font-bold text-white"
+                className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center text-xs font-bold text-white shadow-lg"
                 animate={{ 
                   scale: [1, 1.2, 1],
-                  boxShadow: ["0 0 0 0 rgba(239, 68, 68, 0.7)", "0 0 0 10px rgba(239, 68, 68, 0)", "0 0 0 0 rgba(239, 68, 68, 0)"]
+                  boxShadow: ["0 0 0 0 rgba(239, 68, 68, 0.7)", "0 0 0 8px rgba(239, 68, 68, 0)", "0 0 0 0 rgba(239, 68, 68, 0)"]
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
                 3
               </motion.span>
-              
-              {/* Effet de brillance */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-2xl"></div>
             </motion.button>
 
             <AnimatePresence>
@@ -170,11 +147,11 @@ export default function HomeNavbar({ userName = "Professeur" }) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -20, scale: 0.9 }}
                   transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
-                  className="absolute right-0 mt-4 w-96 border-2 rounded-2xl shadow-2xl p-6 z-[999999] bg-white/95 backdrop-blur-md border-blue-200"
+                  className="absolute right-0 mt-4 w-96 border rounded-2xl shadow-2xl p-6 z-[999999] bg-white/95 backdrop-blur-md border-white/30"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <motion.h3 
-                      className="text-lg font-bold flex items-center gap-2 text-blue-800"
+                      className="text-lg font-bold flex items-center gap-2 text-gray-800"
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                     >
@@ -204,47 +181,22 @@ export default function HomeNavbar({ userName = "Professeur" }) {
             </AnimatePresence>
           </div>
 
-          {/* Dark Mode Toggle avec animation */}
+          {/* Dark Mode Toggle */}
           <motion.button
             onClick={toggleDarkMode}
-            className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm transition-all duration-300 shadow-xl border-2 ${
-              darkMode 
-                ? 'bg-gradient-to-r from-blue-800 to-blue-900 text-yellow-300 border-blue-600 hover:from-blue-700 hover:to-blue-800' 
-                : 'bg-white/20 backdrop-blur-sm text-white border-white/20 hover:bg-white/30'
-            }`}
+            className="flex items-center gap-3 px-5 py-5 rounded-xl font-medium text-sm transition-all duration-300 shadow-lg border border-white/30 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white"
             whileHover={{ scale: 1.05, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
             title={darkMode ? "Passer en mode clair" : "Passer en mode sombre"}
           >
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            <span>{darkMode ? "Clair" : "Sombre"}</span>
+            {darkMode ? <Sun size={24} /> : <Moon size={24} />}
+            <span className="hidden sm:inline">{darkMode ? "Clair" : "Sombre"}</span>
           </motion.button>
 
-          {/* User Profile avec animation */}
-          <motion.div 
-            className={`flex items-center space-x-3 font-bold text-lg px-6 py-3 rounded-2xl shadow-xl border-2 bg-white/20 backdrop-blur-sm border-white/20`}
-            whileHover={{ scale: 1.05, y: -2 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ type: "spring", stiffness: 200 }}
-            >
-              <User size={26} className="text-white" />
-            </motion.div>
-            <span className="text-white">{userName}</span>
-            <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <Trophy className="w-5 h-5 text-yellow-300" />
-            </motion.div>
-          </motion.div>
-
-          {/* Settings avec animation */}
+          {/* Settings - En bleu */}
           <motion.button
             onClick={goToSettings}
-            className={`flex items-center gap-3 px-6 py-3 border-2 rounded-2xl font-bold transition-all duration-300 hover:scale-105 shadow-xl bg-white/20 backdrop-blur-sm border-white/20 text-white hover:bg-white/30`}
+            className="flex items-center gap-3 px-5 py-5 rounded-xl font-medium transition-all duration-300 shadow-lg border border-white/30 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -252,15 +204,15 @@ export default function HomeNavbar({ userName = "Professeur" }) {
               whileHover={{ rotate: 180 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <Settings size={22} />
+              <Settings size={24} />
             </motion.div>
-            <span>Paramètres</span>
+            <span className="hidden sm:inline">Paramètres</span>
           </motion.button>
 
-          {/* Logout avec animation */}
+          {/* Logout - Déplacé à droite */}
           <motion.button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-2xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-3xl group"
+            className="flex items-center gap-3 px-5 py-5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium transition-all duration-300 shadow-xl group"
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -268,9 +220,9 @@ export default function HomeNavbar({ userName = "Professeur" }) {
               whileHover={{ rotate: 180 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <LogOut size={22} />
+              <LogOut size={24} />
             </motion.div>
-            <span>Déconnexion</span>
+            <span className="hidden sm:inline">Déconnexion</span>
             <motion.div
               className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               whileHover={{ scale: 1.2 }}
@@ -280,12 +232,12 @@ export default function HomeNavbar({ userName = "Professeur" }) {
           </motion.button>
         </nav>
 
-        {/* Mobile menu button avec animation */}
+        {/* Mobile menu button */}
         <div className="sm:hidden flex items-center" ref={menuRef}>
           <motion.button
             onClick={() => setMenuOpen((o) => !o)}
             aria-label="Menu"
-            className="p-4 rounded-2xl bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 shadow-2xl border border-white/20"
+            className="p-3 rounded-xl bg-white/90 backdrop-blur-sm hover:bg-white transition-all duration-300 shadow-lg border border-white/30"
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -298,7 +250,7 @@ export default function HomeNavbar({ userName = "Professeur" }) {
                   exit={{ rotate: 90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <X size={30} className="text-white" />
+                  <X size={24} className="text-gray-600" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -308,7 +260,7 @@ export default function HomeNavbar({ userName = "Professeur" }) {
                   exit={{ rotate: -90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Menu size={30} className="text-white" />
+                  <Menu size={24} className="text-gray-600" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -321,12 +273,12 @@ export default function HomeNavbar({ userName = "Professeur" }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.9 }}
                 transition={{ duration: 0.2, type: "spring", stiffness: 200 }}
-                className="absolute top-full right-4 mt-3 w-80 border-2 rounded-2xl shadow-2xl z-[999999] py-4 flex flex-col gap-2 backdrop-blur-md bg-white/95 border-blue-200"
+                className="absolute top-full right-0 mt-3 w-80 border rounded-2xl shadow-2xl z-[999999] py-4 flex flex-col gap-2 backdrop-blur-md bg-white/95 border-white/30"
               >
                 {/* User Info */}
-                <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl mx-2">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                    <User className="w-6 h-6 text-white" />
+                <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl mx-2">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-700 rounded-full flex items-center justify-center shadow-lg">
+                    <GraduationCap className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <p className="font-bold text-gray-800">{userName}</p>
@@ -383,6 +335,30 @@ export default function HomeNavbar({ userName = "Professeur" }) {
             )}
           </AnimatePresence>
         </div>
+        
+        {/* Animation de particules flottantes */}
+        <motion.div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-blue-500/30 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -20, 0],
+                opacity: [0.3, 0.8, 0.3],
+                scale: [1, 1.5, 1],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
+        </motion.div>
       </div>
     </motion.header>
   );

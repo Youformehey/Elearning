@@ -160,81 +160,44 @@ export default function AbsencesProfesseur() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-[#edf3ff] to-[#f9fcff] overflow-hidden text-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 overflow-hidden text-gray-800">
       
-      {/* Header ultra-moderne avec effets 3D */}
+      {/* Header avec animations améliorées */}
       <motion.div 
-        className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-8 px-10 shadow-2xl relative overflow-hidden"
-        initial={{ y: -100, opacity: 0 }}
+        className="bg-white shadow-lg border-b border-blue-200"
+        initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
       >
-        {/* Effet de brillance amélioré */}
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
-          animate={{ x: [-200, 400] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        />
-        
-        {/* Effet de particules */}
-        <motion.div 
-          className="absolute inset-0 opacity-30"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        >
-          <div className="absolute top-4 left-1/4 w-2 h-2 bg-white rounded-full" />
-          <div className="absolute top-8 right-1/3 w-1 h-1 bg-white rounded-full" />
-          <div className="absolute bottom-6 left-1/2 w-1.5 h-1.5 bg-white rounded-full" />
-        </motion.div>
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <motion.div
-            className="flex flex-col lg:flex-row items-center justify-between gap-10"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            {/* Titre et icône avec effets 3D */}
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            {/* Titre et icône avec animations */}
             <motion.div 
-              className="flex items-center gap-8"
-              whileHover={{ scale: 1.02 }}
+              className="flex items-center gap-6"
+              initial={{ x: -30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
             >
               <motion.div 
-                className="p-5 bg-white/25 backdrop-blur-md rounded-3xl shadow-2xl border border-white/30 relative overflow-hidden"
-                whileHover={{ scale: 1.2, rotate: 15, y: -10 }}
+                className="p-4 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl shadow-lg"
+                whileHover={{ scale: 1.1, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
-                animate={{ 
-                  y: [0, -8, 0],
-                  rotate: [0, 2, -2, 0]
-                }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 300,
-                  y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                  rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                }}
               >
-                {/* Effet de brillance sur l'icône */}
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                  animate={{ x: [-50, 50] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                />
-                <UserX className="w-12 h-12 text-white relative z-10" />
+                <UserX className="w-8 h-8 text-white" />
               </motion.div>
               <div>
                 <motion.h1 
-                  className="text-5xl md:text-6xl font-bold text-white mb-3 bg-gradient-to-r from-white to-blue-100 bg-clip-text"
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  className="text-4xl font-bold text-gray-900 mb-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
                   Gestion des Absences
                 </motion.h1>
                 <motion.p 
-                  className="text-blue-100 font-medium text-xl"
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  className="text-gray-600 text-lg"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                 >
                   Suivi de la présence des étudiants
@@ -242,55 +205,37 @@ export default function AbsencesProfesseur() {
               </div>
             </motion.div>
             
-            {/* Statistiques avec effets 3D */}
+            {/* Statistiques avec animations améliorées */}
             <motion.div 
-              className="flex items-center gap-10"
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-6"
+              initial={{ x: 30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              <motion.div 
-                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
-                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -3, 0] }}
-                transition={{ 
-                  y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                }}
-              >
-                <div className="text-4xl font-bold text-white mb-1">{coursList.length}</div>
-                <div className="text-blue-100 text-sm font-medium">Cours</div>
-              </motion.div>
-              <motion.div 
-                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
-                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -3, 0] }}
-                transition={{ 
-                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
-                }}
-              >
-                <div className="text-4xl font-bold text-white mb-1">{selectedCours?.etudiants?.length || 0}</div>
-                <div className="text-blue-100 text-sm font-medium">Étudiants</div>
-              </motion.div>
-              <motion.div 
-                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
-                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -3, 0] }}
-                transition={{ 
-                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }
-                }}
-              >
-                <div className="text-4xl font-bold text-white mb-1">{Object.values(absences).reduce((sum, dates) => sum + dates.length, 0)}</div>
-                <div className="text-blue-100 text-sm font-medium">Absences</div>
-              </motion.div>
+              {[
+                { value: coursList.length, label: "Cours", color: "blue" },
+                { value: selectedCours?.etudiants?.length || 0, label: "Étudiants", color: "emerald" },
+                { value: Object.values(absences).reduce((sum, dates) => sum + dates.length, 0), label: "Absences", color: "red" }
+              ].map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  className={`text-center p-4 bg-${stat.color}-50 rounded-xl border border-${stat.color}-200`}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.6 + index * 0.1, type: "spring", stiffness: 200 }}
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className={`text-2xl font-bold text-${stat.color}-600`}>{stat.value}</div>
+                  <div className={`text-sm text-${stat.color}-600 font-medium`}>{stat.label}</div>
+                </motion.div>
+              ))}
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </motion.div>
 
-      {/* Messages de notification */}
+      {/* Messages de notification avec animations améliorées */}
       <AnimatePresence>
         {successMessage && (
           <motion.div
@@ -332,7 +277,7 @@ export default function AbsencesProfesseur() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="space-y-6 sm:space-y-8"
+          className="space-y-6"
         >
           {loading ? (
             <motion.div 
@@ -359,9 +304,9 @@ export default function AbsencesProfesseur() {
             </motion.div>
           ) : !selectedCours ? (
             <motion.div
+              className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100/50 p-8"
             >
               <div className="text-center mb-8">
                 <motion.div
@@ -370,24 +315,42 @@ export default function AbsencesProfesseur() {
                 >
                   <BookOpen className="w-20 h-20 text-blue-300 mx-auto mb-4" />
                 </motion.div>
-                <h2 className="text-2xl font-bold text-blue-800 mb-2">Sélectionner un Cours</h2>
-                <p className="text-blue-600">Choisissez le cours pour gérer les absences</p>
+                <motion.h2 
+                  className="text-2xl font-bold text-gray-800 mb-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  Sélectionner un Cours
+                </motion.h2>
+                <motion.p 
+                  className="text-gray-600"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  Choisissez le cours pour gérer les absences
+                </motion.p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {coursList.map((cours, index) => (
                   <motion.div
                     key={cours._id}
-                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                    initial={{ opacity: 0, y: 30, scale: 0.9 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ scale: 1.02, y: -3 }}
-                    className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                    transition={{ 
+                      delay: index * 0.1,
+                      type: "spring",
+                      stiffness: 200
+                    }}
+                    whileHover={{ y: -6, scale: 1.02 }}
+                    className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
                     onClick={() => handleSelectCours(cours._id)}
                   >
                     <div className="flex items-center gap-4">
                       <motion.div
-                        className="p-3 bg-white/80 rounded-2xl shadow-md"
+                        className="p-3 bg-white/80 rounded-xl shadow-md"
                         whileHover={{ scale: 1.1, rotate: 10 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
@@ -411,30 +374,33 @@ export default function AbsencesProfesseur() {
             </motion.div>
           ) : (
             <motion.div
+              className="space-y-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
             >
-              {/* Header du cours sélectionné */}
+              {/* Header du cours sélectionné avec animations */}
               <motion.div
-                className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100/50 overflow-hidden"
-                whileHover={{ y: -5 }}
+                className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden"
+                whileHover={{ y: -4 }}
               >
-                <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 sm:px-8 py-6">
-                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <motion.div 
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-6"
+                  whileHover={{ scale: 1.01 }}
+                >
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <motion.div 
-                        className="p-3 bg-white/20 rounded-2xl shadow-lg"
+                        className="p-3 bg-white/20 rounded-xl backdrop-blur-sm"
                         whileHover={{ scale: 1.1, rotate: 10 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
                         <BookOpen className="w-6 h-6 text-white" />
                       </motion.div>
                       <div>
-                        <h2 className="text-xl sm:text-2xl font-bold text-white">
+                        <h2 className="text-xl font-bold text-white mb-1">
                           {selectedCours.nom} — {selectedCours.classe}
                         </h2>
-                        <p className="text-blue-100 font-medium">
+                        <p className="text-blue-100 text-sm font-medium">
                           {selectedCours.matiere?.nom || "Matière non définie"}
                         </p>
                       </div>
@@ -445,76 +411,68 @@ export default function AbsencesProfesseur() {
                       whileHover={{ scale: 1.05 }}
                     >
                       <div className="text-3xl font-bold">{courseStats.totalStudents}</div>
-                      <div className="text-blue-100 text-sm">Étudiants</div>
+                      <div className="text-blue-100 text-sm font-medium">Étudiants</div>
                     </motion.div>
                   </div>
-                </div>
+                </motion.div>
 
-                {/* Statistiques */}
-                <div className="p-6 bg-gradient-to-r from-blue-50 to-blue-100">
+                {/* Statistiques avec animations */}
+                <div className="p-6 bg-gradient-to-br from-gray-50 to-white">
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <motion.div 
-                      className="text-center p-3 rounded-2xl bg-white/50 backdrop-blur-sm shadow-lg"
-                      whileHover={{ scale: 1.05, y: -3 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <div className="text-2xl font-bold text-blue-600">
-                        {courseStats.totalStudents}
-                      </div>
-                      <div className="text-sm text-blue-600 font-medium">Total</div>
-                    </motion.div>
-                    <motion.div 
-                      className="text-center p-3 rounded-2xl bg-white/50 backdrop-blur-sm shadow-lg"
-                      whileHover={{ scale: 1.05, y: -3 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <div className="text-2xl font-bold text-emerald-600">
-                        {courseStats.presentToday}
-                      </div>
-                      <div className="text-sm text-emerald-600 font-medium">Présents</div>
-                    </motion.div>
-                    <motion.div 
-                      className="text-center p-3 rounded-2xl bg-white/50 backdrop-blur-sm shadow-lg"
-                      whileHover={{ scale: 1.05, y: -3 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <div className="text-2xl font-bold text-red-600">
-                        {courseStats.absentToday}
-                      </div>
-                      <div className="text-sm text-red-600 font-medium">Absents</div>
-                    </motion.div>
-                    <motion.div 
-                      className="text-center p-3 rounded-2xl bg-white/50 backdrop-blur-sm shadow-lg"
-                      whileHover={{ scale: 1.05, y: -3 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <div className="text-2xl font-bold text-amber-600">
-                        {courseStats.attendanceRate}%
-                      </div>
-                      <div className="text-sm text-amber-600 font-medium">Taux</div>
-                    </motion.div>
+                    {[
+                      { value: courseStats.totalStudents, label: "Total", color: "blue" },
+                      { value: courseStats.presentToday, label: "Présents", color: "emerald" },
+                      { value: courseStats.absentToday, label: "Absents", color: "red" },
+                      { value: courseStats.attendanceRate + "%", label: "Taux", color: "amber" }
+                    ].map((stat, index) => (
+                                             <motion.div 
+                         key={stat.label}
+                         className={`text-center p-4 rounded-xl bg-white shadow-lg border border-gray-100`}
+                         whileHover={{ scale: 1.05, y: -3 }}
+                         initial={{ opacity: 0, y: 20 }}
+                         animate={{ opacity: 1, y: 0 }}
+                         transition={{ 
+                           delay: 0.3 + index * 0.1,
+                           type: "spring", 
+                           stiffness: 300 
+                         }}
+                       >
+                        <div className={`text-2xl font-bold text-${stat.color}-600`}>
+                          {stat.value}
+                        </div>
+                        <div className={`text-sm text-${stat.color}-600 font-medium`}>{stat.label}</div>
+                      </motion.div>
+                    ))}
                   </div>
                 </div>
               </motion.div>
 
-              {/* Liste des étudiants */}
+              {/* Liste des étudiants avec animations améliorées */}
               <motion.div
-                className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100/50 p-6 sm:p-8"
+                className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-blue-800 flex items-center gap-3">
+                  <motion.h3 
+                    className="text-xl font-bold text-gray-800 flex items-center gap-3"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
                     <Users className="w-6 h-6" />
                     Liste des étudiants
-                  </h3>
+                  </motion.h3>
                   <motion.button
                     onClick={handleSave}
                     disabled={saving}
                     whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-2xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center gap-2 shadow-lg disabled:opacity-50"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center gap-2 shadow-lg disabled:opacity-50"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
                   >
                     {saving ? (
                       <>
@@ -539,11 +497,15 @@ export default function AbsencesProfesseur() {
                     return (
                       <motion.div
                         key={student._id}
-                        initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                        initial={{ opacity: 0, y: 30, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        transition={{ delay: index * 0.1 }}
-                        whileHover={{ scale: 1.02, y: -3 }}
-                        className={`rounded-2xl p-4 shadow-lg border transition-all duration-300 ${
+                        transition={{ 
+                          delay: index * 0.1,
+                          type: "spring",
+                          stiffness: 200
+                        }}
+                        whileHover={{ y: -6, scale: 1.02 }}
+                        className={`rounded-xl p-4 shadow-lg border transition-all duration-300 ${
                           isPresent 
                             ? 'bg-emerald-50 border-emerald-200' 
                             : 'bg-red-50 border-red-200'

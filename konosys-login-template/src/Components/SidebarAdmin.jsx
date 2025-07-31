@@ -108,6 +108,39 @@ export default function SidebarAdmin() {
       badge: "2"
     },
     {
+      to: "/admin/courses",
+      icon: BookOpen,
+      label: "Cours",
+      description: "Gestion des cours",
+      color: "from-indigo-500 via-indigo-600 to-indigo-700",
+      bgColor: "from-indigo-50 to-indigo-100",
+      darkBgColor: "from-indigo-900/20 to-indigo-800/20",
+      accent: "indigo",
+      badge: "5"
+    },
+    {
+      to: "/admin/planning",
+      icon: Calendar,
+      label: "Planning",
+      description: "Gestion des emplois du temps",
+      color: "from-pink-500 via-pink-600 to-pink-700",
+      bgColor: "from-pink-50 to-pink-100",
+      darkBgColor: "from-pink-900/20 to-pink-800/20",
+      accent: "pink",
+      badge: "1"
+    },
+    {
+      to: "/admin/parents",
+      icon: User,
+      label: "Parents",
+      description: "Gestion des parents",
+      color: "from-teal-500 via-teal-600 to-teal-700",
+      bgColor: "from-teal-50 to-teal-100",
+      darkBgColor: "from-teal-900/20 to-teal-800/20",
+      accent: "teal",
+      badge: "8"
+    },
+    {
       to: "/admin/settings",
       icon: Settings,
       label: "Paramètres",

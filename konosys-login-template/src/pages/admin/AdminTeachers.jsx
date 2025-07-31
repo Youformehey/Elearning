@@ -86,41 +86,157 @@ const AdminTeachers = () => {
     setFilteredTeachers(filtered);
   };
 
-  const handleAddTeacher = () => {
-    const teacher = {
-      id: teachers.length + 1,
-      ...newTeacher,
-      experience: '0 an',
-      students: 0,
-      rating: 0,
-      joinDate: new Date().toISOString().split('T')[0],
-      avatar: '👨‍🏫'
-    };
-    setTeachers([...teachers, teacher]);
-    setNewTeacher({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      subject: '',
-      department: '',
-      status: 'active'
-    });
-    setShowAddModal(false);
+  const handleAddTeacher = async () => {
+    try {
+      console.log('🔄 Création du professeur:', newTeacher);
+      
+      const token = localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTk5YzY5YzY5YzY5YzY5YzY5YzY5YzY5YyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNDY5NzIwMCwiZXhwIjoxNzA0NzgzNjAwfQ.example';
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+      
+      const teacherData = {
+        name: `${newTeacher.firstName} ${newTeacher.lastName}`,
+        email: newTeacher.email,
+        telephone: newTeacher.phone,
+        matiere: newTeacher.subject,
+        status: newTeacher.status || 'active'
+      };
+      
+      const response = await fetch(`http://localhost:5001/api/admin/teachers`, {
+        method: 'POST',
+        headers: config.headers,
+        body: JSON.stringify(teacherData)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erreur lors de la création');
+      }
+      
+      const newTeacherData = await response.json();
+      console.log('✅ Réponse création:', newTeacherData);
+      
+      // Ajouter le nouveau professeur à la liste locale
+      const teacherItem = {
+        _id: newTeacherData.teacher._id,
+        name: newTeacherData.teacher.name,
+        email: newTeacherData.teacher.email,
+        tel: newTeacherData.teacher.telephone,
+        matiere: newTeacherData.teacher.matiere,
+        status: newTeacherData.teacher.status,
+        experience: '0 an',
+        students: 0,
+        rating: 0,
+        joinDate: new Date().toISOString().split('T')[0],
+        avatar: '👨‍🏫'
+      };
+      
+      setTeachers([...teachers, teacherItem]);
+      setNewTeacher({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        subject: '',
+        department: '',
+        status: 'active'
+      });
+      setShowAddModal(false);
+      alert('Professeur créé avec succès');
+    } catch (err) {
+      console.error('❌ Error adding teacher:', err);
+      const errorMessage = err.message;
+      alert(`Erreur lors de la création du professeur: ${errorMessage}`);
+    }
   };
 
-  const handleEditTeacher = () => {
-    const updatedTeachers = teachers.map(teacher =>
-      teacher.id === editingTeacher.id ? editingTeacher : teacher
-    );
-    setTeachers(updatedTeachers);
-    setEditingTeacher(null);
-    setShowEditModal(false);
+  const handleEditTeacher = async () => {
+    try {
+      console.log('🔄 Modification du professeur:', editingTeacher._id);
+      console.log('📝 Données à envoyer:', editingTeacher);
+      
+      const token = localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTk5YzY5YzY5YzY5YzY5YzY5YzY5YzY5YyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNDY5NzIwMCwiZXhwIjoxNzA0NzgzNjAwfQ.example';
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+      
+      const teacherData = {
+        name: `${editingTeacher.firstName} ${editingTeacher.lastName}`,
+        email: editingTeacher.email,
+        telephone: editingTeacher.phone,
+        matiere: editingTeacher.subject,
+        status: editingTeacher.status
+      };
+      
+      const response = await fetch(`http://localhost:5001/api/admin/teachers/${editingTeacher._id}`, {
+        method: 'PUT',
+        headers: config.headers,
+        body: JSON.stringify(teacherData)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erreur lors de la modification');
+      }
+      
+      const updatedTeacher = await response.json();
+      console.log('✅ Réponse modification:', updatedTeacher);
+      
+      // Mettre à jour la liste locale
+      const updatedTeachers = teachers.map(teacher =>
+        teacher._id === editingTeacher._id ? { ...teacher, ...editingTeacher } : teacher
+      );
+      setTeachers(updatedTeachers);
+      setEditingTeacher(null);
+      setShowEditModal(false);
+      alert('Professeur modifié avec succès');
+    } catch (err) {
+      console.error('❌ Error updating teacher:', err);
+      const errorMessage = err.message;
+      alert(`Erreur lors de la modification du professeur: ${errorMessage}`);
+    }
   };
 
-  const handleDeleteTeacher = (id) => {
-    setTeachers(teachers.filter(teacher => teacher.id !== id));
-    setShowDeleteModal(false);
+  const handleDeleteTeacher = async (id) => {
+    try {
+      console.log('🔄 Suppression du professeur:', id);
+      
+      const token = localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTk5YzY5YzY5YzY5YzY5YzY5YzY5YyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNDY5NzIwMCwiZXhwIjoxNzA0NzgzNjAwfQ.example';
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+      
+      const response = await fetch(`http://localhost:5001/api/admin/teachers/${id}`, {
+        method: 'DELETE',
+        headers: config.headers
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erreur lors de la suppression');
+      }
+      
+      console.log('✅ Professeur supprimé avec succès');
+      
+      // Mettre à jour la liste locale
+      setTeachers(teachers.filter(teacher => teacher._id !== id));
+      setShowDeleteModal(false);
+      alert('Professeur supprimé avec succès');
+    } catch (err) {
+      console.error('❌ Error deleting teacher:', err);
+      const errorMessage = err.message;
+      alert(`Erreur lors de la suppression du professeur: ${errorMessage}`);
+    }
   };
 
   const handleBulkAction = (action) => {

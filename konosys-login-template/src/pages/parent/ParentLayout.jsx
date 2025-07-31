@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { Outlet } from "react-router-dom";
 import { motion } from "framer-motion";
-import HomeNavbarParent from "../../Components/HomeNavbarParent";
 import SidebarParent from "../../Components/SidebarParent";
+import HomeNavbarParent from "../../Components/HomeNavbarParent";
 import { ThemeContext } from "../../context/ThemeContext";
 
 const ParentLayout = () => {

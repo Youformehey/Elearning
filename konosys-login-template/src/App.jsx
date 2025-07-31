@@ -97,11 +97,13 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminStudents from "./pages/admin/AdminStudents";
 import AdminTeachers from "./pages/admin/AdminTeachers";
 import AdminClasses from "./pages/admin/AdminClasses";
+import AdminCourses from "./pages/admin/AdminCourses";
+import AdminPlanning from "./pages/admin/AdminPlanning";
+import AdminParents from "./pages/admin/AdminParents";
 import AdminSettings from "./pages/admin/AdminSettings";
 
 // --- Pages Parent
-import SidebarParent from "./pages/parent/SidebarParent";
-import HomeNavbarParent from "./pages/parent/HomeNavbarParent";
+import ParentLayout from "./pages/parent/ParentLayout";
 import DashboardParent from "./pages/parent/DashboardParent";
 import AbsencesParent from "./pages/parent/AbsencesParent";
 import NotesParent from "./pages/parent/NotesParent";
@@ -110,19 +112,7 @@ import RappelsParent from "./pages/parent/RappelsParent";
 import ProfilParent from "./pages/parent/ProfilParent";
 import DemandesParent from "./pages/parent/DemandesParent";
 import NotificationParent from "./pages/parent/NotificationParent";
-
-// --- Layout Parent
-const ParentLayout = () => (
-  <div className="flex min-h-screen">
-    <SidebarParent />
-    <div className="flex-1 flex flex-col">
-      <HomeNavbarParent />
-      <main className="flex-1 bg-gray-50 overflow-auto">
-        <Outlet />
-      </main>
-    </div>
-  </div>
-);
+import SettingsParent from "./pages/parent/SettingsParent";
 
 // --- Route protégée Admin uniquement
 function PrivateRouteAdmin() {
@@ -224,11 +214,12 @@ export default function App() {
                 <Route path="users" element={<AdminStudents />} />
                 <Route path="students" element={<AdminStudents />} />
                 <Route path="teachers" element={<AdminTeachers />} />
-                <Route path="parents" element={<AdminStudents />} />
                 <Route path="admins" element={<AdminStudents />} />
                 <Route path="classes" element={<AdminClasses />} />
                 <Route path="subjects" element={<AdminClasses />} />
-                <Route path="courses" element={<AdminClasses />} />
+                <Route path="courses" element={<AdminCourses />} />
+                <Route path="planning" element={<AdminPlanning />} />
+                <Route path="parents" element={<AdminParents />} />
                 <Route path="homework" element={<AdminClasses />} />
                 <Route path="exams" element={<AdminClasses />} />
                 <Route path="grades" element={<AdminStudents />} />
@@ -260,6 +251,7 @@ export default function App() {
                 <Route path="profil" element={<ProfilParent />} />
                 <Route path="demandes" element={<DemandesParent />} />
                 <Route path="notifications" element={<NotificationParent />} />
+                <Route path="parametres" element={<SettingsParent />} />
               </Route>
             </Route>
 

@@ -194,308 +194,527 @@ export default function CoursStudent() {
   };
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50'} relative overflow-hidden`}>
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Animated background elements - Animations ultra attractives */}
+      <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute top-20 left-10 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full opacity-20"
+          className="absolute top-20 left-10 w-16 h-16 sm:w-20 sm:h-20 bg-blue-100 rounded-full"
           animate={{ 
             y: [0, -20, 0],
-            rotate: [0, 180, 360]
+            rotate: [0, 180, 360],
+            scale: [1, 1.1, 1],
           }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
         />
         <motion.div
-          className="absolute top-40 right-20 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full opacity-20"
+          className="absolute top-40 right-20 w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full"
           animate={{ 
             y: [0, 20, 0],
-            scale: [1, 1.2, 1]
+            scale: [1, 1.2, 1],
+            rotate: [0, -180, -360],
           }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
         />
         <motion.div
-          className="absolute bottom-20 left-1/4 w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-green-400 to-blue-400 rounded-full opacity-20"
+          className="absolute bottom-20 left-1/4 w-8 h-8 sm:w-12 sm:h-12 bg-purple-100 rounded-full"
           animate={{ 
             x: [0, 30, 0],
-            rotate: [0, 90, 180]
+            rotate: [0, 90, 180, 270, 360],
+            scale: [1, 1.15, 1],
           }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute top-1/4 right-1/4 w-10 h-10 bg-pink-100 rounded-full"
+          animate={{ 
+            x: [0, -20, 0],
+            y: [0, 15, 0],
+            scale: [1, 1.1, 1],
+            rotate: [0, -90, -180, -270, -360],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
         />
       </div>
 
-      <div className="max-w-7xl mx-auto p-3 sm:p-4 md:p-6 relative z-10">
-        {/* Header */}
+      {/* Floating decorative elements - Animations ultra attractives */}
+      <motion.div
+        className="absolute top-16 right-16 text-blue-400"
+        animate={{ 
+          rotate: 360,
+          scale: [1, 1.3, 1],
+          y: [0, -10, 0],
+          x: [0, 5, 0],
+        }}
+        transition={{ 
+          duration: 15, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <BookOpenCheck size={32} />
+      </motion.div>
+      <motion.div
+        className="absolute bottom-16 left-16 text-green-400"
+        animate={{ 
+          rotate: -360,
+          scale: [1, 1.2, 1],
+          y: [0, 10, 0],
+          x: [0, -5, 0],
+        }}
+        transition={{ 
+          duration: 20, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <Star size={28} />
+      </motion.div>
+      <motion.div
+        className="absolute top-1/2 left-1/2 text-purple-400"
+        animate={{ 
+          rotate: 360,
+          scale: [1, 1.4, 1],
+          y: [0, -15, 0],
+          x: [0, 10, 0],
+        }}
+        transition={{ 
+          duration: 18, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <Trophy size={24} />
+      </motion.div>
+
+      <div className="relative z-10 py-8 px-6">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-4 sm:mb-6 md:mb-8"
+          transition={{ duration: 0.8 }}
+          className="max-w-7xl mx-auto"
         >
+          {/* Header avec animations ultra attractives */}
           <motion.div
-            className="flex items-center justify-center gap-2 sm:gap-4 mb-3 sm:mb-4 md:mb-6"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="text-center mb-12"
           >
             <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <BookOpenCheck className={`w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-            </motion.div>
-            <motion.div
-              animate={{ rotate: [0, -10, 10, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-            >
-              <Star className={`w-5 h-5 sm:w-6 sm:h-6 md:w-10 md:h-10 ${darkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
-            </motion.div>
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            >
-              <Trophy className={`w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-            </motion.div>
-          </motion.div>
-          
-          <motion.h1 
-            className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 ${
-              darkMode ? 'text-white' : 'text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600'
-            }`}
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            🎓 Mes Cours Magiques ✨
-          </motion.h1>
-          
-          <motion.p 
-            className={`text-sm sm:text-base md:text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'} mb-4 sm:mb-6`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            🌟 Découvre les cours de ta classe créés par tes professeurs !
-            {classeEtudiant && (
-              <motion.span 
-                className="block mt-2 font-semibold text-blue-600"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-              >
-                🎓 Classe : {classeEtudiant}
-              </motion.span>
-            )}
-          </motion.p>
-        </motion.div>
-
-        {/* Statistiques */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className={`mb-6 sm:mb-8 rounded-xl sm:rounded-2xl shadow-xl border border-white/20 backdrop-blur-sm overflow-hidden ${
-            darkMode ? 'bg-gray-800/80' : 'bg-white/80'
-          }`}
-        >
-          <div className={`px-4 sm:px-6 md:px-8 py-4 sm:py-6 font-bold text-base sm:text-lg ${
-            darkMode 
-              ? 'bg-gradient-to-r from-blue-700 to-purple-700 text-white' 
-              : 'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-900'
-          }`}>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <motion.div
-                className={`p-2 rounded-lg ${darkMode ? 'bg-blue-600' : 'bg-blue-500'}`}
-                whileHover={{ scale: 1.1, rotate: 10 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <BarChart3 className="text-white w-5 h-5 sm:w-6 sm:h-6" />
-              </motion.div>
-              <span className="uppercase tracking-wide text-sm sm:text-base">Statistiques</span>
-            </div>
-          </div>
-          
-          <div className="p-4 sm:p-6 md:p-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              <motion.div 
-                className="text-center"
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className={`text-2xl sm:text-3xl font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                  {stats.totalCours}
-                </div>
-                <div className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} font-medium`}>
-                  Cours
-                </div>
-              </motion.div>
-              <motion.div 
-                className="text-center"
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className={`text-2xl sm:text-3xl font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                  {stats.totalMatieres}
-                </div>
-                <div className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} font-medium`}>
-                  Matières
-                </div>
-              </motion.div>
-              <motion.div 
-                className="text-center"
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className={`text-2xl sm:text-3xl font-bold ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                  {stats.totalChapitres}
-                </div>
-                <div className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} font-medium`}>
-                  Chapitres
-                </div>
-              </motion.div>
-              <motion.div 
-                className="text-center"
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className={`text-2xl sm:text-3xl font-bold ${darkMode ? 'text-pink-400' : 'text-pink-600'}`}>
-                  {stats.totalEtudiants}
-                </div>
-                <div className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} font-medium`}>
-                  Étudiants
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Search and Refresh */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="mb-6 sm:mb-8"
-        >
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md">
-              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-              <input
-                type="text"
-                placeholder="Rechercher un cours..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 sm:py-3 rounded-xl border-2 transition-all duration-300 text-sm sm:text-base ${
-                  darkMode 
-                    ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500' 
-                    : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500 focus:border-blue-500'
-                }`}
-              />
-            </div>
-            
-            <motion.button
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className={`flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 text-sm sm:text-base ${
-                refreshing 
-                  ? 'bg-gray-400 text-white cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 hover:scale-105'
-              }`}
-              whileHover={!refreshing ? { scale: 1.05 } : {}}
-              whileTap={!refreshing ? { scale: 0.95 } : {}}
-            >
-              <motion.div
-                animate={refreshing ? { rotate: 360 } : {}}
-                transition={{ duration: 1, repeat: refreshing ? Infinity : 0, ease: "linear" }}
-              >
-                <RefreshCw size={16} className="sm:w-5 sm:h-5" />
-              </motion.div>
-              {refreshing ? "Actualisation..." : "Actualiser"}
-            </motion.button>
-          </div>
-        </motion.div>
-
-        {/* Error Display */}
-        <AnimatePresence>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              className="bg-red-50 border border-red-200 text-red-700 py-3 sm:py-4 px-4 sm:px-6 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 flex items-center justify-center gap-3 max-w-md mx-auto text-sm sm:text-base"
-            >
-              <AlertCircle size={16} className="sm:w-5 sm:h-5" />
-              {error}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Cours List */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="space-y-6 sm:space-y-8"
-        >
-          {Object.entries(filteredCoursGroupesParMatiere).map(([matiere, coursList], index) => (
-            <motion.div
-              key={matiere}
+              className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * index }}
-              className={`rounded-xl sm:rounded-2xl shadow-lg border border-white/20 backdrop-blur-sm overflow-hidden ${
-                darkMode ? 'bg-gray-800/80' : 'bg-white/80'
-              }`}
-            >
-              {/* Matière Header */}
-              <div className={`px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r ${getMatiereColor(matiere)} text-white`}>
-                <div className="flex items-center gap-3">
-                  <motion.div
-                    className="p-2 bg-white/20 rounded-lg"
-                    whileHover={{ scale: 1.1, rotate: 10 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    {getMatiereIcon(matiere)}
-                  </motion.div>
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-bold">{matiere}</h3>
-                    <p className="text-sm opacity-90">{coursList.length} cours</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Cours Cards */}
-              <div className="p-4 sm:p-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {coursList.map((cours, coursIndex) => (
-                    <CoursCard
-                      key={cours._id || coursIndex}
-                      cours={cours}
-                      navigate={navigate}
-                      formatDate={formatDate}
-                      getMatiereNom={getMatiereNom}
-                      darkMode={darkMode}
-                      fetchQuizForCourse={fetchQuizForCourse}
-                      quizData={quizData}
-                      quizLoading={quizLoading}
-                    />
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Loading State */}
-        <AnimatePresence>
-          {loading && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+              transition={{ delay: 0.6 }}
             >
               <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-12 h-12 sm:w-16 sm:h-16 border-4 border-blue-500 border-t-transparent rounded-full"
-              />
+                className="p-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl shadow-2xl"
+                whileHover={{ scale: 1.2, rotate: 15 }}
+                animate={{ 
+                  boxShadow: [
+                    "0 25px 50px -12px rgba(59, 130, 246, 0.25)",
+                    "0 25px 50px -12px rgba(147, 51, 234, 0.25)",
+                    "0 25px 50px -12px rgba(59, 130, 246, 0.25)"
+                  ],
+                  scale: [1, 1.05, 1],
+                  rotate: [0, 5, 0, -5, 0],
+                }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300,
+                  boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                  scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+                }}
+              >
+                <motion.span 
+                  className="text-6xl"
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    rotate: [0, 10, 0, -10, 0],
+                  }}
+                  transition={{ 
+                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  📚
+                </motion.span>
+              </motion.div>
+              <div className="text-center sm:text-left">
+                <motion.h1 
+                  className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                  animate={{ 
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                    scale: [1, 1.02, 1],
+                    y: [0, -3, 0],
+                  }}
+                  transition={{ 
+                    duration: 6, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                    y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  🎓 Mes Cours Magiques ✨
+                </motion.h1>
+                <motion.p 
+                  className="text-xl sm:text-2xl font-medium text-gray-700"
+                  animate={{ 
+                    opacity: [0.8, 1, 0.8],
+                    scale: [1, 1.01, 1],
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  🌟 Découvre les cours de ta classe créés par tes professeurs !
+                  {classeEtudiant && (
+                    <motion.span 
+                      className="block mt-2 font-semibold text-blue-600"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.8 }}
+                    >
+                      🎓 Classe : {classeEtudiant}
+                    </motion.span>
+                  )}
+                </motion.p>
+              </div>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </motion.div>
+
+          {/* Statistiques - Animations ultra attractives */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="mb-12 rounded-3xl shadow-2xl border-2 border-blue-200 bg-blue-50 overflow-hidden"
+          >
+            <div className="bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-6">
+              <div className="flex items-center gap-6">
+                <motion.div
+                  className="p-4 bg-white/20 rounded-2xl"
+                  whileHover={{ scale: 1.2, rotate: 15 }}
+                  animate={{ 
+                    boxShadow: [
+                      "0 10px 25px -5px rgba(255, 255, 255, 0.1)",
+                      "0 20px 40px -10px rgba(255, 255, 255, 0.2)",
+                      "0 10px 25px -5px rgba(255, 255, 255, 0.1)"
+                    ],
+                    scale: [1, 1.05, 1],
+                    rotate: [0, 8, 0, -8, 0],
+                  }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 300,
+                    boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                    scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  <motion.span 
+                    className="text-4xl"
+                    animate={{ 
+                      scale: [1, 1.1, 1],
+                      rotate: [0, 12, 0, -12, 0],
+                    }}
+                    transition={{ 
+                      scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                      rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                    }}
+                  >
+                    📊
+                  </motion.span>
+                </motion.div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white">📊 Statistiques</h3>
+                  <p className="text-white/90 text-lg">Vue d'ensemble de tes cours</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <motion.div 
+                  className="text-center"
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  animate={{ 
+                    scale: [1, 1.02, 1],
+                    y: [0, -2, 0],
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  <div className="text-3xl sm:text-4xl font-bold text-blue-600">
+                    {stats.totalCours}
+                  </div>
+                  <div className="text-sm font-medium text-gray-600">
+                    Cours
+                  </div>
+                </motion.div>
+                <motion.div 
+                  className="text-center"
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  animate={{ 
+                    scale: [1, 1.02, 1],
+                    y: [0, -2, 0],
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  <div className="text-3xl sm:text-4xl font-bold text-green-600">
+                    {stats.totalMatieres}
+                  </div>
+                  <div className="text-sm font-medium text-gray-600">
+                    Matières
+                  </div>
+                </motion.div>
+                <motion.div 
+                  className="text-center"
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  animate={{ 
+                    scale: [1, 1.02, 1],
+                    y: [0, -2, 0],
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  <div className="text-3xl sm:text-4xl font-bold text-purple-600">
+                    {stats.totalChapitres}
+                  </div>
+                  <div className="text-sm font-medium text-gray-600">
+                    Chapitres
+                  </div>
+                </motion.div>
+                <motion.div 
+                  className="text-center"
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  animate={{ 
+                    scale: [1, 1.02, 1],
+                    y: [0, -2, 0],
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  <div className="text-3xl sm:text-4xl font-bold text-pink-600">
+                    {stats.totalEtudiants}
+                  </div>
+                  <div className="text-sm font-medium text-gray-600">
+                    Étudiants
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Search and Refresh - Animations ultra attractives */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+            className="mb-12"
+          >
+            <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <input
+                  type="text"
+                  placeholder="Rechercher un cours..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 rounded-2xl border-2 border-gray-200 text-base focus:border-blue-500 transition-all duration-300 bg-white"
+                />
+              </div>
+              
+              <motion.button
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className={`flex items-center gap-4 px-6 py-3 rounded-2xl font-bold transition-all duration-300 text-base shadow-xl ${
+                  refreshing 
+                    ? 'bg-gray-400 text-white cursor-not-allowed' 
+                    : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 hover:scale-105 hover:shadow-2xl'
+                }`}
+                whileHover={!refreshing ? { 
+                  scale: 1.1, 
+                  y: -5,
+                  rotate: [0, 2, -2, 0],
+                } : {}}
+                whileTap={!refreshing ? { scale: 0.95 } : {}}
+                animate={!refreshing ? { 
+                  boxShadow: [
+                    "0 10px 25px -5px rgba(59, 130, 246, 0.3)",
+                    "0 20px 40px -10px rgba(147, 51, 234, 0.4)",
+                    "0 10px 25px -5px rgba(59, 130, 246, 0.3)"
+                  ],
+                  scale: [1, 1.02, 1],
+                } : {}}
+                transition={{ 
+                  boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                  scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                }}
+              >
+                <motion.div
+                  animate={refreshing ? { rotate: 360 } : { 
+                    rotate: [0, 10, 0, -10, 0],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{ 
+                    duration: refreshing ? 1 : 2, 
+                    repeat: Infinity, 
+                    ease: refreshing ? "linear" : "easeInOut" 
+                  }}
+                >
+                  <RefreshCw size={20} />
+                </motion.div>
+                {refreshing ? "Actualisation..." : "🔄 Actualiser"}
+              </motion.button>
+            </div>
+          </motion.div>
+
+          {/* Error Display */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                className="bg-red-50 border-2 border-red-200 text-red-700 py-5 px-8 rounded-2xl mb-8 flex items-center justify-center gap-4 max-w-md mx-auto text-lg shadow-xl"
+              >
+                <AlertCircle size={24} />
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Cours List - Animations ultra attractives */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2 }}
+            className="space-y-8"
+          >
+            {Object.entries(filteredCoursGroupesParMatiere).map(([matiere, coursList], index) => (
+              <motion.div
+                key={matiere}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+                className="rounded-3xl shadow-2xl border-2 border-white/30 backdrop-blur-sm overflow-hidden bg-white/90"
+              >
+                {/* Matière Header */}
+                <div className={`px-8 py-6 bg-gradient-to-r ${getMatiereColor(matiere)} text-white`}>
+                  <div className="flex items-center gap-6">
+                    <motion.div
+                      className="p-4 bg-white/20 rounded-2xl"
+                      whileHover={{ scale: 1.2, rotate: 15 }}
+                      animate={{ 
+                        boxShadow: [
+                          "0 10px 25px -5px rgba(255, 255, 255, 0.1)",
+                          "0 20px 40px -10px rgba(255, 255, 255, 0.2)",
+                          "0 10px 25px -5px rgba(255, 255, 255, 0.1)"
+                        ],
+                        scale: [1, 1.05, 1],
+                        rotate: [0, 8, 0, -8, 0],
+                      }}
+                      transition={{ 
+                        type: "spring", 
+                        stiffness: 300,
+                        boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                        scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                        rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                      }}
+                    >
+                      <motion.span 
+                        className="text-3xl"
+                        animate={{ 
+                          scale: [1, 1.1, 1],
+                          rotate: [0, 12, 0, -12, 0],
+                        }}
+                        transition={{ 
+                          scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                          rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                        }}
+                      >
+                        {getMatiereIcon(matiere)}
+                      </motion.span>
+                    </motion.div>
+                    <div>
+                      <h3 className="text-2xl font-bold">{matiere}</h3>
+                      <p className="text-lg opacity-90">{coursList.length} cours</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Cours Cards */}
+                <div className="p-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {coursList.map((cours, coursIndex) => (
+                      <CoursCard
+                        key={cours._id || coursIndex}
+                        cours={cours}
+                        navigate={navigate}
+                        formatDate={formatDate}
+                        getMatiereNom={getMatiereNom}
+                        darkMode={darkMode}
+                        fetchQuizForCourse={fetchQuizForCourse}
+                        quizData={quizData}
+                        quizLoading={quizLoading}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Loading State */}
+          <AnimatePresence>
+            {loading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </div>
   );
@@ -519,77 +738,89 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02, y: -5 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ 
+        scale: 1.05, 
+        y: -8,
+        rotateY: [0, 5, 0],
+        rotateX: [0, 3, 0],
+      }}
+      whileTap={{ scale: 0.95 }}
       onClick={() => navigate(`/student/cours/${cours._id}`)}
-      className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg border border-white/20 backdrop-blur-sm cursor-pointer transition-all duration-300 ${
-        darkMode ? 'bg-gray-700/80 hover:bg-gray-600/80' : 'bg-white/80 hover:bg-white/90'
-      }`}
+      className="p-6 rounded-3xl shadow-2xl border-2 border-white/30 backdrop-blur-sm cursor-pointer transition-all duration-300 bg-white/90 hover:bg-white/95"
     >
-      <div className="flex items-start justify-between mb-3 sm:mb-4">
+      <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
-          <h4 className={`text-base sm:text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+          <h4 className="text-lg font-bold mb-2 text-gray-800">
             {cours.nom || "Cours sans nom"}
           </h4>
-          <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} mb-2`}>
+          <p className="text-sm text-gray-600 mb-2">
             {getMatiereNom(cours)}
           </p>
         </div>
         <motion.div
-          whileHover={{ scale: 1.1, rotate: 10 }}
-          transition={{ type: "spring", stiffness: 300 }}
+          whileHover={{ scale: 1.2, rotate: 15 }}
+          animate={{ 
+            scale: [1, 1.05, 1],
+            rotate: [0, 5, 0, -5, 0],
+          }}
+          transition={{ 
+            type: "spring", 
+            stiffness: 300,
+            scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+            rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+          }}
         >
-          <ArrowRight className={`w-5 h-5 sm:w-6 sm:h-6 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+          <ArrowRight className="w-6 h-6 text-blue-600" />
         </motion.div>
       </div>
       
-      <div className="space-y-2 sm:space-y-3">
-        <div className="flex items-center gap-2 text-xs sm:text-sm">
-          <User className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-          <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 text-sm">
+          <User className="w-4 h-4 text-gray-500" />
+          <span className="text-gray-600">
             {cours.teacher?.name || "Professeur non assigné"}
           </span>
         </div>
         
-        <div className="flex items-center gap-2 text-xs sm:text-sm">
-          <Building className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-          <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
+        <div className="flex items-center gap-2 text-sm">
+          <Building className="w-4 h-4 text-gray-500" />
+          <span className="text-gray-600">
             {cours.classe || "Classe non définie"}
           </span>
         </div>
         
-        <div className="flex items-center gap-2 text-xs sm:text-sm">
-          <CalendarDays className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-          <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
+        <div className="flex items-center gap-2 text-sm">
+          <CalendarDays className="w-4 h-4 text-gray-500" />
+          <span className="text-gray-600">
             Créé le {formatDate(cours.createdAt)}
           </span>
         </div>
         
-        <div className="flex items-center gap-2 text-xs sm:text-sm">
-          <FileText className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-          <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
+        <div className="flex items-center gap-2 text-sm">
+          <FileText className="w-4 h-4 text-gray-500" />
+          <span className="text-gray-600">
             {cours.chapitres?.length || 0} chapitres
           </span>
         </div>
         
-        <div className="flex items-center gap-2 text-xs sm:text-sm">
-          <Users className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-          <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
+        <div className="flex items-center gap-2 text-sm">
+          <Users className="w-4 h-4 text-gray-500" />
+          <span className="text-gray-600">
             {cours.etudiants?.length || 0} étudiants
           </span>
         </div>
         
         {/* Section Quiz */}
-        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+        <div className="mt-4 pt-4 border-t border-gray-200">
           <motion.button
             onClick={handleToggleQuizzes}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
-            className="w-full flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-pink-100 to-red-100 dark:from-pink-900/30 dark:to-red-900/30 hover:from-pink-200 hover:to-red-200 dark:hover:from-pink-800/40 dark:hover:to-red-800/40 transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="w-full flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-pink-100 to-red-100 hover:from-pink-200 hover:to-red-200 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             <div className="flex items-center gap-3">
               <motion.div
-                className={`p-2 rounded-lg ${darkMode ? 'bg-pink-800/40' : 'bg-pink-200'}`}
+                className="p-2 rounded-lg bg-pink-200"
                 whileHover={{ scale: 1.1, rotate: 10 }}
                 animate={{ 
                   scale: [1, 1.05, 1],
@@ -602,13 +833,13 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
                   rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
                 }}
               >
-                <Target className={`w-5 h-5 ${darkMode ? 'text-pink-300' : 'text-pink-600'}`} />
+                <Target className="w-5 h-5 text-pink-600" />
               </motion.div>
               <div className="text-left">
-                <span className={`font-bold text-sm ${darkMode ? 'text-pink-200' : 'text-pink-700'}`}>
+                <span className="font-bold text-sm text-pink-700">
                   🎯 Quiz disponibles
                 </span>
-                <div className={`text-xs ${darkMode ? 'text-pink-300' : 'text-pink-600'}`}>
+                <div className="text-xs text-pink-600">
                   {quizData[cours._id] ? `${quizData[cours._id].length} quiz trouvé(s)` : 'Cliquez pour voir les quiz'}
                 </div>
               </div>
@@ -618,11 +849,7 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className={`px-2 py-1 rounded-full text-xs font-bold ${
-                    darkMode 
-                      ? 'bg-pink-600 text-white' 
-                      : 'bg-pink-500 text-white'
-                  }`}
+                  className="px-2 py-1 rounded-full text-xs font-bold bg-pink-500 text-white"
                 >
                   {quizData[cours._id].length}
                 </motion.div>
@@ -630,9 +857,9 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
               <motion.div
                 animate={{ rotate: showQuizzes ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
-                className={`p-2 rounded-lg ${darkMode ? 'bg-pink-800/40' : 'bg-pink-200'}`}
+                className="p-2 rounded-lg bg-pink-200"
               >
-                <ArrowRight className={`w-4 h-4 ${darkMode ? 'text-pink-300' : 'text-pink-600'}`} />
+                <ArrowRight className="w-4 h-4 text-pink-600" />
               </motion.div>
             </div>
           </motion.button>
@@ -661,13 +888,13 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="p-4 rounded-xl bg-gradient-to-r from-pink-50 to-red-50 dark:from-pink-900/20 dark:to-red-900/20 border border-pink-200 dark:border-pink-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                      className="p-4 rounded-2xl bg-gradient-to-r from-pink-50 to-red-50 border border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <motion.div
-                              className={`p-2 rounded-lg ${darkMode ? 'bg-pink-800/30' : 'bg-pink-200'}`}
+                              className="p-2 rounded-lg bg-pink-200"
                               whileHover={{ scale: 1.1, rotate: 10 }}
                               animate={{ 
                                 scale: [1, 1.05, 1],
@@ -680,18 +907,18 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
                                 rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
                               }}
                             >
-                              <Target className={`w-4 h-4 ${darkMode ? 'text-pink-300' : 'text-pink-600'}`} />
+                              <Target className="w-4 h-4 text-pink-600" />
                             </motion.div>
-                            <h5 className={`font-bold text-sm ${darkMode ? 'text-pink-200' : 'text-pink-800'}`}>
+                            <h5 className="font-bold text-sm text-pink-800">
                               {quizInfo.chapitreName}
                             </h5>
                           </div>
                           <div className="flex items-center gap-4 text-xs">
-                            <div className={`flex items-center gap-1 ${darkMode ? 'text-pink-300' : 'text-pink-600'}`}>
+                            <div className="flex items-center gap-1 text-pink-600">
                               <FileText className="w-3 h-3" />
                               <span>{quizInfo.quiz.questions?.length || 0} questions</span>
                             </div>
-                            <div className={`flex items-center gap-1 ${darkMode ? 'text-pink-300' : 'text-pink-600'}`}>
+                            <div className="flex items-center gap-1 text-pink-600">
                               <Clock className="w-3 h-3" />
                               <span>~{Math.ceil((quizInfo.quiz.questions?.length || 0) * 1.5)} min</span>
                             </div>
@@ -730,14 +957,14 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
                         scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
                         rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
                       }}
-                      className={`w-12 h-12 mx-auto mb-3 p-3 rounded-full ${darkMode ? 'bg-gray-700/50' : 'bg-gray-200'}`}
+                      className="w-12 h-12 mx-auto mb-3 p-3 rounded-full bg-gray-200"
                     >
-                      <Target className={`w-6 h-6 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                      <Target className="w-6 h-6 text-gray-500" />
                     </motion.div>
-                    <h4 className={`font-semibold text-sm mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <h4 className="font-semibold text-sm mb-1 text-gray-600">
                       Aucun quiz disponible
                     </h4>
-                    <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <p className="text-xs text-gray-500">
                       Les quiz apparaîtront ici quand ils seront créés
                     </p>
                   </motion.div>

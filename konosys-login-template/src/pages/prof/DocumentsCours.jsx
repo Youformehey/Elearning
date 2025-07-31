@@ -175,110 +175,163 @@ export default function DocumentsCours() {
   return (
     <div className="min-h-screen bg-gradient-to-tr from-[#edf3ff] to-[#f9fcff] overflow-hidden text-gray-800">
       
-      {/* Header simple et élégant */}
+      {/* Header avec animations ultra attractives */}
       <motion.div 
-        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-6 px-8 shadow-xl"
-        initial={{ y: -50, opacity: 0 }}
+        className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-8 px-10 shadow-2xl relative overflow-hidden"
+        initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 200, damping: 25 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
       >
-        <div className="max-w-6xl mx-auto">
+        {/* Effet de brillance amélioré */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+          animate={{ x: [-200, 400] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        
+        {/* Effet de particules */}
+        <motion.div 
+          className="absolute inset-0 opacity-30"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        >
+          <div className="absolute top-4 left-1/4 w-2 h-2 bg-white rounded-full" />
+          <div className="absolute top-8 right-1/3 w-1 h-1 bg-white rounded-full" />
+          <div className="absolute bottom-6 left-1/2 w-1.5 h-1.5 bg-white rounded-full" />
+        </motion.div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
-            className="flex flex-col lg:flex-row items-center justify-between gap-6"
-            initial={{ opacity: 0, y: -10 }}
+            className="flex flex-col lg:flex-row items-center justify-between gap-10"
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, type: "spring", stiffness: 150 }}
+            transition={{ delay: 0.2 }}
           >
-            {/* Titre et icône */}
+            {/* Titre et icône avec animations ultra attractives */}
             <motion.div 
-              className="flex items-center gap-4"
-              whileHover={{ scale: 1.01 }}
+              className="flex items-center gap-8"
+              whileHover={{ scale: 1.02 }}
             >
               <motion.button
                 onClick={() => navigate(-1)}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all duration-200 shadow-md"
+                className="p-3 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all duration-200 shadow-md"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-6 h-6" />
               </motion.button>
               <motion.div 
-                className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20"
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
+                className="p-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl shadow-2xl"
+                whileHover={{ scale: 1.2, rotate: 15 }}
                 animate={{ 
-                  y: [0, -2, 0]
+                  boxShadow: [
+                    "0 25px 50px -12px rgba(59, 130, 246, 0.25)",
+                    "0 25px 50px -12px rgba(147, 51, 234, 0.25)",
+                    "0 25px 50px -12px rgba(59, 130, 246, 0.25)"
+                  ],
+                  scale: [1, 1.05, 1],
+                  rotate: [0, 5, 0, -5, 0],
                 }}
                 transition={{ 
                   type: "spring", 
-                  stiffness: 400,
-                  y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  stiffness: 300,
+                  boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                  scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
                 }}
               >
-                <BookOpenCheck className="w-8 h-8 text-white" />
+                <motion.span 
+                  className="text-6xl"
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    rotate: [0, 10, 0, -10, 0],
+                  }}
+                  transition={{ 
+                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  📄
+                </motion.span>
               </motion.div>
               <div>
                 <motion.h1 
-                  className="text-3xl md:text-4xl font-bold text-white mb-1"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                  className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent"
+                  animate={{ 
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                    scale: [1, 1.02, 1],
+                    y: [0, -3, 0],
+                  }}
+                  transition={{ 
+                    duration: 6, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                    y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                  }}
                 >
-                  Documents du Cours
+                  📄 Documents de Cours ✨
                 </motion.h1>
                 <motion.p 
-                  className="text-blue-100 font-medium text-base"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+                  className="text-xl sm:text-2xl font-medium text-white"
+                  animate={{ 
+                    opacity: [0.8, 1, 0.8],
+                    scale: [1, 1.01, 1],
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                  }}
                 >
-                  Gestion des ressources pédagogiques
+                  🌟 Gestion des ressources pédagogiques !
                 </motion.p>
               </div>
             </motion.div>
             
-            {/* Statistiques simples */}
+            {/* Statistiques avec animations ultra attractives */}
             <motion.div 
-              className="flex items-center gap-4"
-              initial={{ opacity: 0, x: 20 }}
+              className="flex items-center gap-6"
+              initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4, type: "spring", stiffness: 150 }}
+              transition={{ delay: 0.5 }}
             >
               <motion.div 
-                className="text-center p-3 bg-white/15 rounded-xl backdrop-blur-sm border border-white/20 shadow-md"
-                whileHover={{ scale: 1.05, y: -2 }}
+                className="text-center p-4 bg-white/15 rounded-2xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
                 whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -1, 0] }}
+                animate={{ y: [0, -3, 0] }}
                 transition={{ 
-                  y: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
                 }}
               >
-                <div className="text-2xl font-bold text-white mb-1">{courses.length}</div>
-                <div className="text-blue-100 text-xs font-medium">Cours</div>
+                <div className="text-3xl font-bold text-white mb-1">{courses.length}</div>
+                <div className="text-white text-sm font-medium">Cours</div>
               </motion.div>
               <motion.div 
-                className="text-center p-3 bg-white/15 rounded-xl backdrop-blur-sm border border-white/20 shadow-md"
-                whileHover={{ scale: 1.05, y: -2 }}
+                className="text-center p-4 bg-white/15 rounded-2xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
                 whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -1, 0] }}
+                animate={{ y: [0, -3, 0] }}
                 transition={{ 
-                  y: { duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.3 }
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
                 }}
               >
-                <div className="text-2xl font-bold text-white mb-1">{documents.length}</div>
-                <div className="text-blue-100 text-xs font-medium">Documents</div>
+                <div className="text-3xl font-bold text-white mb-1">{documents.length}</div>
+                <div className="text-white text-sm font-medium">Documents</div>
               </motion.div>
               <motion.div 
-                className="text-center p-3 bg-white/15 rounded-xl backdrop-blur-sm border border-white/20 shadow-md"
-                whileHover={{ scale: 1.05, y: -2 }}
+                className="text-center p-4 bg-white/15 rounded-2xl backdrop-blur-md border border-white/20 shadow-xl"
+                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
                 whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -1, 0] }}
+                animate={{ y: [0, -3, 0] }}
                 transition={{ 
-                  y: { duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.6 }
+                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }
                 }}
               >
-                <div className="text-2xl font-bold text-white mb-1">{stats.pdf}</div>
-                <div className="text-blue-100 text-xs font-medium">PDF</div>
+                <div className="text-3xl font-bold text-white mb-1">{stats.pdf}</div>
+                <div className="text-white text-sm font-medium">PDF</div>
               </motion.div>
             </motion.div>
           </motion.div>
@@ -335,7 +388,7 @@ export default function DocumentsCours() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
           >
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+            <div className="bg-gradient-to-r from-blue-800 to-blue-900 px-8 py-6">
               <div className="flex items-center gap-4">
                 <motion.div 
                   className="p-3 bg-white/20 rounded-xl"
@@ -346,7 +399,7 @@ export default function DocumentsCours() {
                 </motion.div>
                 <div>
                   <h2 className="text-2xl font-bold text-white">Sélectionner un Cours</h2>
-                  <p className="text-blue-100 font-medium">Choisissez le cours pour voir ses documents</p>
+                  <p className="text-white/90 font-medium">Choisissez le cours pour voir ses documents</p>
                 </div>
               </div>
             </div>
@@ -399,7 +452,7 @@ export default function DocumentsCours() {
               transition={{ delay: 0.3 }}
               className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
             >
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+              <div className="bg-gradient-to-r from-blue-800 to-blue-900 px-8 py-6">
                 <div className="flex items-center gap-4">
                   <motion.div 
                     className="p-3 bg-white/20 rounded-xl"
@@ -410,7 +463,7 @@ export default function DocumentsCours() {
                   </motion.div>
                   <div>
                     <h2 className="text-2xl font-bold text-white">Statistiques des Documents</h2>
-                    <p className="text-blue-100 font-medium">Cours : {selectedCourse.nom} — {selectedCourse.classe}</p>
+                    <p className="text-white/90 font-medium">Cours : {selectedCourse.nom} — {selectedCourse.classe}</p>
                   </div>
                 </div>
               </div>

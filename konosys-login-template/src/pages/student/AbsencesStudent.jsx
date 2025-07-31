@@ -115,7 +115,7 @@ const AbsencesStudent = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -141,7 +141,7 @@ const AbsencesStudent = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -160,7 +160,7 @@ const AbsencesStudent = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={fetchAbsences}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="px-6 py-3 bg-blue-500 text-white rounded-xl font-medium hover:bg-blue-600 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             <RefreshCw className="h-5 w-5 inline mr-2" />
             Réessayer
@@ -171,322 +171,652 @@ const AbsencesStudent = () => {
   }
 
   return (
-    <div className={`min-h-screen p-6 ${
-      darkMode 
-        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
-        : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
-    }`}>
-      {/* Header */}
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Animated background elements - Animations ultra attractives */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute top-20 left-10 w-16 h-16 sm:w-20 sm:h-20 bg-blue-100 rounded-full"
+          animate={{ 
+            y: [0, -20, 0],
+            rotate: [0, 180, 360],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute top-40 right-20 w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full"
+          animate={{ 
+            y: [0, 20, 0],
+            scale: [1, 1.2, 1],
+            rotate: [0, -180, -360],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute bottom-20 left-1/4 w-8 h-8 sm:w-12 sm:h-12 bg-purple-100 rounded-full"
+          animate={{ 
+            x: [0, 30, 0],
+            rotate: [0, 90, 180, 270, 360],
+            scale: [1, 1.15, 1],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute top-1/4 right-1/4 w-10 h-10 bg-pink-100 rounded-full"
+          animate={{ 
+            x: [0, -20, 0],
+            y: [0, 15, 0],
+            scale: [1, 1.1, 1],
+            rotate: [0, -90, -180, -270, -360],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+
+      {/* Floating decorative elements - Animations ultra attractives */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="absolute top-16 right-16 text-blue-400"
+        animate={{ 
+          rotate: 360,
+          scale: [1, 1.3, 1],
+          y: [0, -10, 0],
+          x: [0, 5, 0],
+        }}
+        transition={{ 
+          duration: 15, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+        }}
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-3">
-              <Calendar className="h-10 w-10 text-blue-600" />
-              Mes Absences
-            </h1>
-            <p className="mt-2 text-gray-600 text-lg">
-              Suivi de vos absences par matière ✨
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowStats(!showStats)}
-              className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 font-medium"
-            >
-              <BarChart className="h-5 w-5" />
-              {showStats ? 'Masquer' : 'Afficher'} les statistiques
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={fetchAbsences}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              <RefreshCw className="h-5 w-5" />
-              Actualiser
-            </motion.button>
-          </div>
-        </div>
+        <Calendar size={32} />
+      </motion.div>
+      <motion.div
+        className="absolute bottom-16 left-16 text-green-400"
+        animate={{ 
+          rotate: -360,
+          scale: [1, 1.2, 1],
+          y: [0, 10, 0],
+          x: [0, -5, 0],
+        }}
+        transition={{ 
+          duration: 20, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <CheckCircle size={28} />
+      </motion.div>
+      <motion.div
+        className="absolute top-1/2 left-1/2 text-purple-400"
+        animate={{ 
+          rotate: 360,
+          scale: [1, 1.4, 1],
+          y: [0, -15, 0],
+          x: [0, 10, 0],
+        }}
+        transition={{ 
+          duration: 18, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <AlertTriangle size={24} />
       </motion.div>
 
-      {/* Statistiques */}
-      <AnimatePresence>
-        {showStats && (
+      <div className="relative z-10 py-8 px-6">
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-7xl mx-auto"
+        >
+          {/* Header avec animations ultra attractives */}
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mb-8"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="mb-12"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {/* Total absences */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
               <motion.div
+                className="flex flex-col sm:flex-row items-center gap-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className={`rounded-2xl shadow-lg p-6 border hover:shadow-xl transition-all duration-300 ${
-                  darkMode 
-                    ? 'bg-gray-800 border-gray-700' 
-                    : 'bg-white border-blue-100'
-                }`}
+                transition={{ delay: 0.6 }}
               >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Total absences</p>
-                    <p className="text-3xl font-bold text-blue-600">{stats.total}</p>
-                  </div>
-                  <div className="p-4 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
-                    <Calendar className="h-8 w-8 text-blue-600" />
-                  </div>
+                <motion.div
+                  className="p-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl shadow-2xl"
+                  whileHover={{ scale: 1.2, rotate: 15 }}
+                  animate={{ 
+                    boxShadow: [
+                      "0 25px 50px -12px rgba(59, 130, 246, 0.25)",
+                      "0 25px 50px -12px rgba(147, 51, 234, 0.25)",
+                      "0 25px 50px -12px rgba(59, 130, 246, 0.25)"
+                    ],
+                    scale: [1, 1.05, 1],
+                    rotate: [0, 5, 0, -5, 0],
+                  }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 300,
+                    boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                    scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  <motion.span 
+                    className="text-6xl"
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 10, 0, -10, 0],
+                    }}
+                    transition={{ 
+                      scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                      rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                    }}
+                  >
+                    📅
+                  </motion.span>
+                </motion.div>
+                <div className="text-center sm:text-left">
+                  <motion.h1 
+                    className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                    animate={{ 
+                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                      scale: [1, 1.02, 1],
+                      y: [0, -3, 0],
+                    }}
+                    transition={{ 
+                      duration: 6, 
+                      repeat: Infinity, 
+                      ease: "easeInOut",
+                      scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                      y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                    }}
+                  >
+                    📅 Mes Absences Magiques ✨
+                  </motion.h1>
+                  <motion.p 
+                    className="text-xl sm:text-2xl font-medium text-gray-700"
+                    animate={{ 
+                      opacity: [0.8, 1, 0.8],
+                      scale: [1, 1.01, 1],
+                    }}
+                    transition={{ 
+                      duration: 3, 
+                      repeat: Infinity, 
+                      ease: "easeInOut",
+                      scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                    }}
+                  >
+                    🌟 Suivi de tes absences par matière !
+                  </motion.p>
                 </div>
               </motion.div>
-
-              {/* Heures manquées */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white rounded-2xl shadow-lg p-6 border border-orange-100 hover:shadow-xl transition-all duration-300"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Heures manquées</p>
-                    <p className="text-3xl font-bold text-orange-600">{stats.totalHours}h</p>
-                  </div>
-                  <div className="p-4 bg-gradient-to-br from-orange-100 to-yellow-100 rounded-xl">
-                    <Clock className="h-8 w-8 text-orange-600" />
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Absences justifiées */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="bg-white rounded-2xl shadow-lg p-6 border border-emerald-100 hover:shadow-xl transition-all duration-300"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Justifiées</p>
-                    <p className="text-3xl font-bold text-emerald-600">{stats.justified}</p>
-                  </div>
-                  <div className="p-4 bg-gradient-to-br from-emerald-100 to-green-100 rounded-xl">
-                    <CheckCircle className="h-8 w-8 text-emerald-600" />
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Absences non justifiées */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="bg-white rounded-2xl shadow-lg p-6 border border-red-100 hover:shadow-xl transition-all duration-300"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Non justifiées</p>
-                    <p className="text-3xl font-bold text-red-600">{stats.unjustified}</p>
-                  </div>
-                  <div className="p-4 bg-gradient-to-br from-red-100 to-pink-100 rounded-xl">
-                    <XCircle className="h-8 w-8 text-red-600" />
-                  </div>
-                </div>
-              </motion.div>
+              
+              <div className="flex items-center gap-4">
+                <motion.button
+                  whileHover={{ 
+                    scale: 1.1, 
+                    y: -5,
+                    rotate: [0, 2, -2, 0],
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowStats(!showStats)}
+                  animate={{ 
+                    boxShadow: [
+                      "0 10px 25px -5px rgba(59, 130, 246, 0.3)",
+                      "0 20px 40px -10px rgba(147, 51, 234, 0.4)",
+                      "0 10px 25px -5px rgba(59, 130, 246, 0.3)"
+                    ],
+                    scale: [1, 1.02, 1],
+                  }}
+                  transition={{ 
+                    boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                    scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="flex items-center gap-4 px-6 py-3 rounded-2xl font-bold transition-all duration-300 text-base shadow-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 hover:scale-105 hover:shadow-2xl"
+                >
+                  <motion.div
+                    animate={{ 
+                      rotate: [0, 10, 0, -10, 0],
+                      scale: [1, 1.1, 1],
+                    }}
+                    transition={{ 
+                      duration: 2, 
+                      repeat: Infinity, 
+                      ease: "easeInOut" 
+                    }}
+                  >
+                    <BarChart size={20} />
+                  </motion.div>
+                  {showStats ? 'Masquer' : 'Afficher'} les statistiques
+                </motion.button>
+                <motion.button
+                  whileHover={{ 
+                    scale: 1.1, 
+                    y: -5,
+                    rotate: [0, 2, -2, 0],
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={fetchAbsences}
+                  animate={{ 
+                    boxShadow: [
+                      "0 10px 25px -5px rgba(59, 130, 246, 0.3)",
+                      "0 20px 40px -10px rgba(147, 51, 234, 0.4)",
+                      "0 10px 25px -5px rgba(59, 130, 246, 0.3)"
+                    ],
+                    scale: [1, 1.02, 1],
+                  }}
+                  transition={{ 
+                    boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                    scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="flex items-center gap-4 px-6 py-3 rounded-2xl font-bold transition-all duration-300 text-base shadow-xl bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 hover:scale-105 hover:shadow-2xl"
+                >
+                  <motion.div
+                    animate={{ 
+                      rotate: [0, 10, 0, -10, 0],
+                      scale: [1, 1.1, 1],
+                    }}
+                    transition={{ 
+                      duration: 2, 
+                      repeat: Infinity, 
+                      ease: "easeInOut" 
+                    }}
+                  >
+                    <RefreshCw size={20} />
+                  </motion.div>
+                  Actualiser
+                </motion.button>
+              </div>
             </div>
+          </motion.div>
 
-            {/* Statistiques par matière */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200"
-            >
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                <BarChart className="h-6 w-6 text-blue-600" />
-                Détail par matière
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Object.entries(stats.bySubject).map(([subject, data], index) => {
-                  const status = getAbsenceStatus(data.hours);
-                  return (
+          {/* Statistiques - Animations ultra attractives */}
+          <AnimatePresence>
+            {showStats && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-8"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                  {[
+                    { 
+                      label: "Total absences", 
+                      count: stats.total, 
+                      color: "blue", 
+                      icon: "📅",
+                      bgColor: "bg-blue-100",
+                      textColor: "text-blue-600"
+                    },
+                    { 
+                      label: "Heures manquées", 
+                      count: `${stats.totalHours}h`, 
+                      color: "orange", 
+                      icon: "⏰",
+                      bgColor: "bg-orange-100",
+                      textColor: "text-orange-600"
+                    },
+                    { 
+                      label: "Justifiées", 
+                      count: stats.justified, 
+                      color: "green", 
+                      icon: "✅",
+                      bgColor: "bg-green-100",
+                      textColor: "text-green-600"
+                    },
+                    { 
+                      label: "Non justifiées", 
+                      count: stats.unjustified, 
+                      color: "red", 
+                      icon: "❌",
+                      bgColor: "bg-red-100",
+                      textColor: "text-red-600"
+                    }
+                  ].map((stat, index) => (
                     <motion.div
-                      key={subject}
+                      key={stat.label}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 * index }}
-                      className="p-6 rounded-xl border border-gray-100 hover:border-blue-200 transition-all duration-300 hover:shadow-lg bg-gradient-to-br from-gray-50 to-white"
+                      whileHover={{ 
+                        scale: 1.05, 
+                        y: -8,
+                        rotateY: [0, 5, 0],
+                        rotateX: [0, 3, 0],
+                      }}
+                      className="bg-white rounded-3xl shadow-2xl p-6 border-2 border-gray-200 hover:shadow-2xl transition-all duration-300"
                     >
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
-                          <BookOpen className="h-6 w-6 text-blue-600" />
-                        </div>
+                      <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="font-semibold text-gray-900 text-lg">{subject}</h4>
-                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
-                            <status.icon className="h-3 w-3" />
-                            {status.text}
-                          </span>
+                          <p className="text-sm font-medium text-gray-600">{stat.label}</p>
+                          <motion.p 
+                            className={`text-3xl font-bold ${stat.textColor}`}
+                            animate={{ 
+                              scale: [1, 1.02, 1],
+                              y: [0, -2, 0],
+                            }}
+                            transition={{ 
+                              duration: 3, 
+                              repeat: Infinity, 
+                              ease: "easeInOut",
+                              y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                            }}
+                          >
+                            {stat.count}
+                          </motion.p>
                         </div>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Total :</span>
-                          <span className="font-bold text-lg">{data.total}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Justifiées :</span>
-                          <span className="font-semibold text-emerald-600">{data.justified}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Non justifiées :</span>
-                          <span className="font-semibold text-red-600">{data.unjustified}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Heures :</span>
-                          <span className="font-bold text-orange-600">{data.hours}h</span>
-                        </div>
+                        <motion.div 
+                          className={`p-4 ${stat.bgColor} rounded-2xl`}
+                          whileHover={{ scale: 1.2, rotate: 15 }}
+                          animate={{ 
+                            scale: [1, 1.05, 1],
+                            rotate: [0, 8, 0, -8, 0],
+                          }}
+                          transition={{ 
+                            type: "spring", 
+                            stiffness: 300,
+                            scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                            rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                          }}
+                        >
+                          <motion.span 
+                            className="text-3xl"
+                            animate={{ 
+                              scale: [1, 1.1, 1],
+                              rotate: [0, 12, 0, -12, 0],
+                            }}
+                            transition={{ 
+                              scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                              rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                            }}
+                          >
+                            {stat.icon}
+                          </motion.span>
+                        </motion.div>
                       </div>
                     </motion.div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  ))}
+                </div>
 
-      {/* Filtres */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="mb-6 bg-white rounded-2xl shadow-lg p-6 border border-gray-200"
-      >
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Filter className="h-5 w-5 text-blue-600" />
-            <span className="text-gray-700 font-medium">Filtrer par :</span>
-          </div>
-          
-          <select
-            value={selectedPeriod}
-            onChange={(e) => setSelectedPeriod(e.target.value)}
-            className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-          >
-            <option value="all">Toutes les périodes</option>
-            <option value="month">Ce mois</option>
-            <option value="semester">Ce semestre</option>
-          </select>
-
-          <select
-            value={selectedSubject}
-            onChange={(e) => setSelectedSubject(e.target.value)}
-            className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-          >
-            <option value="all">Toutes les matières</option>
-            {Object.keys(stats.bySubject).map(subject => (
-              <option key={subject} value={subject}>{subject}</option>
-            ))}
-          </select>
-        </div>
-      </motion.div>
-
-      {/* Liste des absences */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
-        className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden"
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Date</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Matière</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Horaire</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Statut</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Justification</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAbsences.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="px-6 py-12 text-center">
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="text-gray-500"
-                    >
-                      <CheckCircle className="h-16 w-16 text-emerald-500 mx-auto mb-4" />
-                      <p className="text-lg font-medium text-gray-600">Aucune absence pour cette période</p>
-                      <p className="text-sm text-gray-500 mt-2">Continuez comme ça !</p>
-                    </motion.div>
-                  </td>
-                </tr>
-              ) : (
-                filteredAbsences.map((absence, index) => (
-                  <motion.tr
-                    key={absence._id || index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200"
+                {/* Statistiques par matière - Animations ultra attractives */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="bg-white rounded-3xl shadow-2xl p-8 border-2 border-gray-200"
+                >
+                  <motion.h3 
+                    className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3"
+                    animate={{ 
+                      scale: [1, 1.02, 1],
+                      y: [0, -2, 0],
+                    }}
+                    transition={{ 
+                      duration: 3, 
+                      repeat: Infinity, 
+                      ease: "easeInOut",
+                      y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                    }}
                   >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-blue-500" />
-                        <span className="font-semibold text-gray-900">{new Date(absence.date).toLocaleDateString()}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="h-4 w-4 text-indigo-500" />
-                        <span className="font-semibold text-gray-900">{absence.course?.nom || 'Non spécifiée'}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-orange-500" />
-                        <span className="font-medium">2h</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      {absence.justified ? (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
-                          <CheckCircle className="h-4 w-4" />
-                          Justifiée
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold bg-red-50 text-red-600 border border-red-200">
-                          <XCircle className="h-4 w-4" />
-                          Non justifiée
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Info className="h-4 w-4 text-gray-400" />
-                        <span className="text-gray-600">
-                          {absence.justification || 'Aucune justification fournie'}
-                        </span>
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </motion.div>
+                    <BarChart className="h-6 w-6 text-blue-600" />
+                    Détail par matière
+                  </motion.h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Object.entries(stats.bySubject).map(([subject, data], index) => {
+                      const status = getAbsenceStatus(data.hours);
+                      return (
+                        <motion.div
+                          key={subject}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 * index }}
+                          whileHover={{ 
+                            scale: 1.05, 
+                            y: -8,
+                            rotateY: [0, 5, 0],
+                            rotateX: [0, 3, 0],
+                          }}
+                          className="p-6 rounded-3xl border-2 border-gray-200 hover:border-blue-200 transition-all duration-300 hover:shadow-2xl bg-gradient-to-br from-gray-50 to-white"
+                        >
+                          <div className="flex items-center gap-3 mb-4">
+                            <motion.div 
+                              className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl"
+                              whileHover={{ scale: 1.2, rotate: 15 }}
+                              animate={{ 
+                                scale: [1, 1.05, 1],
+                                rotate: [0, 8, 0, -8, 0],
+                              }}
+                              transition={{ 
+                                type: "spring", 
+                                stiffness: 300,
+                                scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                                rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                              }}
+                            >
+                              <BookOpen className="h-6 w-6 text-blue-600" />
+                            </motion.div>
+                            <div>
+                              <h4 className="font-semibold text-gray-900 text-lg">{subject}</h4>
+                              <motion.span 
+                                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${status.color}`}
+                                whileHover={{ scale: 1.1, y: -2 }}
+                                animate={{ 
+                                  scale: [1, 1.02, 1],
+                                  y: [0, -1, 0],
+                                }}
+                                transition={{ 
+                                  duration: 3, 
+                                  repeat: Infinity, 
+                                  ease: "easeInOut",
+                                  y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                                }}
+                              >
+                                <status.icon className="h-3 w-3" />
+                                {status.text}
+                              </motion.span>
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-600">Total :</span>
+                              <span className="font-bold text-lg">{data.total}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-600">Justifiées :</span>
+                              <span className="font-semibold text-emerald-600">{data.justified}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-600">Non justifiées :</span>
+                              <span className="font-semibold text-red-600">{data.unjustified}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-600">Heures :</span>
+                              <span className="font-bold text-orange-600">{data.hours}h</span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Filtres - Animations ultra attractives */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="mb-6 bg-white rounded-3xl shadow-2xl p-6 border-2 border-gray-200"
+          >
+            <div className="flex flex-wrap items-center gap-4">
+              <motion.div 
+                className="flex items-center gap-2"
+                animate={{ 
+                  scale: [1, 1.02, 1],
+                  y: [0, -1, 0],
+                }}
+                transition={{ 
+                  duration: 3, 
+                  repeat: Infinity, 
+                  ease: "easeInOut",
+                  y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                }}
+              >
+                <Filter className="h-5 w-5 text-blue-600" />
+                <span className="text-gray-700 font-medium">Filtrer par :</span>
+              </motion.div>
+              
+              <select
+                value={selectedPeriod}
+                onChange={(e) => setSelectedPeriod(e.target.value)}
+                className="px-6 py-3 rounded-2xl border-2 border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-base font-medium"
+              >
+                <option value="all">Toutes les périodes</option>
+                <option value="month">Ce mois</option>
+                <option value="semester">Ce semestre</option>
+              </select>
+
+              <select
+                value={selectedSubject}
+                onChange={(e) => setSelectedSubject(e.target.value)}
+                className="px-6 py-3 rounded-2xl border-2 border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-base font-medium"
+              >
+                <option value="all">Toutes les matières</option>
+                {Object.keys(stats.bySubject).map(subject => (
+                  <option key={subject} value={subject}>{subject}</option>
+                ))}
+              </select>
+            </div>
+          </motion.div>
+
+          {/* Liste des absences - Animations ultra attractives */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+            className="bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden"
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+                    <th className="px-8 py-6 text-left text-base font-bold text-gray-700">Date</th>
+                    <th className="px-8 py-6 text-left text-base font-bold text-gray-700">Matière</th>
+                    <th className="px-8 py-6 text-left text-base font-bold text-gray-700">Horaire</th>
+                    <th className="px-8 py-6 text-left text-base font-bold text-gray-700">Statut</th>
+                    <th className="px-8 py-6 text-left text-base font-bold text-gray-700">Justification</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAbsences.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="px-8 py-16 text-center">
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="text-gray-500"
+                        >
+                          <motion.div
+                            animate={{ 
+                              scale: [1, 1.1, 1],
+                              rotate: [0, 5, -5, 0]
+                            }}
+                            transition={{ 
+                              scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                              rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                            }}
+                            className="w-20 h-20 mx-auto mb-6 p-4 rounded-full bg-green-100"
+                          >
+                            <CheckCircle className="text-green-600" size={48} />
+                          </motion.div>
+                          <p className="text-xl font-medium text-gray-600">
+                            Aucune absence pour cette période
+                          </p>
+                          <p className="text-gray-500">
+                            Continuez comme ça !
+                          </p>
+                        </motion.div>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredAbsences.map((absence, index) => (
+                      <motion.tr
+                        key={absence._id || index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        whileHover={{ 
+                          scale: 1.01, 
+                          y: -2,
+                          rotateY: [0, 1, 0],
+                        }}
+                        className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200"
+                      >
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-5 w-5 text-blue-500" />
+                            <span className="font-semibold text-gray-900">{new Date(absence.date).toLocaleDateString()}</span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-2">
+                            <BookOpen className="h-5 w-5 text-indigo-500" />
+                            <span className="font-semibold text-gray-900">{absence.course?.nom || 'Non spécifiée'}</span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-5 w-5 text-orange-500" />
+                            <span className="font-medium">2h</span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          {absence.justified ? (
+                            <span className="inline-flex items-center gap-1 px-4 py-2 rounded-2xl text-base font-bold bg-emerald-50 text-emerald-600 border-2 border-emerald-200">
+                              <CheckCircle className="h-5 w-5" />
+                              Justifiée
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-4 py-2 rounded-2xl text-base font-bold bg-red-50 text-red-600 border-2 border-red-200">
+                              <XCircle className="h-5 w-5" />
+                              Non justifiée
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-2">
+                            <Info className="h-5 w-5 text-gray-400" />
+                            <span className="text-gray-600">
+                              {absence.justification || 'Aucune justification fournie'}
+                            </span>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 };

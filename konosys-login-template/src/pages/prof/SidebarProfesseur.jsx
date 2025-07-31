@@ -99,20 +99,12 @@ const SidebarProfesseur = () => {
 
   const menuItems = [
     { 
-      id: "accueil", 
-      icon: Home, 
-      label: "Accueil", 
-      path: "/prof", 
-      description: "Tableau de bord principal",
-      color: "from-blue-500 to-blue-600"
-    },
-    { 
       id: "dashboard", 
       icon: BarChart3, 
       label: "Dashboard", 
       path: "/prof/dashboard", 
       description: "Vue d'ensemble complète",
-      color: "from-blue-600 to-blue-700"
+      color: "from-blue-700 to-blue-800"
     },
     { 
       id: "cours", 
@@ -120,7 +112,7 @@ const SidebarProfesseur = () => {
       label: "Mes cours", 
       path: "/prof/cours", 
       description: "Gestion des cours",
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-600 to-blue-700"
     },
     { 
       id: "notes", 
@@ -128,15 +120,15 @@ const SidebarProfesseur = () => {
       label: "Notes", 
       path: "/prof/notes", 
       description: "Évaluation des élèves",
-      color: "from-blue-600 to-blue-700"
+      color: "from-blue-700 to-blue-800"
     },
     { 
       id: "absences", 
-      icon: Clock, 
+      icon: UserCheck, 
       label: "Absences", 
       path: "/prof/absences", 
       description: "Suivi des présences",
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-600 to-blue-700"
     },
     { 
       id: "planning", 
@@ -144,15 +136,15 @@ const SidebarProfesseur = () => {
       label: "Planning", 
       path: "/prof/planning", 
       description: "Emploi du temps",
-      color: "from-blue-600 to-blue-700"
+      color: "from-blue-700 to-blue-800"
     },
     { 
       id: "documents", 
-      icon: FileSpreadsheet, 
+      icon: FileCheck, 
       label: "Documents", 
       path: "/prof/documents", 
       description: "Ressources pédagogiques",
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-600 to-blue-700"
     },
     { 
       id: "rappels", 
@@ -160,7 +152,7 @@ const SidebarProfesseur = () => {
       label: "Rappels", 
       path: "/prof/rappels", 
       description: "Notifications importantes",
-      color: "from-blue-600 to-blue-700"
+      color: "from-blue-700 to-blue-800"
     },
     { 
       id: "rappels-faits", 
@@ -168,7 +160,7 @@ const SidebarProfesseur = () => {
       label: "Rappels faits", 
       path: "/prof/rappels/1/faits", 
       description: "Historique des rappels",
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-600 to-blue-700"
     },
     { 
       id: "demandes", 
@@ -176,15 +168,15 @@ const SidebarProfesseur = () => {
       label: "Demandes", 
       path: "/prof/demandes", 
       description: "Communications",
-      color: "from-blue-600 to-blue-700"
+      color: "from-blue-700 to-blue-800"
     },
     { 
       id: "profil", 
-      icon: UserCheck, 
+      icon: UserCog, 
       label: "Profil", 
       path: "/prof/profil", 
       description: "Informations personnelles",
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-600 to-blue-700"
     },
     { 
       id: "parametres", 
@@ -192,7 +184,7 @@ const SidebarProfesseur = () => {
       label: "Paramètres", 
       path: "/prof/parametres", 
       description: "Configuration",
-      color: "from-blue-600 to-blue-700"
+      color: "from-blue-700 to-blue-800"
     }
   ];
 
@@ -201,25 +193,25 @@ const SidebarProfesseur = () => {
       icon: BookOpen, 
       label: "Cours", 
       value: dashboardData?.totalCourses || "8", 
-      color: "from-blue-500 to-blue-600" 
+      color: "from-blue-600 to-blue-700" 
     },
     { 
       icon: Users, 
       label: "Élèves", 
       value: dashboardData?.totalStudents || "156", 
-      color: "from-blue-600 to-blue-700" 
+      color: "from-blue-700 to-blue-800" 
     },
     { 
       icon: Award, 
       label: "Moyenne", 
       value: dashboardData?.averageGrade ? `${dashboardData.averageGrade.toFixed(1)}` : "15.2", 
-      color: "from-blue-500 to-blue-600" 
+      color: "from-blue-600 to-blue-700" 
     },
     { 
       icon: TrendingUp, 
       label: "Progression", 
       value: dashboardData?.attendanceRate ? `${dashboardData.attendanceRate}%` : "87%", 
-      color: "from-blue-600 to-blue-700" 
+      color: "from-blue-700 to-blue-800" 
     }
   ];
 
@@ -259,8 +251,8 @@ const SidebarProfesseur = () => {
           isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
-        {/* Header avec Logo - Même hauteur que navbar */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-600 to-blue-700">
+        {/* Header avec Logo - Hauteur agrandie */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-800 to-blue-900">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white shadow-xl border-2 border-white/30 flex items-center justify-center overflow-hidden">
@@ -274,11 +266,11 @@ const SidebarProfesseur = () => {
               {!isCollapsed && (
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-bold text-white">LEARNUP</h1>
-                  <p className="text-xs text-white/90">Espace Professeur</p>
+                  <p className="text-sm text-white/90">Espace Professeur</p>
                   <div className="flex items-center gap-1 mt-1">
-                    <Crown className="w-3 h-3 text-yellow-300" />
-                    <span className="text-xs text-yellow-200 font-bold">Premium</span>
-                    <Sparkles className="w-3 h-3 text-white" />
+                    <Crown className="w-4 h-4 text-yellow-300" />
+                    <span className="text-sm text-yellow-200 font-bold">Premium</span>
+                    <Sparkles className="w-4 h-4 text-white" />
                   </div>
                 </div>
               )}
@@ -312,14 +304,14 @@ const SidebarProfesseur = () => {
         </div>
 
         {/* User Info */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <div className="p-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
           <div className="flex items-center gap-3">
             <motion.div 
-              className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-xl"
+              className="w-14 h-14 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-xl"
               whileHover={{ scale: 1.1, rotate: 360 }}
               transition={{ type: "spring", stiffness: 200 }}
             >
-              <User className="w-6 h-6 text-white" />
+              <GraduationCap className="w-7 h-7 text-white" />
             </motion.div>
             {!isCollapsed && (
               <div className="flex-1">
@@ -352,15 +344,19 @@ const SidebarProfesseur = () => {
                 }`}
               >
                 <motion.div 
-                  className={`p-2 rounded-lg ${
+                  className={`p-3 rounded-xl ${
                     activeItem === item.id 
-                      ? 'bg-white/20 shadow-lg' 
-                      : 'bg-white shadow-md'
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 shadow-xl' 
+                      : 'bg-gradient-to-r from-gray-100 to-gray-200 shadow-lg'
                   }`}
-                  whileHover={{ scale: 1.15, rotate: 8 }}
+                  whileHover={{ scale: 1.2, rotate: 12 }}
                   transition={{ type: "spring", stiffness: 200 }}
                 >
-                  <item.icon className="w-5 h-5" />
+                  <item.icon className={`w-7 h-7 ${
+                    activeItem === item.id 
+                      ? 'text-white' 
+                      : 'text-blue-700'
+                  }`} />
                 </motion.div>
                 {!isCollapsed && (
                   <div className="flex-1 text-left">
@@ -375,13 +371,13 @@ const SidebarProfesseur = () => {
 
         {/* Quick Stats */}
         {!isCollapsed && (
-          <div className="p-3 border-t border-gray-200 dark:border-gray-700">
-            <div className="rounded-2xl shadow-xl bg-gradient-to-r from-blue-500 to-blue-600 p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <BarChart3 className="w-5 h-5 text-white" />
-                <h3 className="text-sm font-bold text-white">Statistiques rapides</h3>
-                <Sparkles className="w-4 h-4 text-white animate-pulse" />
-              </div>
+          <div className="p-5 border-t border-gray-200 dark:border-gray-700">
+                          <div className="rounded-2xl shadow-xl bg-gradient-to-r from-blue-700 to-blue-800 p-6">
+                          <div className="flex items-center gap-2 mb-3">
+              <BarChart3 className="w-6 h-6 text-white" />
+              <h3 className="text-sm font-bold text-white">Statistiques rapides</h3>
+              <Sparkles className="w-5 h-5 text-white animate-pulse" />
+            </div>
               <div className="grid grid-cols-2 gap-2">
                 {quickStats.map((stat, index) => (
                   <motion.div
@@ -392,8 +388,8 @@ const SidebarProfesseur = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className={`p-1.5 rounded-lg bg-white/20`}>
-                          <stat.icon className="w-4 h-4 text-white" />
+                        <div className={`p-2 rounded-lg bg-white/20`}>
+                          <stat.icon className="w-5 h-5 text-white" />
                         </div>
                         <span className="text-xs font-bold text-white">{stat.label}</span>
                       </div>
@@ -411,7 +407,7 @@ const SidebarProfesseur = () => {
         )}
 
         {/* Footer */}
-        <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <div className="p-5 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
           <div className="space-y-2">
             {/* Dark Mode Toggle */}
             <motion.button
@@ -422,16 +418,16 @@ const SidebarProfesseur = () => {
             >
               {darkMode ? (
                 <>
-                  <div className="w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
-                    <Sun className="w-3 h-3 text-white" />
-                  </div>
+                                <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
+                <Sun className="w-5 h-5 text-white" />
+              </div>
                   {!isCollapsed && <span className="text-xs font-bold">Mode Clair</span>}
                 </>
               ) : (
                 <>
-                  <div className="w-6 h-6 bg-gradient-to-r from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
-                    <Moon className="w-3 h-3 text-white" />
-                  </div>
+                                <div className="w-8 h-8 bg-gradient-to-r from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
+                <Moon className="w-5 h-5 text-white" />
+              </div>
                   {!isCollapsed && <span className="text-xs font-bold">Mode Sombre</span>}
                 </>
               )}
@@ -444,7 +440,7 @@ const SidebarProfesseur = () => {
               onClick={() => handleNavigation("/prof/parametres", "parametres")}
               className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-900 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 shadow-lg"
             >
-              <Settings2 className="w-5 h-5" />
+              <Settings2 className="w-7 h-7" />
               {!isCollapsed && <span className="text-xs font-bold">Paramètres</span>}
             </motion.button>
 
@@ -455,7 +451,7 @@ const SidebarProfesseur = () => {
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300 shadow-lg"
             >
-              <Power className="w-5 h-5" />
+              <Power className="w-7 h-7" />
               {!isCollapsed && <span className="text-xs font-bold">Déconnexion</span>}
             </motion.button>
           </div>

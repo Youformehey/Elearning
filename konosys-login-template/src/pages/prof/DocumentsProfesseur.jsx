@@ -221,135 +221,199 @@ export default function DocumentsProfesseur() {
   };
 
     return (
-    <div className="min-h-screen bg-gradient-to-tr from-[#edf3ff] to-[#f9fcff] overflow-hidden text-gray-800">
-      
-      {/* Header ultra-moderne avec effets 3D */}
-      <motion.div 
-        className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-8 px-10 shadow-2xl relative overflow-hidden"
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 100, damping: 20 }}
-      >
-        {/* Effet de brillance amélioré */}
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
-          animate={{ x: [-200, 400] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Animated background elements - Animations ultra attractives */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute top-20 left-10 w-16 h-16 sm:w-20 sm:h-20 bg-blue-100 rounded-full"
+          animate={{ 
+            y: [0, -20, 0],
+            rotate: [0, 180, 360],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
         />
-        
-        {/* Effet de particules */}
-        <motion.div 
-          className="absolute inset-0 opacity-30"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        <motion.div
+          className="absolute top-40 right-20 w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full"
+          animate={{ 
+            y: [0, 20, 0],
+            scale: [1, 1.2, 1],
+            rotate: [0, -180, -360],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute bottom-20 left-1/4 w-8 h-8 sm:w-12 sm:h-12 bg-purple-100 rounded-full"
+          animate={{ 
+            x: [0, 30, 0],
+            rotate: [0, 90, 180, 270, 360],
+            scale: [1, 1.15, 1],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute top-1/4 right-1/4 w-10 h-10 bg-pink-100 rounded-full"
+          animate={{ 
+            x: [0, -20, 0],
+            y: [0, 15, 0],
+            scale: [1, 1.1, 1],
+            rotate: [0, -90, -180, -270, -360],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+
+      {/* Floating decorative elements - Animations ultra attractives */}
+      <motion.div
+        className="absolute top-16 right-16 text-blue-400"
+        animate={{ 
+          rotate: 360,
+          scale: [1, 1.3, 1],
+          y: [0, -10, 0],
+          x: [0, 5, 0],
+        }}
+        transition={{ 
+          duration: 15, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <FileText size={32} />
+      </motion.div>
+      <motion.div
+        className="absolute bottom-16 left-16 text-green-400"
+        animate={{ 
+          rotate: -360,
+          scale: [1, 1.2, 1],
+          y: [0, 10, 0],
+          x: [0, -5, 0],
+        }}
+        transition={{ 
+          duration: 20, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <BookOpen size={28} />
+      </motion.div>
+      <motion.div
+        className="absolute top-1/2 left-1/2 text-purple-400"
+        animate={{ 
+          rotate: 360,
+          scale: [1, 1.4, 1],
+          y: [0, -15, 0],
+          x: [0, 10, 0],
+        }}
+        transition={{ 
+          duration: 18, 
+          repeat: Infinity, 
+          ease: "linear",
+          scale: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+          y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          x: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <FolderPlus size={24} />
+      </motion.div>
+
+      <div className="relative z-10 py-8 px-6">
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-7xl mx-auto"
         >
-          <div className="absolute top-4 left-1/4 w-2 h-2 bg-white rounded-full" />
-          <div className="absolute top-8 right-1/3 w-1 h-1 bg-white rounded-full" />
-          <div className="absolute bottom-6 left-1/2 w-1.5 h-1.5 bg-white rounded-full" />
-        </motion.div>
-        
-        <div className="max-w-7xl mx-auto relative z-10">
+          {/* Header avec animations ultra attractives */}
           <motion.div
-            className="flex flex-col lg:flex-row items-center justify-between gap-10"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="text-center mb-12"
           >
-            {/* Titre et icône avec effets 3D */}
-            <motion.div 
-              className="flex items-center gap-8"
-              whileHover={{ scale: 1.02 }}
+            <motion.div
+              className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
             >
-              <motion.div 
-                className="p-5 bg-white/25 backdrop-blur-md rounded-3xl shadow-2xl border border-white/30 relative overflow-hidden"
-                whileHover={{ scale: 1.2, rotate: 15, y: -10 }}
-                whileTap={{ scale: 0.95 }}
+              <motion.div
+                className="p-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl shadow-2xl"
+                whileHover={{ scale: 1.2, rotate: 15 }}
                 animate={{ 
-                  y: [0, -8, 0],
-                  rotate: [0, 2, -2, 0]
+                  boxShadow: [
+                    "0 25px 50px -12px rgba(59, 130, 246, 0.25)",
+                    "0 25px 50px -12px rgba(147, 51, 234, 0.25)",
+                    "0 25px 50px -12px rgba(59, 130, 246, 0.25)"
+                  ],
+                  scale: [1, 1.05, 1],
+                  rotate: [0, 5, 0, -5, 0],
                 }}
                 transition={{ 
                   type: "spring", 
                   stiffness: 300,
-                  y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                  rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                  scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
                 }}
               >
-                {/* Effet de brillance sur l'icône */}
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                  animate={{ x: [-50, 50] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                />
-                <FolderPlus className="w-12 h-12 text-white relative z-10" />
-              </motion.div>
-              <div>
-                <motion.h1 
-                  className="text-5xl md:text-6xl font-bold text-white mb-3 bg-gradient-to-r from-white to-blue-100 bg-clip-text"
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
+                <motion.span 
+                  className="text-6xl"
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    rotate: [0, 10, 0, -10, 0],
+                  }}
+                  transition={{ 
+                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  }}
                 >
-                  Documents de Cours
+                  📄
+                </motion.span>
+              </motion.div>
+              <div className="text-center sm:text-left">
+                <motion.h1 
+                  className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                  animate={{ 
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                    scale: [1, 1.02, 1],
+                    y: [0, -3, 0],
+                  }}
+                  transition={{ 
+                    duration: 6, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                    y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  📄 Documents de Cours ✨
                 </motion.h1>
                 <motion.p 
-                  className="text-blue-100 font-medium text-xl"
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
+                  className="text-xl sm:text-2xl font-medium text-gray-700"
+                  animate={{ 
+                    opacity: [0.8, 1, 0.8],
+                    scale: [1, 1.01, 1],
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                  }}
                 >
-                  Gestion des ressources pédagogiques
+                  🌟 Gestion des ressources pédagogiques !
                 </motion.p>
               </div>
             </motion.div>
-            
-            {/* Statistiques avec effets 3D */}
-            <motion.div 
-              className="flex items-center gap-10"
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <motion.div 
-                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
-                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -3, 0] }}
-                transition={{ 
-                  y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                }}
-              >
-                <div className="text-4xl font-bold text-white mb-1">{courses.length}</div>
-                <div className="text-blue-100 text-sm font-medium">Cours</div>
-              </motion.div>
-              <motion.div 
-                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
-                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -3, 0] }}
-                transition={{ 
-                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
-                }}
-              >
-                <div className="text-4xl font-bold text-white mb-1">{documents.length}</div>
-                <div className="text-blue-100 text-sm font-medium">Documents</div>
-              </motion.div>
-              <motion.div 
-                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
-                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -3, 0] }}
-                transition={{ 
-                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }
-                }}
-              >
-                <div className="text-4xl font-bold text-white mb-1">{selectedCourse ? documents.filter(d => d.course === selectedCourse).length : 0}</div>
-                <div className="text-blue-100 text-sm font-medium">Sélectionné</div>
-              </motion.div>
-            </motion.div>
           </motion.div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
 
       {/* Messages de notification */}
       <AnimatePresence>
