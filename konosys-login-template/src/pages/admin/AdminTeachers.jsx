@@ -209,6 +209,8 @@ const AdminTeachers = () => {
       console.log('🔄 Suppression du professeur:', id);
       
       const token = localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTk5YzY5YzY5YzY5YzY5YzY5YzY5YyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNDY5NzIwMCwiZXhwIjoxNzA0NzgzNjAwfQ.example';
+      // const token = localStorage.getItem('token');
+      console.log('🔑 Token JWT :', token);
       const config = {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -771,7 +773,7 @@ const AdminTeachers = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => handleDeleteTeacher(editingTeacher.id)}
+                    onClick={() => handleDeleteTeacher(editingTeacher._id)}
                     className="flex-1 bg-red-500 text-white py-3 rounded-xl font-medium"
                   >
                     Supprimer

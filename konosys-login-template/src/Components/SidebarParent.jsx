@@ -621,9 +621,9 @@ export default function SidebarParent() {
           ))}
         </div>
 
-          {/* Quick Actions */}
+          {/* Quick Actions - Compact & Responsive */}
           {!isCollapsed && (
-            <motion.div 
+            <motion.div
               className="p-4 border-t border-gray-200/50 dark:border-gray-700/50"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -632,7 +632,7 @@ export default function SidebarParent() {
               <h3 className={`font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                 Actions rapides
               </h3>
-              <div className="space-y-2">
+              <div className="flex flex-wrap gap-2">
                 {quickActions.map((action, index) => (
                   <motion.button
                     key={action.label}
@@ -640,26 +640,25 @@ export default function SidebarParent() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.6 + index * 0.1 }}
-                    whileHover={{ scale: 1.02, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${action.bgColor} ${action.darkBgColor} border ${
+                    whileHover={{ scale: 1.05, y: -1 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`flex items-center gap-2 px-2 py-1 rounded-md text-xs font-medium transition-all duration-200 ${action.bgColor} ${action.darkBgColor} border ${
                       darkMode ? 'border-gray-700/50' : 'border-gray-200/50'
-                    }`}
+                    } min-w-[110px] sm:min-w-[90px]`}
+                    style={{ flex: "1 1 45%", maxWidth: "48%" }}
                   >
-                    <div className={`p-2 rounded-lg bg-gradient-to-r ${action.color}`}>
+                    <span className={`p-1 rounded bg-gradient-to-r ${action.color}`}>
                       <action.icon className="w-4 h-4 text-white" />
-                    </div>
-                    <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    </span>
+                    <span className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} truncate`}>
                       {action.label}
                     </span>
                   </motion.button>
                 ))}
-      </div>
+              </div>
             </motion.div>
           )}
-
-          {/* Children Statistics */}
-      {!isCollapsed && (
+      {/* {!isCollapsed && (
             <motion.div 
               className="p-4 border-t border-gray-200/50 dark:border-gray-700/50"
               initial={{ opacity: 0, y: 20 }}
@@ -703,7 +702,7 @@ export default function SidebarParent() {
               ))}
             </div>
             </motion.div>
-          )}
+          )} */}
 
           {/* Bottom Actions */}
           <div className="p-4 border-t border-gray-200/50 dark:border-gray-700/50">

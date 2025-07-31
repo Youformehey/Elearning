@@ -555,7 +555,7 @@ export default function SidebarAdmin() {
             </motion.div>
           )}
 
-          {/* System Statistics */}
+          {/* System Statistics
           {!isCollapsed && (
             <motion.div 
               className="p-4 border-t border-gray-200/50 dark:border-gray-700/50"
@@ -600,7 +600,7 @@ export default function SidebarAdmin() {
                 ))}
               </div>
             </motion.div>
-          )}
+          )} */}
 
           {/* Bottom Actions */}
           <div className="p-4 border-t border-gray-200/50 dark:border-gray-700/50">

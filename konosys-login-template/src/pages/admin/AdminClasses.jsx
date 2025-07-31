@@ -925,11 +925,12 @@ const AdminClasses = () => {
                   <select
                     value={newClass.professeurPrincipal}
                     onChange={(e) => setNewClass({...newClass, professeurPrincipal: e.target.value})}
-                    className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                   >
                     <option value="">Sélectionner un professeur</option>
                     {teachers.map(teacher => (
-                      <option key={teacher._id} value={teacher.name}>{teacher.name}</option>
+                      <option key={teacher._id} value={teacher._id}>
+                        {teacher.name}
+                      </option>
                     ))}
                   </select>
                 </div>
