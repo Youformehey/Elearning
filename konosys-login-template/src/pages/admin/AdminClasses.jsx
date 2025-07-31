@@ -71,33 +71,38 @@ const AdminClasses = () => {
         setStudents(studentsResponse.data);
         
         // Transform class names into class objects with additional data
-        const classObjects = classesResponse.data.map((className, index) => {
-          const classStudents = studentsResponse.data.filter(student => student.classe === className);
-          const classTeacher = teachersResponse.data.find(teacher => 
-            teacher.matieres && teacher.matieres.some(matiere => 
-              classStudents.some(student => student.classe === className)
-            )
-          );
-          
-          return {
-            _id: index + 1, // Generate ID since backend only returns strings
-            nom: className,
-            niveau: className.includes('ème') ? className.split('ème')[0] + 'ème' : 
-                   className.includes('ère') ? className.split('ère')[0] + 'ère' : 
-                   className.includes('nde') ? className.split('nde')[0] + 'nde' : 
-                   className.includes('inale') ? className.split('inale')[0] + 'inale' : className,
-            effectif: classStudents.length,
-            professeurPrincipal: classTeacher ? classTeacher.name : 'Non assigné',
-            status: 'active',
-            currentStudents: classStudents.length,
-            capacity: 30,
-            averageGrade: 'N/A',
-            attendance: 95,
-            schedule: 'À définir',
-            room: 'À définir',
-            subject: 'Matières générales'
-          };
-        });
+        const classObjects = classesResponse.data.map((item, index) => {
+  // 1) récupère toujours le nom sous forme de string
+  const className = typeof item === 'string' ? item : item.nom || '';
+  // 2) récupère l’ID si c’est un objet, sinon génère-en un de secours
+  const id = typeof item === 'object' && item._id ? item._id : index + 1;
+
+  // 3) calcule les élèves
+  const classStudents = studentsResponse.data.filter(s => s.classe === className);
+
+  // 4) récupère le prof principal (ici on cherche son _id si stocké, sinon on prend le premier qui matche)
+  const profObj = (typeof item === 'object' && item.professeurPrincipal)
+    ? teachersResponse.data.find(t => t._id === item.professeurPrincipal)
+    : null;
+
+  return {
+    _id: id,
+    nom: className,
+    // plus simple que bouts de split('ème')…
+    niveau: className.split(' ')[0],
+    section: className.split(' ')[1] || '',
+    effectif: classStudents.length,
+    professeurPrincipal: profObj ? profObj.name : 'Non assigné',
+    status: 'active',
+    currentStudents: classStudents.length,
+    capacity: 30,
+    averageGrade: 'N/A',
+    attendance: 95,
+    schedule: 'À définir',
+    room: 'À définir',
+    subject: 'Matières générales'
+  };
+});
         
         setClasses(classObjects);
         setFilteredClasses(classObjects);
