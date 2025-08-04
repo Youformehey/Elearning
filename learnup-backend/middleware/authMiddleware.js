@@ -34,12 +34,16 @@ const protect = async (req, res, next) => {
     
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Gérer les différents formats d'ID dans le token
-    const id = decoded._id || decoded.id || decoded.userId;
-    const role = decoded.role ? decoded.role.toLowerCase() : 'admin'; // Par défaut admin si pas de rôle (TOTALEMENT FAUX )
-  
+    // Sécurité : vérifie que le rôle est bien présent dans le token
+    if (!decoded.role) {
+      console.error('❌ Token invalide : rôle manquant');
+      return res.status(403).json({ message: "Token invalide : rôle utilisateur manquant." });
+    }
 
-    console.log('🔍 Token décodé:', { id, role, decoded });
+    const id = decoded._id || decoded.id || decoded.userId;
+    const role = decoded.role.toLowerCase();
+
+    console.log('🔍 Token décodé:', { id, role });
 
     const Model = roleModelMap[role];
     if (!Model) {
@@ -67,6 +71,10 @@ const protect = async (req, res, next) => {
 const authorizeRoles = (...allowedRoles) => {
   return (req, res, next) => {
     if (!req.user || !allowedRoles.includes(req.user.role)) {
+      console.warn('⛔ Accès refusé :', {
+        userRole: req.user?.role,
+        allowed: allowedRoles
+      });
       return res.status(403).json({ message: "Accès refusé : rôle insuffisant." });
     }
     next();

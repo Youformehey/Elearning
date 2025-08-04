@@ -55,125 +55,62 @@ export default function HomeNavbar({ userName = "Professeur" }) {
     <motion.header 
       className={`fixed top-0 left-0 right-0 z-[999998] transition-all duration-500 ${
         isScrolled 
-          ? 'bg-blue-800/95 shadow-xl border-b border-blue-700' 
-          : 'bg-gradient-to-r from-blue-800 to-blue-900 backdrop-blur-md'
+          ? 'bg-gradient-to-r from-blue-50/80 via-white/80 to-blue-100/80 dark:from-gray-900/90 dark:via-gray-900/80 dark:to-gray-800/80 shadow-lg'
+          : 'bg-gradient-to-r from-blue-50/60 via-white/60 to-blue-100/60 dark:from-gray-900/80 dark:via-gray-900/60 dark:to-gray-800/60 backdrop-blur-xl'
       }`}
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: "spring", stiffness: 100 }}
-      style={{ marginLeft: '320px', height: '140px' }}
+      style={{ marginLeft: '320px', height: '90px' }}
     >
-      {/* Barre de progression animée en haut */}
-      <motion.div
-        className="absolute top-0 left-0 h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600"
-        initial={{ width: 0 }}
-        animate={{ width: "100%" }}
-        transition={{ duration: 3, ease: "easeOut" }}
-      />
-
       <div className="flex items-center justify-between px-8 h-full">
-        {/* Section gauche - Barre de recherche */}
+        {/* Barre de recherche stylée */}
         <motion.div 
           className="flex-1 max-w-md"
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <motion.div 
-            className="relative group"
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            {/* Effet de brillance */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-2xl"
-              animate={{
-                x: ["-100%", "100%"]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
-            
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-400 dark:text-blue-300" />
             <input
               type="text"
-              placeholder="Rechercher cours, élèves..."
-              className="w-full pl-12 pr-16 py-4 rounded-2xl border-2 border-white/30 focus:border-white focus:ring-4 focus:ring-white/50 transition-all duration-300 bg-white/20 backdrop-blur-sm shadow-xl text-white placeholder-white/70"
+              placeholder="Rechercher..."
+              className="w-full pl-12 pr-4 py-3 rounded-2xl border-none bg-gradient-to-r from-blue-100/60 via-white/60 to-blue-200/60 dark:from-gray-800/80 dark:via-gray-900/80 dark:to-gray-800/80 text-gray-700 dark:text-gray-200 placeholder-blue-400 dark:placeholder-blue-300 shadow-lg focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900 transition-all duration-200"
             />
-            <motion.div
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-700 rounded-xl flex items-center justify-center shadow-lg cursor-pointer"
-              whileHover={{ scale: 1.1, rotate: 90 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <Search className="w-4 h-4 text-white" />
-            </motion.div>
-          </motion.div>
+          </div>
         </motion.div>
 
-        {/* Section droite - Actions modernes */}
+        {/* Actions à droite */}
         <nav className="flex items-center gap-4">
           {/* Notifications */}
-          <div className="relative z-[999999]" ref={notifRef}>
+          <div className="relative" ref={notifRef}>
             <motion.button
               onClick={() => setNotifOpen((o) => !o)}
               aria-label="Afficher les notifications"
-              className="relative p-5 rounded-xl bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 shadow-lg border border-white/30"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
+              className="p-3 rounded-2xl bg-gradient-to-r from-blue-100/70 to-blue-300/70 dark:from-gray-800/80 dark:to-gray-900/80 text-blue-700 dark:text-blue-200 shadow-lg hover:shadow-xl transition-all duration-200 relative"
+              whileHover={{ scale: 1.07 }}
+              whileTap={{ scale: 0.97 }}
             >
-              <Bell className="text-white" size={26} />
-              
-              {/* Badge de notification animé */}
-              <motion.span 
-                className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center text-xs font-bold text-white shadow-lg"
-                animate={{ 
-                  scale: [1, 1.2, 1],
-                  boxShadow: ["0 0 0 0 rgba(239, 68, 68, 0.7)", "0 0 0 8px rgba(239, 68, 68, 0)", "0 0 0 0 rgba(239, 68, 68, 0)"]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                3
-              </motion.span>
+              <Bell size={22} />
+              <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-bold border-2 border-white shadow-md">3</span>
             </motion.button>
-
             <AnimatePresence>
               {notifOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: -20, scale: 0.9 }}
+                  initial={{ opacity: 0, y: -10, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                  transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
-                  className="absolute right-0 mt-4 w-96 border rounded-2xl shadow-2xl p-6 z-[999999] bg-white/95 backdrop-blur-md border-white/30"
+                  exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 mt-3 w-80 rounded-2xl shadow-2xl p-4 bg-gradient-to-br from-blue-50/90 to-blue-200/90 dark:from-gray-900/90 dark:to-gray-800/90"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <motion.h3 
-                      className="text-lg font-bold flex items-center gap-2 text-gray-800"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                    >
-                      <Bell className="w-5 h-5 text-blue-600" />
-                      📌 Mes Rappels
-                      <motion.div
-                        animate={{ rotate: [0, 10, -10, 0] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      >
-                        <Sparkles className="w-4 h-4 text-yellow-500" />
-                      </motion.div>
-                    </motion.h3>
-                    <motion.button
-                      onClick={() => setNotifOpen(false)}
-                      className="p-2 hover:bg-red-100 rounded-full transition-colors"
-                      whileHover={{ scale: 1.1, rotate: 90 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <X className="w-4 h-4 text-red-500" />
-                    </motion.button>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-blue-700 dark:text-blue-200">Rappels</span>
+                    <button onClick={() => setNotifOpen(false)} className="p-1 rounded hover:bg-blue-100 dark:hover:bg-gray-800">
+                      <X size={16} className="text-blue-400 dark:text-blue-200" />
+                    </button>
                   </div>
-                  <div className="max-h-80 overflow-y-auto">
+                  <div className="max-h-60 overflow-y-auto">
                     <NotificationRappels />
                   </div>
                 </motion.div>
@@ -184,51 +121,32 @@ export default function HomeNavbar({ userName = "Professeur" }) {
           {/* Dark Mode Toggle */}
           <motion.button
             onClick={toggleDarkMode}
-            className="flex items-center gap-3 px-5 py-5 rounded-xl font-medium text-sm transition-all duration-300 shadow-lg border border-white/30 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white"
-            whileHover={{ scale: 1.05, rotate: 5 }}
-            whileTap={{ scale: 0.95 }}
+            className="p-3 rounded-2xl bg-gradient-to-r from-yellow-100/70 to-yellow-300/70 dark:from-gray-800/80 dark:to-gray-900/80 text-yellow-700 dark:text-yellow-200 shadow-lg hover:shadow-xl transition-all duration-200"
+            whileHover={{ scale: 1.07 }}
+            whileTap={{ scale: 0.97 }}
             title={darkMode ? "Passer en mode clair" : "Passer en mode sombre"}
           >
-            {darkMode ? <Sun size={24} /> : <Moon size={24} />}
-            <span className="hidden sm:inline">{darkMode ? "Clair" : "Sombre"}</span>
+            {darkMode ? <Sun size={22} /> : <Moon size={22} />}
           </motion.button>
 
-          {/* Settings - En bleu */}
+          {/* Settings */}
           <motion.button
             onClick={goToSettings}
-            className="flex items-center gap-3 px-5 py-5 rounded-xl font-medium transition-all duration-300 shadow-lg border border-white/30 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
+            className="p-3 rounded-2xl bg-gradient-to-r from-blue-100/70 to-blue-300/70 dark:from-gray-800/80 dark:to-gray-900/80 text-blue-700 dark:text-blue-200 shadow-lg hover:shadow-xl transition-all duration-200"
+            whileHover={{ scale: 1.07 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <motion.div
-              whileHover={{ rotate: 180 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <Settings size={24} />
-            </motion.div>
-            <span className="hidden sm:inline">Paramètres</span>
+            <Settings size={22} />
           </motion.button>
 
-          {/* Logout - Déplacé à droite */}
+          {/* Logout */}
           <motion.button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-5 py-5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium transition-all duration-300 shadow-xl group"
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
+            className="p-3 rounded-2xl bg-gradient-to-r from-red-100/70 to-red-300/70 dark:from-gray-800/80 dark:to-gray-900/80 text-red-600 dark:text-red-300 shadow-lg hover:shadow-xl transition-all duration-200"
+            whileHover={{ scale: 1.07 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <motion.div
-              whileHover={{ rotate: 180 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <LogOut size={24} />
-            </motion.div>
-            <span className="hidden sm:inline">Déconnexion</span>
-            <motion.div
-              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              whileHover={{ scale: 1.2 }}
-            >
-              <Zap className="w-5 h-5" />
-            </motion.div>
+            <LogOut size={22} />
           </motion.button>
         </nav>
 
@@ -237,9 +155,9 @@ export default function HomeNavbar({ userName = "Professeur" }) {
           <motion.button
             onClick={() => setMenuOpen((o) => !o)}
             aria-label="Menu"
-            className="p-3 rounded-xl bg-white/90 backdrop-blur-sm hover:bg-white transition-all duration-300 shadow-lg border border-white/30"
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            whileTap={{ scale: 0.9 }}
+            className="p-3 rounded-2xl bg-gradient-to-r from-blue-100/90 to-blue-300/90 dark:from-gray-800/90 dark:to-gray-900/90 text-blue-700 dark:text-blue-200 shadow-lg hover:shadow-xl transition-all duration-200"
+            whileHover={{ scale: 1.09 }}
+            whileTap={{ scale: 0.97 }}
           >
             <AnimatePresence mode="wait">
               {menuOpen ? (
@@ -250,7 +168,7 @@ export default function HomeNavbar({ userName = "Professeur" }) {
                   exit={{ rotate: 90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <X size={24} className="text-gray-600" />
+                  <X size={22} />
                 </motion.div>
               ) : (
                 <motion.div
@@ -260,105 +178,68 @@ export default function HomeNavbar({ userName = "Professeur" }) {
                   exit={{ rotate: -90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Menu size={24} className="text-gray-600" />
+                  <Menu size={22} />
                 </motion.div>
               )}
             </AnimatePresence>
           </motion.button>
-
           <AnimatePresence>
             {menuOpen && (
               <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                initial={{ opacity: 0, y: -10, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.9 }}
-                transition={{ duration: 0.2, type: "spring", stiffness: 200 }}
-                className="absolute top-full right-0 mt-3 w-80 border rounded-2xl shadow-2xl z-[999999] py-4 flex flex-col gap-2 backdrop-blur-md bg-white/95 border-white/30"
+                exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-full right-0 mt-3 w-72 rounded-2xl shadow-2xl bg-gradient-to-br from-blue-50/90 to-blue-200/90 dark:from-gray-900/90 dark:to-gray-800/90 py-3"
               >
                 {/* User Info */}
-                <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl mx-2">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-700 rounded-full flex items-center justify-center shadow-lg">
-                    <GraduationCap className="w-6 h-6 text-white" />
+                <div className="flex items-center gap-3 p-3">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                    <GraduationCap className="w-5 h-5 text-blue-600 dark:text-blue-300" />
                   </div>
                   <div>
-                    <p className="font-bold text-gray-800">{userName}</p>
-                    <p className="text-sm text-gray-600">Professeur Premium</p>
-                    <div className="flex items-center gap-1 mt-1">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                      <span className="text-xs text-green-600">En ligne</span>
-                    </div>
+                    <p className="font-bold text-blue-700 dark:text-blue-200">{userName}</p>
+                    <p className="text-xs text-blue-400 dark:text-blue-300">Professeur</p>
                   </div>
                 </div>
-
                 {/* Search */}
-                <div className="relative mx-2">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <div className="relative px-3 py-2">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-blue-400 dark:text-blue-300" />
                   <input
                     type="text"
                     placeholder="Rechercher..."
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                    className="w-full pl-10 pr-4 py-2 rounded-xl border-none bg-gradient-to-r from-blue-100/60 via-white/60 to-blue-200/60 dark:from-gray-800/80 dark:via-gray-900/80 dark:to-gray-800/80 text-blue-700 dark:text-blue-200 placeholder-blue-400 dark:placeholder-blue-300 shadow-lg focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900 transition-all duration-200"
                   />
                 </div>
-
                 {/* Menu Items */}
                 <motion.button
                   onClick={() => {
                     setMenuOpen(false);
                     goToSettings();
                   }}
-                  className="flex items-center gap-4 p-4 rounded-xl hover:bg-blue-50 transition-colors mx-2"
-                  whileHover={{ scale: 1.05, x: 5 }}
-                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-100 dark:hover:bg-gray-800 transition-colors w-full text-left"
+                  whileHover={{ scale: 1.03, x: 3 }}
+                  whileTap={{ scale: 0.97 }}
                 >
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Settings className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <span className="font-medium text-gray-800">Paramètres</span>
-                  <Heart className="w-4 h-4 text-blue-500" />
+                  <Settings className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+                  <span className="font-medium text-blue-700 dark:text-blue-200">Paramètres</span>
                 </motion.button>
                 <motion.button
                   onClick={() => {
                     setMenuOpen(false);
                     handleLogout();
                   }}
-                  className="flex items-center gap-4 p-4 rounded-xl hover:bg-red-50 transition-colors mx-2"
-                  whileHover={{ scale: 1.05, x: 5 }}
-                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-100 dark:hover:bg-red-900 transition-colors w-full text-left"
+                  whileHover={{ scale: 1.03, x: 3 }}
+                  whileTap={{ scale: 0.97 }}
                 >
-                  <div className="p-2 bg-red-100 rounded-lg">
-                    <LogOut className="w-5 h-5 text-red-600" />
-                  </div>
-                  <span className="font-medium text-gray-800">Déconnexion</span>
-                  <Zap className="w-4 h-4" />
+                  <LogOut className="w-5 h-5 text-red-600" />
+                  <span className="font-medium text-red-600 dark:text-red-300">Déconnexion</span>
                 </motion.button>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-        
-        {/* Animation de particules flottantes */}
-        <motion.div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-2 h-2 bg-blue-500/30 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                y: [0, -20, 0],
-                opacity: [0.3, 0.8, 0.3],
-                scale: [1, 1.5, 1],
-              }}
-              transition={{
-                duration: 3 + Math.random() * 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-              }}
-            />
-          ))}
-        </motion.div>
       </div>
     </motion.header>
   );

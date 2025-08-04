@@ -358,63 +358,29 @@ const bulkActionTeachers = async (req, res) => {
 const getAllParents = async (req, res) => {
   try {
     console.log('🔄 getAllParents appelé');
+
     const parents = await Parent.find().select('-password');
     console.log('✅ Parents trouvés:', parents.length);
-    
-    // Transformer les données pour correspondre au format attendu par le frontend
+
     const formattedParents = parents.map(parent => {
-      console.log('🔍 Parent brut:', parent);
-
-      // Formater le nom correctement
-      let name = '';
-      if (parent.nom && parent.prenom) {
-        name = `${parent.nom} ${parent.prenom}`;
-      } else if (parent.nom) {
-        name = parent.nom;
-      } else if (parent.prenom) {
-        name = parent.prenom;
-      } else {
-        name = 'Nom non défini';
-      }
-
-      // Formater les enfants - s'assurer que c'est toujours un tableau
-      let children = [];
-      if (parent.enfants) {
-        if (Array.isArray(parent.enfants)) {
-          children = parent.enfants.filter(child => child && child.trim() !== '');
-        } else if (typeof parent.enfants === 'string') {
-          children = parent.enfants.split(',').map(child => child.trim()).filter(child => child);
-        }
-      }
-
-      // Formater la dernière connexion
-      let derniereConnexion = null;
-      if (parent.derniereConnexion) {
-        if (parent.derniereConnexion instanceof Date) {
-          derniereConnexion = parent.derniereConnexion.toISOString();
-        } else if (typeof parent.derniereConnexion === 'string') {
-          derniereConnexion = parent.derniereConnexion;
-        }
-      }
-
-      const formattedParent = {
+      const formatted = {
         _id: parent._id,
-        name: name,
+        name: parent.name || 'Nom non défini',
         email: parent.email || 'email@non.defini',
-        tel: parent.telephone || 'Non renseigné',
+        tel: parent.tel || 'Non renseigné',
         adresse: parent.adresse || 'Adresse non renseignée',
-        children: children,
+        children: Array.isArray(parent.children) ? parent.children : [],
         status: parent.status || 'active',
         dateInscription: parent.dateInscription,
-        derniereConnexion: derniereConnexion
+        derniereConnexion: parent.derniereConnexion
+          ? new Date(parent.derniereConnexion).toISOString()
+          : null
       };
 
-      console.log('✅ Parent formaté:', formattedParent);
-      console.log('✅ Nombre d\'enfants:', children.length);
-      console.log('✅ Enfants:', children);
-      return formattedParent;
+      console.log('✅ Parent formaté:', formatted);
+      return formatted;
     });
-    
+
     console.log('✅ Parents formatés:', formattedParents.length);
     res.json(formattedParents);
   } catch (error) {
@@ -422,6 +388,7 @@ const getAllParents = async (req, res) => {
     res.status(500).json({ message: "Erreur lors de la récupération des parents", error: error.message });
   }
 };
+
 
 const getParentById = async (req, res) => {
   try {
@@ -457,32 +424,35 @@ const getParentById = async (req, res) => {
 
 const createParent = async (req, res) => {
   try {
-    const { nom, prenom, email, password, telephone, adresse, enfants } = req.body;
-    
+    const { name, email, password, tel, adresse, children, status } = req.body;
+
+    // Vérifier si un parent existe déjà avec cet email
     const existingParent = await Parent.findOne({ email });
     if (existingParent) {
       return res.status(400).json({ message: "Un parent avec cet email existe déjà" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
-
+    // Création directe, le hash sera fait automatiquement par le schema (pre("save"))
     const parent = new Parent({
-      nom,
-      prenom,
+      name,
       email,
-      password: hashedPassword,
-      telephone,
+      password, // brut, sera hashé automatiquement
+      tel,
       adresse,
-      enfants,
-      role: 'parent'
+      children,
+      status: status || "active",
+      role: "parent"
     });
 
     await parent.save();
+
     res.status(201).json({ message: "Parent créé avec succès", parent });
   } catch (error) {
+    console.error("❌ Erreur createParent:", error);
     res.status(500).json({ message: "Erreur lors de la création du parent", error: error.message });
   }
 };
+
 
 const updateParent = async (req, res) => {
   try {

@@ -247,15 +247,15 @@ const SidebarProfesseur = () => {
       <motion.div
         initial={{ width: 320 }}
         animate={{ width: isCollapsed ? 90 : 320 }}
-        className={`fixed left-0 top-0 h-full bg-white dark:bg-gray-900 text-gray-800 dark:text-white shadow-2xl z-50 transition-all duration-300 border-r border-gray-200 dark:border-gray-700 ${
+        className={`fixed left-0 top-0 h-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl text-gray-800 dark:text-white shadow-2xl z-50 transition-all duration-300 border-r border-gray-200 dark:border-gray-700 ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         {/* Header avec Logo - Hauteur agrandie */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-800 to-blue-900">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-br from-blue-900/90 to-blue-700/80 shadow-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white shadow-xl border-2 border-white/30 flex items-center justify-center overflow-hidden">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/80 shadow-2xl border-2 border-white/30 flex items-center justify-center overflow-hidden">
                 <img
                   src="/image pfe.png"
                   alt="LEARNUP Logo"
@@ -265,10 +265,10 @@ const SidebarProfesseur = () => {
               </div>
               {!isCollapsed && (
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-white">LEARNUP</h1>
-                  <p className="text-sm text-white/90">Espace Professeur</p>
+                  <h1 className="text-3xl font-extrabold text-white drop-shadow-lg tracking-wide">LEARNUP</h1>
+                  <p className="text-sm text-white/80 font-medium">Espace Professeur</p>
                   <div className="flex items-center gap-1 mt-1">
-                    <Crown className="w-4 h-4 text-yellow-300" />
+                    <Crown className="w-4 h-4 text-yellow-300 drop-shadow" />
                     <span className="text-sm text-yellow-200 font-bold">Premium</span>
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
@@ -281,17 +281,16 @@ const SidebarProfesseur = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsMobileOpen(false)}
-                className="md:hidden p-2 rounded-lg bg-white/90 dark:bg-gray-700/90 hover:bg-white dark:hover:bg-gray-600 transition-all duration-300 shadow-lg"
+                className="md:hidden p-2 rounded-xl bg-white/80 dark:bg-gray-700/80 hover:bg-white/90 dark:hover:bg-gray-600 transition-all duration-300 shadow-xl"
               >
                 <X className="w-4 h-4" />
               </motion.button>
-              
               {/* Collapse Button */}
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="hidden md:block p-2 rounded-lg bg-white/90 dark:bg-gray-700/90 hover:bg-white dark:hover:bg-gray-600 transition-all duration-300 shadow-lg"
+                className="hidden md:block p-2 rounded-xl bg-white/80 dark:bg-gray-700/80 hover:bg-white/90 dark:hover:bg-gray-600 transition-all duration-300 shadow-xl"
               >
                 {isCollapsed ? (
                   <ChevronRight className="w-4 h-4" />
@@ -304,10 +303,10 @@ const SidebarProfesseur = () => {
         </div>
 
         {/* User Info */}
-        <div className="p-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <div className="p-5 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-100/60 to-blue-300/40 dark:from-gray-800/80 dark:to-gray-900/60 shadow-lg">
           <div className="flex items-center gap-3">
             <motion.div 
-              className="w-14 h-14 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-xl"
+              className="w-14 h-14 bg-gradient-to-br from-blue-600/80 to-blue-700/80 rounded-full flex items-center justify-center shadow-2xl"
               whileHover={{ scale: 1.1, rotate: 360 }}
               transition={{ type: "spring", stiffness: 200 }}
             >
@@ -329,25 +328,25 @@ const SidebarProfesseur = () => {
         </div>
 
         {/* Navigation Menu avec scroll amélioré */}
-        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 hover:scrollbar-thumb-blue-600 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/70 scrollbar-track-blue-100/30 dark:scrollbar-track-gray-800 hover:scrollbar-thumb-blue-600 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
           <div className="p-3 space-y-1">
             {menuItems.map((item) => (
               <motion.button
                 key={item.id}
-                whileHover={{ scale: 1.02, x: 5 }}
+                whileHover={{ scale: 1.03, x: 6 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleNavigation(item.path, item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-all duration-300 ${
                   activeItem === item.id
-                    ? `bg-gradient-to-r ${item.color} text-white shadow-xl transform scale-105`
-                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-lg"
+                    ? `bg-gradient-to-r ${item.color} text-white shadow-2xl transform scale-105 border border-white/30`
+                    : "text-gray-700 dark:text-gray-200 hover:bg-blue-50/60 dark:hover:bg-gray-700/60 hover:shadow-xl"
                 }`}
               >
                 <motion.div 
                   className={`p-3 rounded-xl ${
                     activeItem === item.id 
-                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 shadow-xl' 
-                      : 'bg-gradient-to-r from-gray-100 to-gray-200 shadow-lg'
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 shadow-xl border border-white/20' 
+                      : 'bg-gradient-to-r from-gray-100/80 to-gray-200/80 shadow-lg'
                   }`}
                   whileHover={{ scale: 1.2, rotate: 12 }}
                   transition={{ type: "spring", stiffness: 200 }}
@@ -372,18 +371,18 @@ const SidebarProfesseur = () => {
         {/* Quick Stats */}
         {!isCollapsed && (
           <div className="p-5 border-t border-gray-200 dark:border-gray-700">
-                          <div className="rounded-2xl shadow-xl bg-gradient-to-r from-blue-700 to-blue-800 p-6">
-                          <div className="flex items-center gap-2 mb-3">
-              <BarChart3 className="w-6 h-6 text-white" />
-              <h3 className="text-sm font-bold text-white">Statistiques rapides</h3>
-              <Sparkles className="w-5 h-5 text-white animate-pulse" />
-            </div>
+            <div className="rounded-2xl shadow-2xl bg-gradient-to-br from-blue-700/90 to-blue-800/80 p-6 backdrop-blur-lg border border-white/20">
+              <div className="flex items-center gap-2 mb-3">
+                <BarChart3 className="w-6 h-6 text-white" />
+                <h3 className="text-sm font-bold text-white">Statistiques rapides</h3>
+                <Sparkles className="w-5 h-5 text-white animate-pulse" />
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 {quickStats.map((stat, index) => (
                   <motion.div
                     key={index}
-                    className="rounded-lg p-2 border border-white/20 shadow-lg backdrop-blur-sm bg-white/10"
-                    whileHover={{ scale: 1.05, y: -3 }}
+                    className="rounded-xl p-3 border border-white/20 shadow-lg backdrop-blur-sm bg-white/10"
+                    whileHover={{ scale: 1.07, y: -2 }}
                     transition={{ type: "spring", stiffness: 200 }}
                   >
                     <div className="flex items-center justify-between">
@@ -407,27 +406,27 @@ const SidebarProfesseur = () => {
         )}
 
         {/* Footer */}
-        <div className="p-5 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <div className="p-5 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-100/60 to-blue-300/40 dark:from-gray-800/80 dark:to-gray-900/60 shadow-lg">
           <div className="space-y-2">
             {/* Dark Mode Toggle */}
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={toggleDarkMode}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-900 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 shadow-lg"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-gray-900 dark:text-gray-200 hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-300 shadow-xl"
             >
               {darkMode ? (
                 <>
-                                <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
-                <Sun className="w-5 h-5 text-white" />
-              </div>
+                  <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center shadow-lg">
+                    <Sun className="w-5 h-5 text-white" />
+                  </div>
                   {!isCollapsed && <span className="text-xs font-bold">Mode Clair</span>}
                 </>
               ) : (
                 <>
-                                <div className="w-8 h-8 bg-gradient-to-r from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
-                <Moon className="w-5 h-5 text-white" />
-              </div>
+                  <div className="w-8 h-8 bg-gradient-to-r from-gray-300 to-gray-400 rounded-full flex items-center justify-center shadow-lg">
+                    <Moon className="w-5 h-5 text-white" />
+                  </div>
                   {!isCollapsed && <span className="text-xs font-bold">Mode Sombre</span>}
                 </>
               )}
@@ -438,7 +437,7 @@ const SidebarProfesseur = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => handleNavigation("/prof/parametres", "parametres")}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-900 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 shadow-lg"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-gray-900 dark:text-gray-200 hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-300 shadow-xl"
             >
               <Settings2 className="w-7 h-7" />
               {!isCollapsed && <span className="text-xs font-bold">Paramètres</span>}
@@ -449,7 +448,7 @@ const SidebarProfesseur = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300 shadow-lg"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-red-600 hover:bg-red-50/80 dark:hover:bg-red-900/30 transition-all duration-300 shadow-xl"
             >
               <Power className="w-7 h-7" />
               {!isCollapsed && <span className="text-xs font-bold">Déconnexion</span>}

@@ -34,6 +34,7 @@ const AdminParents = () => {
   const [editingParent, setEditingParent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [students, setStudents] = useState([]);
   const [newParent, setNewParent] = useState({
     name: '',
     email: '',
@@ -45,19 +46,21 @@ const AdminParents = () => {
 
   // Fetch real data from backend
   useEffect(() => {
+    const token = localStorage.getItem('token') || 'TOKEN_PAR_DÉFAUT';
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+
+
     const fetchParents = async () => {
       try {
         setLoading(true);
         setError(null);
         
-        // Configuration axios avec token d'authentification
-        const token = localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTk5YzY5YzY5YzY5YzY5YzY5YzY5YyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNDY5NzIwMCwiZXhwIjoxNzA0NzgzNjAwfQ.example';
-        const config = {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        };
+        
         
         console.log('🔄 Tentative de récupération des parents depuis l\'API...');
         console.log('🔗 URL:', 'http://localhost:5001/api/admin/parents');
@@ -69,18 +72,27 @@ const AdminParents = () => {
         if (response.data && Array.isArray(response.data)) {
           console.log('✅ Données valides reçues, nombre de parents:', response.data.length);
           
-          // Vérifier et formater les données si nécessaire
-          const formattedParents = response.data.map(parent => ({
-            _id: parent._id,
-            name: parent.name || `${parent.nom || ''} ${parent.prenom || ''}`.trim(),
-            email: parent.email,
-            tel: parent.tel || parent.telephone,
-            adresse: parent.adresse,
-            children: Array.isArray(parent.children) ? parent.children : (parent.enfants || []),
-            status: parent.status || 'active',
-            dateInscription: parent.dateInscription,
-            derniereConnexion: parent.derniereConnexion
-          }));
+          const formattedParents = response.data.map(parent => {
+            const childIds = Array.isArray(parent.children) ? parent.children : (parent.enfants || []);
+
+            const childrenNames = students
+              .filter(student => childIds.includes(student._id))
+              .map(student => student.name);
+
+            return {
+              _id: parent._id,
+              name: parent.name || 'Nom non défini',
+              email: parent.email,
+              tel: parent.tel || parent.telephone || 'Non renseigné',
+              adresse: parent.adresse || '',
+              children: childIds,
+              childrenNames,
+              status: parent.status || 'active',
+              dateInscription: parent.dateInscription,
+              derniereConnexion: parent.derniereConnexion
+            };
+          });
+
           
           console.log('✅ Parents formatés pour l\'affichage:', formattedParents);
           setParents(formattedParents);
@@ -194,7 +206,18 @@ const AdminParents = () => {
       }
     };
 
+    
+    const fetchStudents = async () => {
+    try {
+        const response = await axios.get("http://localhost:5001/api/admin/students", config);
+        setStudents(response.data); // Assure-toi que le backend retourne un tableau d'étudiants avec `_id` et `name`
+      } catch (err) {
+        console.error("❌ Erreur lors du chargement des étudiants :", err);
+      }
+    };
+    
     fetchParents();
+    fetchStudents();
   }, []);
 
   const statuses = ['active', 'inactive', 'suspended'];
@@ -226,15 +249,30 @@ const AdminParents = () => {
 
   const handleAddParent = async () => {
     try {
-      const token = localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTk5YzY5YzY5YzY5YzY5YzY5YzY5YyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNDY5NzIwMCwiZXhwIjoxNzA0NzgzNjAwfQ.example';
+      const token = localStorage.getItem('token') || 'TOKEN_PAR_DÉFAUT';
       const config = {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       };
+
+      const { name, email, tel, adresse, children, status, password } = newParent;
       
-      const response = await axios.post('http://localhost:5001/api/admin/parents', newParent, config);
+      const payload = {
+        name,
+        email,
+        password,
+        tel,
+        adresse,
+        children,
+        status
+      };
+        console.log("Payload envoyé :", payload);
+
+      const response = await axios.post('http://localhost:5001/api/admin/parents', payload, config);
+
+      // Recharger la liste après ajout
       setParents([...parents, response.data]);
       setNewParent({
         name: '',
@@ -245,11 +283,13 @@ const AdminParents = () => {
         status: 'active'
       });
       setShowAddModal(false);
+      window.location.reload();
     } catch (err) {
       console.error('❌ Error adding parent:', err);
       alert('Erreur lors de l\'ajout du parent');
     }
   };
+
 
   const handleEditParent = async () => {
     try {
@@ -611,12 +651,12 @@ const AdminParents = () => {
                     <td className="px-8 py-6">
                       <div className="flex items-center">
                         <FaChild className="text-gray-400 mr-2 text-lg" />
-                        <span className={`font-medium text-lg ${getChildrenCountColor(parent.children.length)}`}>
-                          {parent.children.length} enfant(s)
+                        <span className={`font-medium text-lg ${getChildrenCountColor((parent.children || []).length)}`}>
+                          {(parent.children || []).length} enfant(s)
                         </span>
                       </div>
                       <div className="text-sm text-gray-500 mt-2">
-                        {parent.children.join(', ')}
+                        {(parent.childrenNames || []).join(', ')}
                       </div>
 
                     </td>
@@ -727,6 +767,16 @@ const AdminParents = () => {
                   />
                 </div>
                 <div>
+                  <label className="block text-lg font-medium text-gray-700 mb-3">Mot de passe</label>
+                  <input
+                    type="password"
+                    value={newParent.password}
+                    onChange={(e) => setNewParent({ ...newParent, password: e.target.value })}
+                    className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-lg"
+                    placeholder="Mot de passe"
+                  />
+              </div>
+                <div>
                   <label className="block text-lg font-medium text-gray-700 mb-3">Téléphone</label>
                   <input
                     type="tel"
@@ -747,14 +797,24 @@ const AdminParents = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-lg font-medium text-gray-700 mb-3">Enfants (séparés par des virgules)</label>
-                  <input
-                    type="text"
-                    value={newParent.children.join(', ')}
-                    onChange={(e) => setNewParent({...newParent, children: e.target.value.split(',').map(child => child.trim()).filter(child => child)})}
+                  <label className="block text-lg font-medium text-gray-700 mb-3">
+                    Enfants (choisir dans la liste)
+                  </label>
+                  <select
+                    multiple
+                    value={newParent.children}
+                    onChange={(e) => {
+                      const selected = Array.from(e.target.selectedOptions).map(opt => opt.value);
+                      setNewParent({ ...newParent, children: selected });
+                    }}
                     className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent text-lg"
-                    placeholder="Jean Dupont, Marie Dupont"
-                  />
+                  >
+                    {students.map((student) => (
+                      <option key={student._id} value={student._id}>
+                        {student.name} ({student.email})
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <div className="flex space-x-6 mt-8">

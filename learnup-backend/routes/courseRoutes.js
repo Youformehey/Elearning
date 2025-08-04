@@ -19,10 +19,10 @@ const upload = multer({ storage });
 // ----------- ROUTES ÉTUDIANTS -----------
 
 // Récupérer tous les cours disponibles pour les étudiants
-router.get('/student/all', protect, authorizeRoles('student'), courseController.getAllCoursesForStudents);
+router.get('/student/all', protect, authorizeRoles('student', "admin"), courseController.getAllCoursesForStudents);
 
 // Récupérer les cours pour la classe de l'étudiant
-router.get('/student/class', protect, authorizeRoles('student'), courseController.getCoursesByStudentClass);
+router.get('/student/class', protect, authorizeRoles('student', "admin"), courseController.getCoursesByStudentClass);
 
 // Récupérer les chapitres d'un cours (pour les étudiants)
 router.get('/:courseId/chapitres', protect, courseController.getChapitresByCourse);
@@ -33,7 +33,7 @@ router.get('/:id/students', protect, courseController.getStudentsForCourse);
 // ----------- ROUTES COURS -----------
 
 // Récupérer tous les cours (prof, teacher) ou selon rôle
-router.get('/teacher', protect, authorizeRoles('teacher', 'prof'), courseController.getAllCourses);
+router.get('/teacher', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.getAllCourses);
 router.get('/', protect, courseController.getAllCourses);
 
 // Créer un cours (prof, teacher, admin)
@@ -43,50 +43,50 @@ router.post('/', protect, authorizeRoles('teacher', 'prof', 'admin'), courseCont
 router.get('/:id', protect, courseController.getCourseById);
 
 // Mettre à jour un cours (prof, teacher)
-router.put('/:id', protect, authorizeRoles('teacher', 'prof'), courseController.updateCourse);
+router.put('/:id', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.updateCourse);
 
 // Supprimer un cours (prof, teacher)
-router.delete('/:id', protect, authorizeRoles('teacher', 'prof'), courseController.deleteCourse);
+router.delete('/:id', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.deleteCourse);
 
 // Inscription / désinscription d'un étudiant à un cours
 // Étudiant se désinscrit lui-même
-router.post('/:id/leave', protect, authorizeRoles('student'), courseController.leaveCourse);
+router.post('/:id/leave', protect, authorizeRoles('student', "admin"), courseController.leaveCourse);
 
 // Prof/teacher supprime un étudiant du cours (droit réservé)
 // Prof/teacher supprime un étudiant du cours (droit réservé)
-router.post('/:id/leave-student', protect, authorizeRoles('teacher', 'prof'), courseController.leaveCourse);
+router.post('/:id/leave-student', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.leaveCourse);
 
 
 // Inscrire un étudiant (prof, teacher)
-router.post('/:id/enroll', protect, authorizeRoles('teacher', 'prof'), courseController.enrollStudent);
+router.post('/:id/enroll', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.enrollStudent);
 
 // Statistiques absences pour un cours
-router.get('/:id/absences', protect, authorizeRoles('teacher', 'prof'), courseController.getStatsForCourse);
-router.get('/:id/stats', protect, authorizeRoles('teacher', 'prof'), courseController.getStatsForCourse);
+router.get('/:id/absences', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.getStatsForCourse);
+router.get('/:id/stats', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.getStatsForCourse);
 
 // Cours du jour (prof, teacher)
-router.get('/today', protect, authorizeRoles('teacher', 'prof'), courseController.getTodayCourses);
+router.get('/today', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.getTodayCourses);
 
 // Gestion des devoirs (upload, soumissions)
-router.post('/:id/homework', protect, authorizeRoles('teacher', 'prof'), upload.single('file'), courseController.uploadHomework);
-router.get('/:id/homework/submissions', protect, authorizeRoles('teacher', 'prof'), courseController.getHomeworkSubmissions);
+router.post('/:id/homework', protect, authorizeRoles('teacher', 'prof', "admin"), upload.single('file'), courseController.uploadHomework);
+router.get('/:id/homework/submissions', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.getHomeworkSubmissions);
 
 // Notes des étudiants sur un cours
-router.put('/:id/notes/:studentId', protect, authorizeRoles('teacher', 'prof'), courseController.updateNoteForStudent);
+router.put('/:id/notes/:studentId', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.updateNoteForStudent);
 
 // ----------- ROUTES CHAPITRES -----------
 
 // Ajouter un chapitre à un cours
-router.post('/:id/chapitres', protect, authorizeRoles('teacher', 'prof'), courseController.addChapitreToCourse);
+router.post('/:id/chapitres', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.addChapitreToCourse);
 
 // Mettre à jour un chapitre
-router.put('/:id/chapitres/:chapId', protect, authorizeRoles('teacher', 'prof'), courseController.updateChapitre);
+router.put('/:id/chapitres/:chapId', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.updateChapitre);
 
 // Supprimer un chapitre du cours (simple)
-router.delete('/:id/chapitres/:chapId', protect, authorizeRoles('teacher', 'prof'), courseController.removeChapitre);
+router.delete('/:id/chapitres/:chapId', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.removeChapitre);
 
 // Supprimer un chapitre (route spécialisée)
-router.delete('/:courseId/chapitres/:chapitreId', protect, authorizeRoles('teacher', 'prof'), courseController.deleteChapitreFromCourse);
+router.delete('/:courseId/chapitres/:chapitreId', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.deleteChapitreFromCourse);
 
 // ----------- ROUTES DEVOIRS -----------
 
@@ -100,27 +100,27 @@ router.get('/:courseId/devoirs', protect, courseController.getDevoirsByCourse);
 router.post('/:courseId/devoirs', protect, authorizeRoles('teacher', 'prof'), upload.single('file'), courseController.uploadDevoir);
 
 // Soumettre un devoir (étudiant)
-router.post('/:courseId/devoirs/:devoirId/submit', protect, authorizeRoles('student'), upload.single('file'), courseController.submitDevoir);
+router.post('/:courseId/devoirs/:devoirId/submit', protect, authorizeRoles('student', "admin"), upload.single('file'), courseController.submitDevoir);
 
 // Récupérer les soumissions d'un devoir (professeur)
-router.get('/:courseId/devoirs/:devoirId/submissions', protect, authorizeRoles('teacher', 'prof'), courseController.getDevoirSubmissions);
+router.get('/:courseId/devoirs/:devoirId/submissions', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.getDevoirSubmissions);
 
 // Noter une soumission (professeur)
-router.post('/:courseId/devoirs/:devoirId/submissions/:submissionId/grade', protect, authorizeRoles('teacher', 'prof'), courseController.gradeSubmission);
+router.post('/:courseId/devoirs/:devoirId/submissions/:submissionId/grade', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.gradeSubmission);
 
 // ----------- ROUTES QUIZ -----------
 
 // Créer un quiz pour un chapitre
-router.post('/:id/chapitres/:chapId/quiz', protect, authorizeRoles('teacher', 'prof'), courseController.createQuiz);
+router.post('/:id/chapitres/:chapId/quiz', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.createQuiz);
 
 // Récupérer les quiz d’un chapitre
 router.get('/:id/chapitres/:chapId/quiz', protect, courseController.getQuizzes);
 
 // Mettre à jour un quiz
-router.put('/:id/chapitres/:chapId/quiz/:quizId', protect, authorizeRoles('teacher', 'prof'), courseController.updateQuiz);
+router.put('/:id/chapitres/:chapId/quiz/:quizId', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.updateQuiz);
 
 // Supprimer un quiz
-router.delete('/:id/chapitres/:chapId/quiz/:quizId', protect, authorizeRoles('teacher', 'prof'), courseController.deleteQuiz);
+router.delete('/:id/chapitres/:chapId/quiz/:quizId', protect, authorizeRoles('teacher', 'prof', "admin"), courseController.deleteQuiz);
 
 // ----------- ROUTES FORUM -----------
 
@@ -139,7 +139,7 @@ router.get('/:id/chapitres/:chapId/forum', protect, courseController.getMessages
 // ----------- AUTRES -----------
 
 // Route pour supprimer toutes les séances d'un cours
-router.delete('/:courseId/seances', protect, authorizeRoles('teacher', 'prof'), async (req, res) => {
+router.delete('/:courseId/seances', protect, authorizeRoles('teacher', 'prof', "admin"), async (req, res) => {
   try {
     const courseId = req.params.courseId;
     const course = await Course.findById(courseId);
@@ -171,7 +171,7 @@ router.delete('/:courseId/seances', protect, authorizeRoles('teacher', 'prof'), 
 });
 
 // Route pour générer automatiquement les séances d'un cours
-router.post('/:courseId/generate-seances', protect, authorizeRoles('teacher', 'prof'), async (req, res) => {
+router.post('/:courseId/generate-seances', protect, authorizeRoles('teacher', 'prof', "admin"), async (req, res) => {
   try {
     console.log('Début génération séances pour courseId:', req.params.courseId);
     console.log('User ID:', req.user._id);
@@ -279,7 +279,7 @@ router.post('/:courseId/generate-seances', protect, authorizeRoles('teacher', 'p
     });
 
   } catch (error) {
-    console.error('Erreur génération séances:', error);
+    console.error('Erreur génération séances:', error); 
     console.error('Stack trace:', error.stack);
     res.status(500).json({ 
       message: 'Erreur lors de la génération des séances',

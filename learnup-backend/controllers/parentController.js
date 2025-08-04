@@ -7,7 +7,8 @@ const Demande = require("../models/Demande");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Inscription parent
+
+
 const registerParent = async (req, res) => {
   try {
     const { name, email, password, tel, adresse } = req.body;
@@ -15,15 +16,19 @@ const registerParent = async (req, res) => {
       return res.status(400).json({ message: "Tous les champs sont obligatoires" });
     }
 
+    // Vérifie si l'email existe déjà
     const existingUser = await Parent.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email déjà utilisé" });
     }
 
+    // 🔐 Hasher le mot de passe AVANT de sauvegarder
+    const hashedPassword = await require('bcryptjs').hash(password, 10);
+
     const newParent = new Parent({
       name,
       email,
-      password,
+      password: hashedPassword, // mot de passe sécurisé
       tel,
       adresse,
       role: "parent"
@@ -31,7 +36,7 @@ const registerParent = async (req, res) => {
 
     await newParent.save();
 
-    const token = jwt.sign(
+    const token = require('jsonwebtoken').sign(
       { _id: newParent._id, email: newParent.email, role: newParent.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
@@ -49,6 +54,7 @@ const registerParent = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
 
 // Connexion parent
 const loginParent = async (req, res) => {

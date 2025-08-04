@@ -15,53 +15,46 @@ const jwt = require('jsonwebtoken');
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("🔐 Tentative de login parent :", email);
 
-    // Validation des champs
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email et mot de passe requis' });
+      return res.status(400).json({ message: "Email et mot de passe requis" });
     }
 
-    // Recherche du parent par email
-    const parent = await Parent.findOne({ email }).populate('children', 'name email classe');
-    
+    const parent = await Parent.findOne({ email });
     if (!parent) {
-      return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
+      console.warn("❌ Aucune correspondance pour cet email :", email);
+      return res.status(401).json({ message: "Email incorrect" });
     }
 
-    // Vérification du mot de passe
-    const isPasswordValid = await bcrypt.compare(password, parent.password);
-    
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
+    const isMatch = await parent.matchPassword(password);
+    if (!isMatch) {
+      console.warn("❌ Mot de passe incorrect pour :", email);
+      return res.status(401).json({ message: "Mot de passe incorrect" });
     }
 
-    // Génération du token JWT
     const token = jwt.sign(
-      { 
-        _id: parent._id, 
-        email: parent.email, 
-        role: 'parent' 
-      },
+      { _id: parent._id, email: parent.email, role: "parent" },
       process.env.JWT_SECRET,
-      { expiresIn: '30d' }
+      { expiresIn: "7d" }
     );
 
-    // Réponse avec les données du parent (sans le mot de passe)
-    const parentResponse = {
+    console.log("✅ Connexion réussie pour :", email);
+
+    res.json({
       _id: parent._id,
       name: parent.name,
       email: parent.email,
-      role: 'parent',
-      children: parent.children,
-      token
-    };
-
-    res.json(parentResponse);
+      tel: parent.tel,
+      role: "parent",
+      token,
+    });
   } catch (err) {
-    console.error('Erreur login parent:', err);
-    res.status(500).json({ message: 'Erreur serveur' });
+    console.error("❌ Erreur loginParent:", err);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 });
+
 
 // Récupérer le profil du parent avec ses enfants
 router.get('/me', protect, authorizeRoles('parent'), async (req, res) => {

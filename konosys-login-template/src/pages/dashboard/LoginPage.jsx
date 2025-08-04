@@ -21,7 +21,7 @@ export default function LoginPage() {
     firstName: '',
     lastName: '',
     email: '',
-    phone: ''
+    phone: '',
   });
   const [classes, setClasses] = useState([]);
   const [signUpLoading, setSignUpLoading] = useState(false);
@@ -99,7 +99,7 @@ export default function LoginPage() {
   const handleSubmit = async e => {
     e.preventDefault();
     setError(null);
-    
+    console.log("🔐 Tentative de login avec rôle :", role);
     if (!email.trim() || !password.trim() || !role) {
       setError('Veuillez remplir tous les champs.');
       return;
@@ -130,6 +130,11 @@ export default function LoginPage() {
         admin: '/api/admin/login',
         parent: '/api/parents/login',
       };
+      console.log("🔐 Payload:", email, password, "->", endpointMap[role]);
+      if (!endpointMap[role]) {
+        setError("Rôle invalide sélectionné. Veuillez choisir un rôle valide.");
+        return;
+      }
       const res = await fetch(endpointMap[role], {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
