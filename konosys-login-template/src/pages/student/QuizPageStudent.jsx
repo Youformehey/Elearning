@@ -449,13 +449,13 @@ const QuizPageStudent = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.8, y: 50 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ type: "spring", stiffness: 100, damping: 15 }}
+          transition={{ type: "tween", duration: 0.5, ease: "easeOut" }}
           className="text-center relative z-10"
         >
           <motion.div
             className="p-8 bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl border border-blue-200/50 mb-8"
             whileHover={{ scale: 1.02, y: -5 }}
-            transition={{ type: "spring", stiffness: 300 }}
+             transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
           >
             <motion.div
               animate={{ 
@@ -564,7 +564,7 @@ const QuizPageStudent = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
+          transition={{ delay: 0.2, type: "tween", duration: 0.5, ease: "easeInOut" }}
           className="space-y-8"
         >
           {/* Bouton retour intégré */}
@@ -596,11 +596,11 @@ const QuizPageStudent = () => {
                   className="p-4 bg-gradient-to-r from-pink-100 to-red-100 rounded-2xl shadow-lg"
                   whileHover={{ scale: 1.1, rotate: 10 }}
                   animate={{ 
-                    y: [0, -5, 0],
-                    rotate: [0, 2, -2, 0]
+                    y: 0,
+                    rotate: 0
                   }}
                   transition={{ 
-                    type: "spring", 
+                    type: "tween", 
                     stiffness: 300,
                     y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
                     rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
@@ -619,8 +619,8 @@ const QuizPageStudent = () => {
                 <motion.div 
                   className="text-center p-6 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border border-blue-200 shadow-lg"
                   whileHover={{ scale: 1.05, y: -3 }}
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ y: { duration: 2, repeat: Infinity, ease: "easeInOut" } }}
+                  animate={{ y: 0 }}
+                  transition={{ type: "tween", duration: 1, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <FileText className="w-5 h-5 text-blue-600" />
@@ -632,8 +632,8 @@ const QuizPageStudent = () => {
                 <motion.div 
                   className="text-center p-6 bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl border border-emerald-200 shadow-lg"
                   whileHover={{ scale: 1.05, y: -3 }}
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 } }}
+                  animate={{ y: 0 }}
+                  transition={{ type: "tween", duration: 1, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <CheckCircle className="w-5 h-5 text-emerald-600" />
@@ -645,8 +645,8 @@ const QuizPageStudent = () => {
                 <motion.div 
                   className="text-center p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 shadow-lg"
                   whileHover={{ scale: 1.05, y: -3 }}
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.6 } }}
+                  animate={{ y: 0 }}
+                  transition={{ type: "tween", duration: 1, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Clock className="w-5 h-5 text-amber-600" />
@@ -674,11 +674,11 @@ const QuizPageStudent = () => {
                       className="p-4 bg-white/25 rounded-2xl shadow-lg"
                       whileHover={{ scale: 1.1, rotate: 10 }}
                       animate={{ 
-                        y: [0, -3, 0],
-                        rotate: [0, 2, -2, 0]
+                        y: 0,
+                        rotate: 0
                       }}
                       transition={{ 
-                        type: "spring", 
+                        type: "tween", 
                         stiffness: 300,
                         y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
                         rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
@@ -757,7 +757,7 @@ const QuizPageStudent = () => {
                                 isSelected ? 'bg-gradient-to-r from-pink-500 to-red-500 border-pink-500' : 'border-gray-300'
                               }`}
                               animate={isSelected ? { scale: [1, 1.1, 1] } : {}}
-                              transition={{ duration: 0.3 }}
+                              transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
                             >
                               {isSelected && (
                                 <motion.div
@@ -872,7 +872,7 @@ const QuizPageStudent = () => {
                 >
                   <motion.div
                     animate={{ rotate: [0, 180, 360] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    transition={{ type: "tween", duration: 2, ease: "linear" }}
                   >
                     <RefreshCw className="w-5 h-5" />
                   </motion.div>
@@ -906,7 +906,7 @@ const QuizPageStudent = () => {
                   <>
                     <motion.div
                       animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
+                      transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
                     >
                       <Trophy className="w-6 h-6" />
                     </motion.div>
@@ -958,8 +958,8 @@ const QuizPageStudent = () => {
                 <motion.div 
                   className="text-center p-6 bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl border border-emerald-200 shadow-lg"
                   whileHover={{ scale: 1.05, y: -3 }}
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ y: { duration: 2, repeat: Infinity, ease: "easeInOut" } }}
+                  animate={{ y: 0 }}
+                  transition={{ type: "tween", duration: 1, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <CheckCircle className="w-5 h-5 text-emerald-600" />
@@ -971,8 +971,8 @@ const QuizPageStudent = () => {
                 <motion.div 
                   className="text-center p-6 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border border-blue-200 shadow-lg"
                   whileHover={{ scale: 1.05, y: -3 }}
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 } }}
+                  animate={{ y: 0 }}
+                  transition={{ type: "tween", duration: 1, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <FileText className="w-5 h-5 text-blue-600" />
@@ -984,8 +984,8 @@ const QuizPageStudent = () => {
                 <motion.div 
                   className="text-center p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 shadow-lg"
                   whileHover={{ scale: 1.05, y: -3 }}
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.6 } }}
+                  animate={{ y: 0 }}
+                  transition={{ type: "tween", duration: 1, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <TrendingUp className="w-5 h-5 text-amber-600" />

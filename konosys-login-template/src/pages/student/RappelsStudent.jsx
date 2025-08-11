@@ -155,7 +155,7 @@ export default function RappelsStudent() {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Animated background elements - Animations ultra attractives */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* <div className="absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute top-20 left-10 w-16 h-16 sm:w-20 sm:h-20 bg-blue-100 rounded-full"
           animate={{ 
@@ -193,7 +193,7 @@ export default function RappelsStudent() {
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
         />
-      </div>
+      </div> */}
 
       {/* Floating decorative elements - Animations ultra attractives */}
       <motion.div

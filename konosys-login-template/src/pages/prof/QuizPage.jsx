@@ -21,7 +21,9 @@ import {
   FileText,
   Users,
   Clock,
-  Calendar
+  Calendar,
+  ArrowLeft,
+  RefreshCw
 } from "lucide-react";
 import { ThemeContext } from "../../context/ThemeContext";
 
@@ -79,46 +81,43 @@ const QuizPage = () => {
       console.log("🔍 Quiz response status:", quizRes.status);
       console.log("🔍 Chapitre response status:", chapitreRes.status);
 
-      if (!quizRes.ok) {
-        const errorData = await quizRes.text();
-        console.error("❌ Quiz API error:", errorData);
-        throw new Error(`Erreur API quiz: ${quizRes.status}`);
-      }
-
+      // Vérifier d'abord si le chapitre existe
       if (!chapitreRes.ok) {
         const errorData = await chapitreRes.text();
         console.error("❌ Chapitre API error:", errorData);
-        throw new Error(`Erreur API chapitre: ${chapitreRes.status}`);
+        throw new Error(`❌ Chapitre introuvable (${chapitreRes.status}). Vérifiez que le chapitre existe.`);
+      }
+
+      const chapitreData = await chapitreRes.json();
+      console.log("🔍 Chapitre data:", chapitreData);
+      setChapitre(chapitreData);
+
+      if (!quizRes.ok) {
+        const errorData = await quizRes.text();
+        console.error("❌ Quiz API error:", errorData);
+        
+        if (quizRes.status === 404) {
+          // Pas de quiz existant, c'est normal
+          console.log("ℹ️ Aucun quiz existant pour ce chapitre");
+          setQuiz(null);
+          return;
+        } else {
+          throw new Error(`Erreur API quiz: ${quizRes.status}`);
+        }
       }
 
       const quizData = await quizRes.json();
-      const chapitreData = await chapitreRes.json();
-
       console.log("🔍 Quiz data:", quizData);
-      console.log("🔍 Chapitre data:", chapitreData);
-
-      setChapitre(chapitreData);
-      
-      // Récupérer les données du cours
-      if (chapitreData.course) {
-        const courseRes = await fetch(`${API_URL}/api/courses/${chapitreData.course}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        if (courseRes.ok) {
-          const courseData = await courseRes.json();
-          setCourse(courseData);
-        }
-      }
 
       if (quizData.exists) {
         setQuiz(quizData.quiz);
       } else {
         setQuiz(null);
       }
+      
     } catch (err) {
-      console.error("❌ Erreur chargement quiz:", err);
-      setErrorMessage(`❌ Erreur lors du chargement: ${err.message}`);
+      console.error("❌ Erreur fetchQuizData:", err);
+      setErrorMessage(err.message);
     } finally {
       setLoading(false);
     }
@@ -135,6 +134,8 @@ const QuizPage = () => {
     
     try {
       console.log("🔍 Creating quiz for chapitreId:", chapitreId);
+      console.log("🔍 User info:", userInfo);
+      console.log("🔍 Token:", token ? "Present" : "Missing");
       
       const res = await fetch(`${API_URL}/api/quiz/chapitre/${chapitreId}`, {
         method: "POST",
@@ -149,7 +150,20 @@ const QuizPage = () => {
       if (!res.ok) {
         const errorData = await res.text();
         console.error("❌ Create quiz error:", errorData);
-        throw new Error(`Erreur création quiz: ${res.status}`);
+        
+        let errorMessage = "Erreur création quiz";
+        
+        if (res.status === 404) {
+          errorMessage = "❌ Chapitre introuvable. Vérifiez que le chapitre existe.";
+        } else if (res.status === 403) {
+          errorMessage = "❌ Accès refusé. Vous n'enseignez pas ce cours.";
+        } else if (res.status === 400) {
+          errorMessage = "❌ Un quiz existe déjà pour ce chapitre.";
+        } else {
+          errorMessage = `❌ Erreur création quiz: ${res.status}`;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const data = await res.json();
@@ -157,11 +171,9 @@ const QuizPage = () => {
       
       setQuiz(data.quiz);
       setSuccessMessage("✅ Quiz créé avec succès !");
-      setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
       console.error("❌ Erreur création quiz:", err);
-      setErrorMessage(`❌ ${err.message}`);
-      setTimeout(() => setErrorMessage(""), 3000);
+      setErrorMessage(err.message);
     }
   };
 
@@ -290,185 +302,83 @@ const QuizPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-tr from-[#edf3ff] to-[#f9fcff] overflow-hidden text-gray-800">
       
-      {/* Header ultra-moderne avec effets 3D */}
-      <motion.div 
-        className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-8 px-10 shadow-2xl relative overflow-hidden"
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 100, damping: 20 }}
-      >
-        {/* Effet de brillance amélioré */}
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
-          animate={{ x: [-200, 400] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        />
+      {/* Header avec bouton de retour */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <motion.button
+            onClick={() => navigate('/prof/mes-cours')}
+            className={`p-2 rounded-lg ${darkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-600 hover:bg-gray-50'} shadow-md hover:shadow-lg transition-all duration-300`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </motion.button>
+          
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Quiz du Chapitre</h1>
+            <p className="text-gray-600">
+              {chapitre ? `Chapitre: ${chapitre.titre}` : 'Chargement...'}
+            </p>
+          </div>
+        </div>
         
-        {/* Effet de particules */}
-        <motion.div 
-          className="absolute inset-0 opacity-30"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        {/* Bouton de rafraîchissement */}
+        <motion.button
+          onClick={fetchQuizData}
+          disabled={loading}
+          className="p-3 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-700 transition-all duration-300 flex items-center gap-2"
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <div className="absolute top-4 left-1/4 w-2 h-2 bg-white rounded-full" />
-          <div className="absolute top-8 right-1/3 w-1 h-1 bg-white rounded-full" />
-          <div className="absolute bottom-6 left-1/2 w-1.5 h-1.5 bg-white rounded-full" />
-        </motion.div>
-        
-        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
-            className="flex flex-col lg:flex-row items-center justify-between gap-10"
+            animate={loading ? { rotate: 360 } : {}}
+            transition={{ duration: 1, repeat: loading ? Infinity : 0, ease: "linear" }}
+          >
+            <RefreshCw className="w-5 h-5" />
+          </motion.div>
+          <span className="text-sm font-medium">Actualiser</span>
+        </motion.button>
+      </div>
+
+      {/* Messages d'erreur et de succès */}
+      <AnimatePresence>
+        {errorMessage && (
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-3"
           >
-            {/* Titre et icône avec effets 3D */}
-            <motion.div 
-              className="flex items-center gap-8"
-              whileHover={{ scale: 1.02 }}
+            <AlertCircle className="w-5 h-5" />
+            <span className="flex-1">{errorMessage}</span>
+            <motion.button
+              onClick={() => setErrorMessage("")}
+              className="text-red-600 hover:text-red-800"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <motion.button
-                onClick={() => navigate(-1)}
-                whileHover={{ scale: 1.1, y: -3 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-3 bg-white/25 backdrop-blur-md rounded-2xl text-white hover:bg-white/35 transition-all duration-200 shadow-lg"
-              >
-                <BookOpen className="w-6 h-6" />
-              </motion.button>
-              <motion.div 
-                className="p-5 bg-white/25 backdrop-blur-md rounded-3xl shadow-2xl border border-white/30 relative overflow-hidden"
-                whileHover={{ scale: 1.2, rotate: 15, y: -10 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{ 
-                  y: [0, -8, 0],
-                  rotate: [0, 2, -2, 0]
-                }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 300,
-                  y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                  rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                }}
-              >
-                {/* Effet de brillance sur l'icône */}
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                  animate={{ x: [-50, 50] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                />
-                <Target className="w-12 h-12 text-white relative z-10" />
-              </motion.div>
-              <div>
-                <motion.h1 
-                  className="text-5xl md:text-6xl font-bold text-white mb-3 bg-gradient-to-r from-white to-blue-100 bg-clip-text"
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  Quiz du Chapitre
-                </motion.h1>
-                <motion.p 
-                  className="text-blue-100 font-medium text-xl"
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  {chapitre?.titre || "Chapitre"}
-                </motion.p>
-                {course && (
-                  <motion.p 
-                    className="text-blue-200 font-medium text-lg"
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 }}
-                  >
-                    {course.nom} — {course.classe}
-                  </motion.p>
-                )}
-              </div>
-            </motion.div>
-            
-            {/* Statistiques avec effets 3D */}
-            <motion.div 
-              className="flex items-center gap-10"
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <motion.div 
-                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
-                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -3, 0] }}
-                transition={{ 
-                  y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                }}
-              >
-                <div className="text-4xl font-bold text-white mb-1">{quiz?.questions?.length || 0}</div>
-                <div className="text-blue-100 text-sm font-medium">Questions</div>
-              </motion.div>
-              <motion.div 
-                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
-                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -3, 0] }}
-                transition={{ 
-                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
-                }}
-              >
-                <div className="text-4xl font-bold text-white mb-1">3</div>
-                <div className="text-blue-100 text-sm font-medium">Maximum</div>
-              </motion.div>
-              <motion.div 
-                className="text-center p-6 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 shadow-xl"
-                whileHover={{ scale: 1.15, y: -8, rotateY: 5 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{ y: [0, -3, 0] }}
-                transition={{ 
-                  y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }
-                }}
-              >
-                <div className="text-4xl font-bold text-white mb-1">{quiz ? "✅" : "❌"}</div>
-                <div className="text-blue-100 text-sm font-medium">Quiz Créé</div>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </motion.div>
-
-      {/* Messages de notification */}
-      <AnimatePresence>
-        {successMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -50, scale: 0.8 }}
-            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50"
-          >
-            <motion.div 
-              className="bg-emerald-100 border border-emerald-400 text-emerald-700 px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-base backdrop-blur-sm"
-              whileHover={{ scale: 1.05 }}
-            >
-              <CheckCircle className="w-5 h-5" />
-              {successMessage}
-            </motion.div>
+              <XCircle className="w-4 h-4" />
+            </motion.button>
           </motion.div>
         )}
         
-        {errorMessage && (
+        {successMessage && (
           <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -50, scale: 0.8 }}
-            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-3"
           >
-            <motion.div 
-              className="bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-base backdrop-blur-sm"
-              whileHover={{ scale: 1.05 }}
+            <CheckCircle className="w-5 h-5" />
+            <span className="flex-1">{successMessage}</span>
+            <motion.button
+              onClick={() => setSuccessMessage("")}
+              className="text-green-600 hover:text-green-800"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <AlertCircle className="w-5 h-5" />
-              {errorMessage}
-            </motion.div>
+              <XCircle className="w-4 h-4" />
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>

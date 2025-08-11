@@ -76,6 +76,28 @@ export default function DocumentsCoursStudent() {
     return ytMatch ? ytMatch[1] : null;
   };
 
+  const testDocumentAccess = async (doc) => {
+    if (!doc.fileUrl) {
+      alert('❌ Aucune URL de document');
+      return;
+    }
+
+    const testUrl = `${API_URL}${doc.fileUrl}`;
+    console.log('🔍 Test d\'accès au document:', testUrl);
+
+    try {
+      const response = await fetch(testUrl, { method: 'HEAD' });
+      
+      if (response.ok) {
+        alert(`✅ Document accessible!\n\nNom: ${doc.fileName}\nURL: ${testUrl}\nTaille: ${response.headers.get('content-length') || 'Inconnue'} bytes`);
+      } else {
+        alert(`❌ Document inaccessible (${response.status})\n\nNom: ${doc.fileName}\nURL: ${testUrl}\n\nErreur: ${response.statusText}`);
+      }
+    } catch (error) {
+      alert(`❌ Erreur d'accès au document\n\nNom: ${doc.fileName}\nURL: ${testUrl}\n\nErreur: ${error.message}`);
+    }
+  };
+
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
@@ -174,7 +196,14 @@ export default function DocumentsCoursStudent() {
                     />
                   </div>
                 ) : (
-                  <div className="flex justify-end mt-3">
+                  <div className="flex justify-end mt-3 gap-2">
+                    <button
+                      onClick={() => testDocumentAccess(doc)}
+                      className="text-yellow-600 hover:text-yellow-800 text-sm flex items-center gap-1"
+                      title="Tester l'accès"
+                    >
+                      🔍 Test
+                    </button>
                     <a
                       href={`${API_URL}${doc.fileUrl}`}
                       target="_blank"

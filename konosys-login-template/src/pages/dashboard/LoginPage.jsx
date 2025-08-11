@@ -10,7 +10,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState('enfant');
-  const [childType, setChildType] = useState('typique');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [focusedField, setFocusedField] = useState(null);
@@ -23,7 +22,7 @@ export default function LoginPage() {
     email: '',
     phone: '',
   });
-  const [classes, setClasses] = useState([]);
+
   const [signUpLoading, setSignUpLoading] = useState(false);
   const [signUpError, setSignUpError] = useState(null);
 
@@ -36,11 +35,7 @@ export default function LoginPage() {
       icon: <GraduationCap size={20} />,
       color: 'from-blue-500 to-blue-600',
       description: 'Accédez à vos cours et jeux éducatifs',
-      gradient: 'from-blue-400/20 to-blue-600/20',
-      subTypes: [
-        { value: 'typique', label: 'Typique', description: 'Développement standard' },
-        { value: 'atypique', label: 'Atypique', description: 'Autisme, TDAH, Dyslexie, etc.' }
-      ]
+      gradient: 'from-blue-400/20 to-blue-600/20'
     },
     { 
       value: 'prof', 
@@ -70,21 +65,7 @@ export default function LoginPage() {
 
   const selectedRole = roles.find(r => r.value === role);
 
-  // Récupérer les classes disponibles
-  useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        const response = await fetch('/api/admin/classes');
-        if (response.ok) {
-          const data = await response.json();
-          setClasses(data);
-        }
-      } catch (error) {
-        console.error('Erreur lors de la récupération des classes:', error);
-      }
-    };
-    fetchClasses();
-  }, []);
+
 
   // Validation en temps réel
   useEffect(() => {
@@ -96,102 +77,69 @@ export default function LoginPage() {
     setIsValidPassword(password === '' || password.length >= 6);
   }, [password]);
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    setError(null);
-    console.log("🔐 Tentative de login avec rôle :", role);
-    if (!email.trim() || !password.trim() || !role) {
-      setError('Veuillez remplir tous les champs.');
-      return;
-    }
+const handleSubmit = async e => {
+  e.preventDefault();
+  setError(null);
+  if (!email.trim() || !password.trim() || !role) {
+    setError('Veuillez remplir tous les champs.');
+    return;
+  }
 
-    // Validation spécifique pour les enfants
-    if (role === 'enfant' && !childType) {
-      setError('Veuillez sélectionner le type d\'enfant.');
-      return;
-    }
+  setLoading(true);
+  try {
+    const endpointMap = {
+      enfant: 'http://localhost:5001/api/students/login',
+      prof: 'http://localhost:5001/api/teachers/login',
+      admin: 'http://localhost:5001/api/admin/login',
+      parent: 'http://localhost:5001/api/parents/login',
+    };
+    if (!endpointMap[role]) throw new Error("Rôle invalide.");
 
-    if (!isValidEmail) {
-      setError('Veuillez entrer une adresse email valide.');
-      return;
-    }
+    const res = await fetch(endpointMap[role], {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.trim(), password: password.trim(), role }),
+    });
 
-    if (!isValidPassword) {
-      setError('Le mot de passe doit contenir au moins 6 caractères.');
-      return;
-    }
-
-    setLoading(true);
+    let data;
     try {
-      // Choix de l'endpoint selon le rôle
-      const endpointMap = {
-        enfant: '/api/students/login',
-        prof: '/api/teachers/login',
-        admin: '/api/admin/login',
-        parent: '/api/parents/login',
-      };
-      console.log("🔐 Payload:", email, password, "->", endpointMap[role]);
-      if (!endpointMap[role]) {
-        setError("Rôle invalide sélectionné. Veuillez choisir un rôle valide.");
-        return;
-      }
-      const res = await fetch(endpointMap[role], {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), password: password.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Erreur de connexion');
-
-      // On force le rôle côté front
-      data.role = role;
-
-      // On récupère l'ID de la matière si le prof en a une
-      const matiereId = data.matiere?._id || data.matiere || '';
-
-      // Stockage complet
-      const userInfo = {
-        ...data,
-        matiere: matiereId,
-      };
-      localStorage.setItem('userInfo', JSON.stringify(userInfo));
-      localStorage.setItem('token', data.token);
-
-      // Ajouter les informations du type d'enfant dans localStorage
-      if (role === 'enfant') {
-        localStorage.setItem('childType', childType);
-        localStorage.setItem('userRole', 'enfant');
-      }
-
-      // Redirections
-      switch (role) {
-        case 'enfant':
-          // Redirection selon le type d'enfant
-          if (childType === 'atypique') {
-            navigate('/studentAtypiques');
-          } else {
-            navigate('/student');
-          }
-          break;
-        case 'parent':
-          navigate('/parent');
-          break;
-        case 'prof':
-          navigate('/prof');
-          break;
-        case 'admin':
-          navigate('/admin');
-          break;
-        default:
-          navigate('/student');
-      }
-    } catch (err) {
-      console.error("Erreur lors de la connexion :", err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      data = await res.json();
+    } catch {
+      throw new Error("Erreur de parsing de la réponse serveur");
     }
-  };
+
+    console.log("Réponse serveur login:", data);
+
+    if (!res.ok) throw new Error(data.message || 'Erreur de connexion');
+
+    if (!data.role) {
+      // Pour le rôle "enfant", on force "etudiant" pour la navigation et la protection des routes
+      data.role = role === "enfant" ? "etudiant" : role;
+    }
+    
+    // Normaliser les rôles pour la navigation
+    if (data.role === "teacher") {
+      data.role = "prof"; // Normaliser teacher vers prof pour la navigation
+    }
+
+    localStorage.setItem('userInfo', JSON.stringify(data));
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('userRole', role);
+
+    switch (role) {
+      case 'enfant': navigate('/student'); break;
+      case 'parent': navigate('/parent'); break;
+      case 'prof': navigate('/prof'); break;
+      case 'admin': navigate('/admin'); break;
+      default: navigate('/student');
+    }
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Fonction de gestion de l'inscription
   const handleSignUp = async (e) => {
@@ -494,58 +442,7 @@ export default function LoginPage() {
           </motion.p>
         )}
 
-        {/* Sous-types pour les enfants */}
-        {role === 'enfant' && selectedRole?.subTypes && (
-          <motion.div
-            className="mt-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-          >
-            <label className="block text-white mb-3 text-base font-semibold text-center">Type d'enfant</label>
-            <div className="grid grid-cols-2 gap-3">
-              {selectedRole.subTypes.map((subType, index) => (
-                <motion.button
-                  key={subType.value}
-                  onClick={() => setChildType(subType.value)}
-                  className={`p-3 rounded-xl border-2 transition-all duration-300 relative overflow-hidden ${
-                    childType === subType.value
-                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 border-transparent text-white shadow-lg scale-105'
-                      : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/40'
-                  }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 + index * 0.1 }}
-                >
-                  {childType === subType.value && (
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  )}
-                  <div className="flex flex-col items-center gap-1 relative z-10">
-                    <span className="text-lg">
-                      {subType.value === 'typique' ? '🌟' : '💙'}
-                    </span>
-                    <span className="font-semibold text-xs">{subType.label}</span>
-                  </div>
-                </motion.button>
-              ))}
-            </div>
-            <motion.p 
-              className="text-center mt-2 text-blue-300 text-xs px-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.0 }}
-            >
-              {selectedRole.subTypes.find(st => st.value === childType)?.description}
-            </motion.p>
-          </motion.div>
-        )}
+
       </motion.div>
 
       {/* Enhanced login form */}

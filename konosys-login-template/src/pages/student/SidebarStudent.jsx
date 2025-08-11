@@ -234,7 +234,7 @@ const SidebarStudent = () => {
               <motion.div 
                 className="p-3 bg-white rounded-xl shadow-md"
                 whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.6 }}
+                transition={{ type: "tween", duration: 0.6 }}
               >
                 <img
                   src="/image pfe.png"
@@ -266,8 +266,8 @@ const SidebarStudent = () => {
                     </motion.div>
                     <p className="text-xs text-white/90">Super Élève</p>
                     <motion.div
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
                     >
                       <Sparkles className="w-3 h-3 text-yellow-300" />
                     </motion.div>
@@ -319,13 +319,13 @@ const SidebarStudent = () => {
                 <div className="flex items-center gap-2">
                   <motion.div 
                     className="w-3 h-3 bg-green-500 rounded-full"
-                    animate={{ scale: [1, 1.3, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
                   ></motion.div>
                   <p className="text-xs text-gray-600">Élève • En ligne</p>
                   <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity }}
+                    animate={{ rotate: 0 }}
+                    transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   >
                     <Heart className="w-4 h-4 text-red-400" />
                   </motion.div>

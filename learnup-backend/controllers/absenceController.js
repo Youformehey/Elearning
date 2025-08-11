@@ -175,39 +175,53 @@ const getAbsencesByCourseId = async (req, res) => {
   }
 };
 
-// ✅ Récupère les absences d’un étudiant regroupées par matière
+// ✅ Récupère les absences d'un étudiant avec détails
 const getAbsencesEtudiantParMatiere = async (req, res) => {
   try {
+    // 1. Récupérer l'ID étudiant depuis le token
     const studentId = req.user._id;
 
-    const absences = await Absence.find({ student: studentId })
-      .populate({
-        path: "course",
-        populate: { path: "matiere" }
-      });
-
-    const grouped = {};
-
-    for (const abs of absences) {
-      const matiereNom = abs.course?.matiere?.nom || "Inconnue";
-      if (!grouped[matiereNom]) grouped[matiereNom] = 0;
-      grouped[matiereNom] += 1;
+    // 2. Vérifier que l'ID existe
+    if (!studentId) {
+      return res.status(400).json({ message: "ID étudiant non trouvé" });
     }
 
-    const result = Object.entries(grouped).map(([matiere, nbAbs]) => {
-      const heures = nbAbs * 2;
-      return {
-        matiere,
-        totalAbsences: nbAbs,
-        totalHeures: heures,
-        limiteDepassee: heures > 12,
-      };
-    });
+    console.log("🔍 Recherche absences pour étudiant:", studentId);
 
-    res.status(200).json(result);
+    // 3. Rechercher les absences avec populate complet
+    const absences = await Absence.find({ student: studentId })
+      .populate({
+        path: 'course',
+        select: 'nom matiere classe teacher',
+        populate: {
+          path: 'matiere',
+          select: 'nom'
+        }
+      })
+      .sort({ date: -1 });
+
+    // 4. Formater les données pour le frontend
+    const formattedAbsences = absences.map(abs => ({
+      _id: abs._id,
+      date: abs.date,
+      course: {
+        _id: abs.course?._id,
+        nom: abs.course?.nom || 'Non spécifié',
+        matiere: abs.course?.matiere?.nom || 'Non spécifié',
+        classe: abs.course?.classe
+      },
+      justified: false,
+      hours: 2
+    }));
+
+    res.status(200).json(formattedAbsences);
+
   } catch (err) {
-    console.error("❌ Erreur getAbsencesEtudiantParMatiere :", err.message);
-    res.status(500).json({ message: "Erreur serveur" });
+    console.error("❌ Erreur getAbsencesEtudiantParMatiere:", err);
+    res.status(500).json({ 
+      message: "Erreur lors de la récupération des absences",
+      error: err.message 
+    });
   }
 };
 

@@ -220,7 +220,7 @@ export default function ProfilStudent() {
           </motion.div>
           <motion.div
             animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
             className="mt-6"
           >
             <p className="text-xl font-bold text-purple-600">
@@ -246,7 +246,7 @@ export default function ProfilStudent() {
             rotate: [0, 180, 360],
             scale: [1, 1.1, 1],
           }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          transition={{ type: "tween", duration: 8, repeat: Infinity, ease: "linear" }}
         />
         <motion.div
           className="absolute top-40 right-20 w-16 h-16 sm:w-20 sm:h-20 bg-purple-200 rounded-full"
@@ -255,7 +255,7 @@ export default function ProfilStudent() {
             scale: [1, 1.2, 1],
             rotate: [0, -180, -360],
           }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          transition={{ type: "tween", duration: 10, repeat: Infinity, ease: "linear" }}
         />
         <motion.div
           className="absolute bottom-20 left-1/4 w-12 h-12 sm:w-16 sm:h-16 bg-indigo-200 rounded-full"
@@ -264,7 +264,7 @@ export default function ProfilStudent() {
             rotate: [0, 90, 180, 270, 360],
             scale: [1, 1.15, 1],
           }}
-          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+          transition={{ type: "tween", duration: 12, repeat: Infinity, ease: "linear" }}
         />
         <motion.div
           className="absolute top-1/4 right-1/4 w-14 h-14 bg-blue-300 rounded-full"
@@ -274,7 +274,7 @@ export default function ProfilStudent() {
             scale: [1, 1.1, 1],
             rotate: [0, -90, -180, -270, -360],
           }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          transition={{ type: "tween", duration: 15, repeat: Infinity, ease: "linear" }}
         />
       </div>
 
@@ -376,8 +376,8 @@ export default function ProfilStudent() {
                     rotate: [0, 5, 0, -5, 0],
                   }}
                   transition={{ 
-                    type: "spring", 
-                    stiffness: 300,
+                    type: "tween", 
+                    duration: 4,
                     boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" },
                     scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                     rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
@@ -527,7 +527,7 @@ export default function ProfilStudent() {
               >
                 <motion.div
                   animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 1, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <XCircle className="w-6 h-6 text-red-600" />
                 </motion.div>
@@ -544,7 +544,7 @@ export default function ProfilStudent() {
               >
                 <motion.div
                   animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
                 >
                   <CheckCircle className="w-6 h-6 text-green-600" />
                 </motion.div>
@@ -568,8 +568,8 @@ export default function ProfilStudent() {
                     whileHover={{ scale: 1.1, rotate: 10 }}
                     animate={{ rotate: [0, 5, -5, 0] }}
                     transition={{ 
-                      type: "spring", 
-                      stiffness: 300,
+                      type: "tween", 
+                      duration: 3,
                       rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
                     }}
                   >
@@ -586,7 +586,7 @@ export default function ProfilStudent() {
                 <motion.div
                   className="relative group cursor-pointer w-48 h-48 rounded-full overflow-hidden border-8 border-pink-200 shadow-2xl mb-6"
                   whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(236, 72, 153, 0.3)" }}
-                  transition={{ type: "spring", stiffness: 200 }}
+                  transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
                 >
                   <img
                     src={profile.photo ? `http://localhost:5001${profile.photo}` : "/default-avatar.png"}
@@ -626,7 +626,7 @@ export default function ProfilStudent() {
               className="rounded-3xl shadow-2xl border-2 border-pink-200 overflow-hidden bg-white/90 backdrop-blur-sm"
               initial={{ opacity: 0, x: 50, scale: 0.9 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2, type: "spring", bounce: 0.4 }}
+              transition={{ duration: 0.8, delay: 0.2, type: "tween", ease: "easeInOut" }}
             >
               <div className="bg-gradient-to-r from-pink-500 to-purple-600 px-8 py-6">
                 <div className="flex items-center gap-4">
@@ -635,8 +635,8 @@ export default function ProfilStudent() {
                     whileHover={{ scale: 1.1, rotate: 10 }}
                     animate={{ rotate: [0, -5, 5, 0] }}
                     transition={{ 
-                      type: "spring", 
-                      stiffness: 300,
+                      type: "tween", 
+                      duration: 3,
                       rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
                     }}
                   >
@@ -770,7 +770,7 @@ export default function ProfilStudent() {
             <motion.h3 
               className="text-2xl font-bold mb-6 text-center text-gray-800"
               animate={{ scale: [1, 1.02, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              transition={{ type: "tween", duration: 2, repeat: Infinity }}
             >
               📊 Statistiques Académiques
             </motion.h3>
@@ -778,14 +778,14 @@ export default function ProfilStudent() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
                 animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                transition={{ delay: 1.0, type: "spring", bounce: 0.6 }}
+                transition={{ type: "spring", bounce: 0.6 }}
                 whileHover={{ scale: 1.1, y: -10, rotate: 2 }}
                 className="p-6 rounded-3xl shadow-2xl border-2 border-blue-300 relative overflow-hidden bg-gradient-to-br from-blue-100 to-blue-200"
               >
                 <motion.div
                   className="absolute top-0 right-0 w-20 h-20 bg-blue-300/30 rounded-full -mr-10 -mt-10"
                   animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-                  transition={{ duration: 4, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 2, ease: "linear" }}
                 />
                 <div className="relative z-10 flex items-center gap-4">
                   <motion.div
@@ -804,7 +804,7 @@ export default function ProfilStudent() {
                     <motion.p 
                       className="text-2xl font-bold text-gray-800"
                       animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                      transition={{ type: "tween", duration: 2, repeat: Infinity }}
                     >
                       {profile.courses?.length || 0}
                     </motion.p>
@@ -818,14 +818,14 @@ export default function ProfilStudent() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.5, rotate: 10 }}
                 animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                transition={{ delay: 1.1, type: "spring", bounce: 0.6 }}
+                transition={{ type: "spring", bounce: 0.6 }}
                 whileHover={{ scale: 1.1, y: -10, rotate: -2 }}
                 className="p-6 rounded-3xl shadow-2xl border-2 border-green-300 relative overflow-hidden bg-gradient-to-br from-green-100 to-green-200"
               >
                 <motion.div
                   className="absolute top-0 right-0 w-20 h-20 bg-green-300/30 rounded-full -mr-10 -mt-10"
                   animate={{ scale: [1, 1.2, 1], rotate: [0, -180, -360] }}
-                  transition={{ duration: 4, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 2, ease: "linear" }}
                 />
                 <div className="relative z-10 flex items-center gap-4">
                   <motion.div
@@ -844,7 +844,7 @@ export default function ProfilStudent() {
                     <motion.p 
                       className="text-2xl font-bold text-gray-800"
                       animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                      transition={{ type: "tween", duration: 2, repeat: Infinity }}
                     >
                       {profile.tauxPresence || 100}%
                     </motion.p>
@@ -858,14 +858,14 @@ export default function ProfilStudent() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
                 animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                transition={{ delay: 1.2, type: "spring", bounce: 0.6 }}
+                transition={{ type: "spring", bounce: 0.6 }}
                 whileHover={{ scale: 1.1, y: -10, rotate: 2 }}
                 className="p-6 rounded-3xl shadow-2xl border-2 border-purple-300 relative overflow-hidden bg-gradient-to-br from-purple-100 to-purple-200"
               >
                 <motion.div
                   className="absolute top-0 right-0 w-20 h-20 bg-purple-300/30 rounded-full -mr-10 -mt-10"
                   animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-                  transition={{ duration: 4, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 2, ease: "linear" }}
                 />
                 <div className="relative z-10 flex items-center gap-4">
                   <motion.div
@@ -884,7 +884,7 @@ export default function ProfilStudent() {
                     <motion.p 
                       className="text-2xl font-bold text-gray-800"
                       animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                      transition={{ type: "tween", duration: 2, repeat: Infinity }}
                     >
                       {profile.moyenne || 0}
                     </motion.p>

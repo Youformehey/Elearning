@@ -130,4 +130,27 @@ router.get(
   getAbsencesByCourseId
 );
 
+// ✅ DELETE /api/absences/:id → supprimer une absence spécifique
+router.delete(
+  "/:id",
+  protect,
+  authorizeRoles("teacher", "admin"),
+  async (req, res) => {
+    try {
+      const absence = await Absence.findById(req.params.id);
+      
+      if (!absence) {
+        return res.status(404).json({ message: "Absence non trouvée" });
+      }
+      
+      await absence.deleteOne();
+      
+      res.status(200).json({ message: "Absence supprimée avec succès" });
+    } catch (err) {
+      console.error("❌ Erreur suppression absence:", err.message);
+      res.status(500).json({ message: "Erreur lors de la suppression de l'absence" });
+    }
+  }
+);
+
 module.exports = router;

@@ -1,40 +1,39 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import axios from "axios";
 import {
-  BookOpenCheck,
-  UserCheck,
-  Clock4,
-  CalendarDays,
-  BarChart3,
+  BookOpen,
+  Users,
+  Target,
   TrendingUp,
   Award,
-  Target,
-  Activity,
   Sparkles,
-  Zap,
   Star,
   Trophy,
   GraduationCap,
-  Users,
-  BookOpen,
   CheckCircle,
   AlertCircle,
-  ArrowUpRight,
-  Eye,
+  ArrowRight,
+  RefreshCw,
+  Brain,
+  Lightbulb,
   Calendar,
   Clock,
   FileText,
   FolderOpen,
-  RefreshCw,
-  Brain,
-  Lightbulb,
-  Target as TargetIcon,
-  Plus,
-  Minus,
-  ArrowRight,
-  Play,
-  Pause,
-  Volume2,
+  BookOpenCheck,
+  UserCheck,
+  BarChart3,
+  Activity,
+  Zap,
+  Crown,
+  Gem,
+  Diamond,
+  Moon,
+  Sun,
+  Rainbow,
+  Flower,
+  Cloud,
+  Rocket,
   Heart,
   Smile,
   Book,
@@ -42,7 +41,14 @@ import {
   Palette,
   Music,
   Globe,
-  Gamepad2
+  Gamepad2,
+  Plus,
+  Minus,
+  Play,
+  Pause,
+  Volume2,
+  Eye,
+  ArrowUpRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeContext } from "../../context/ThemeContext";
@@ -52,16 +58,20 @@ const DashboardStudent = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
   const { darkMode } = useContext(ThemeContext);
 
-  const studentEmail = localStorage.getItem("userEmail");
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const userInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
+  const studentEmail = userInfo.email || userInfo.userEmail;
   const token = userInfo?.token;
 
   // Fonction pour récupérer les vraies données
   const fetchRealData = useCallback(async () => {
+    console.log("🔍 Vérification des données utilisateur:", { studentEmail, hasToken: !!token, userInfo });
+    
     if (!studentEmail) {
       console.warn("⚠️ Aucun email trouvé dans localStorage.");
+      console.log("📋 Contenu de userInfo:", userInfo);
       setError("Email manquant. Veuillez vous reconnecter.");
       setLoading(false);
       return;
@@ -95,33 +105,18 @@ const DashboardStudent = () => {
       }
     } catch (err) {
       console.error("❌ Erreur récupération données:", err);
-      if (err.response?.status === 401) {
-        setError("Session expirée. Veuillez vous reconnecter.");
-        setTimeout(() => {
-          localStorage.removeItem("token");
-          localStorage.removeItem("userInfo");
-          window.location.href = "/login";
-        }, 2000);
-      } else {
-        setError("Impossible de charger les données. Vérifiez votre connexion.");
-      }
-      setStats(null);
+      setError("Erreur lors de la récupération des données. Veuillez réessayer.");
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
   }, [studentEmail, token]);
 
-  // Fonction de rafraîchissement manuel
-  const handleRefresh = () => {
-    setRefreshing(true);
-    fetchRealData();
-  };
-
-  // Rafraîchissement automatique toutes les 30 secondes
   useEffect(() => {
     fetchRealData();
+  }, [fetchRealData]);
 
+  useEffect(() => {
     const interval = setInterval(() => {
       console.log("🔄 Rafraîchissement automatique des données...");
       fetchRealData();
@@ -130,46 +125,55 @@ const DashboardStudent = () => {
     return () => clearInterval(interval);
   }, [fetchRealData]);
 
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchRealData();
+  };
+
   const statCards = [
     {
       icon: "📚",
       title: "Mes Cours",
       value: stats?.totalCours ?? "0",
       change: "+12%",
-      color: "bg-blue-500",
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-200",
-      emoji: "📖"
+      color: "bg-gradient-to-r from-blue-500 to-cyan-500",
+      bgColor: darkMode ? "bg-blue-900/20" : "bg-gradient-to-br from-blue-50 to-cyan-50",
+      borderColor: darkMode ? "border-blue-700" : "border-blue-200",
+      emoji: "📖",
+      description: "Cours actifs"
     },
     {
       icon: "👥",
       title: "Mes Amis",
       value: stats?.totalEtudiants ?? "0",
       change: "+5%",
-      color: "bg-green-500",
-      bgColor: "bg-green-50",
-      borderColor: "border-green-200",
-      emoji: "🤝"
+      color: "bg-gradient-to-r from-green-500 to-emerald-500",
+      bgColor: darkMode ? "bg-green-900/20" : "bg-gradient-to-br from-green-50 to-emerald-50",
+      borderColor: darkMode ? "border-green-700" : "border-green-200",
+      emoji: "🤝",
+      description: "Camarades de classe"
     },
     {
       icon: "🎯",
       title: "Mes Objectifs",
       value: `${stats?.objectifsAtteints ?? 75}%`,
       change: "+8%",
-      color: "bg-purple-500",
-      bgColor: "bg-purple-50",
-      borderColor: "border-purple-200",
-      emoji: "⭐"
+      color: "bg-gradient-to-r from-purple-500 to-pink-500",
+      bgColor: darkMode ? "bg-purple-900/20" : "bg-gradient-to-br from-purple-50 to-pink-50",
+      borderColor: darkMode ? "border-purple-700" : "border-purple-200",
+      emoji: "⭐",
+      description: "Objectifs atteints"
     },
     {
       icon: "⏰",
       title: "Prochain Cours",
       value: stats?.prochainCours ? "Aujourd'hui" : "Aucun",
       change: stats?.prochainCours ? "Dans 2h" : "",
-      color: "bg-orange-500",
-      bgColor: "bg-orange-50",
-      borderColor: "border-orange-200",
-      emoji: "📅"
+      color: "bg-gradient-to-r from-orange-500 to-red-500",
+      bgColor: darkMode ? "bg-orange-900/20" : "bg-gradient-to-br from-orange-50 to-red-50",
+      borderColor: darkMode ? "border-orange-700" : "border-orange-200",
+      emoji: "📅",
+      description: "Cours à venir"
     }
   ];
 
@@ -177,70 +181,70 @@ const DashboardStudent = () => {
     { 
       icon: "📚", 
       title: "Voir mes cours", 
-      color: "bg-blue-500",
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-200",
-      description: "Accéder à tous mes cours"
+      color: "bg-gradient-to-r from-blue-500 to-cyan-500",
+      bgColor: darkMode ? "bg-blue-900/20" : "bg-gradient-to-br from-blue-50 to-cyan-50",
+      borderColor: darkMode ? "border-blue-700" : "border-blue-200",
+      description: "Accéder à tous mes cours",
+      action: () => window.location.href = "/student/cours"
     },
     { 
       icon: "📅", 
       title: "Mon planning", 
-      color: "bg-green-500",
-      bgColor: "bg-green-50",
-      borderColor: "border-green-200",
-      description: "Voir mon emploi du temps"
+      color: "bg-gradient-to-r from-green-500 to-emerald-500",
+      bgColor: darkMode ? "bg-green-900/20" : "bg-gradient-to-br from-green-50 to-emerald-50",
+      borderColor: darkMode ? "border-green-700" : "border-green-200",
+      description: "Voir mon emploi du temps",
+      action: () => window.location.href = "/student/planning"
     },
     { 
       icon: "🤖", 
       title: "Assistant IA", 
-      color: "bg-purple-500",
-      bgColor: "bg-purple-50",
-      borderColor: "border-purple-200",
-      description: "Obtenir de l'aide intelligente"
+      color: "bg-gradient-to-r from-purple-500 to-pink-500",
+      bgColor: darkMode ? "bg-purple-900/20" : "bg-gradient-to-br from-purple-50 to-pink-50",
+      borderColor: darkMode ? "border-purple-700" : "border-purple-200",
+      description: "Obtenir de l'aide intelligente",
+      action: () => window.location.href = "/student/assistant"
     },
     { 
       icon: "🎯", 
       title: "Mes objectifs", 
-      color: "bg-orange-500",
-      bgColor: "bg-orange-50",
-      borderColor: "border-orange-200",
-      description: "Suivre mes progrès"
+      color: "bg-gradient-to-r from-orange-500 to-red-500",
+      bgColor: darkMode ? "bg-orange-900/20" : "bg-gradient-to-br from-orange-50 to-red-50",
+      borderColor: darkMode ? "border-orange-700" : "border-orange-200",
+      description: "Suivre mes progrès",
+      action: () => window.location.href = "/student/notes"
     }
   ];
 
-  const additionalStats = [
-    {
-      icon: "📄",
-      title: "Documents",
-      value: stats?.statsSupplementaires?.totalDocuments ?? 24,
-      color: "bg-cyan-500",
-      bgColor: "bg-cyan-50",
-      borderColor: "border-cyan-200"
-    },
-    {
-      icon: "✅",
-      title: "Devoirs rendus",
-      value: stats?.statsSupplementaires?.devoirsRendus ?? 8,
-      color: "bg-pink-500",
-      bgColor: "bg-pink-50",
-      borderColor: "border-pink-200"
-    },
-    {
-      icon: "📅",
-      title: "Séances aujourd'hui",
-      value: stats?.statsSupplementaires?.seancesAujourdhui ?? 3,
-      color: "bg-indigo-500",
-      bgColor: "bg-indigo-50",
-      borderColor: "border-indigo-200"
-    }
+  const achievements = [
+    { icon: "🏆", title: "Premier cours", description: "Tu as assisté à ton premier cours !", unlocked: true },
+    { icon: "📚", title: "Étudiant assidu", description: "5 cours suivis consécutivement", unlocked: true },
+    { icon: "⭐", title: "Excellent élève", description: "Note moyenne de 15/20", unlocked: false },
+    { icon: "🎯", title: "Objectif atteint", description: "100% des objectifs réalisés", unlocked: false },
+    { icon: "🤖", title: "Assistant IA", description: "Utilisé l'assistant IA 10 fois", unlocked: true },
+    { icon: "📅", title: "Organisé", description: "Planning respecté pendant 1 mois", unlocked: false }
+  ];
+
+  const recentActivities = [
+    { type: "course", title: "Mathématiques", time: "Il y a 2h", icon: "📐", color: "blue" },
+    { type: "quiz", title: "Quiz Sciences", time: "Il y a 4h", icon: "🧪", color: "green" },
+    { type: "homework", title: "Devoir Français", time: "Hier", icon: "📝", color: "purple" },
+    { type: "achievement", title: "Nouveau badge", time: "Il y a 1 jour", icon: "🏆", color: "yellow" }
   ];
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
-      {/* Animated background elements - Animations améliorées */}
+    <div className={`min-h-screen relative overflow-hidden ${
+      darkMode 
+        ? 'bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900' 
+        : 'bg-gradient-to-br from-blue-50 via-purple-50 via-pink-50 to-yellow-50'
+    }`}>
+      {/* Animated background elements - Design enfantin et professionnel */}
       <div className="absolute inset-0 overflow-hidden">
+        {/* Formes géométriques animées pour les enfants */}
         <motion.div
-          className="absolute top-20 right-20 w-32 h-32 bg-blue-100 rounded-full"
+          className={`absolute top-20 right-20 w-32 h-32 rounded-full ${
+            darkMode ? 'bg-blue-500/20' : 'bg-blue-400/30'
+          }`}
           animate={{
             x: [0, 30, 0],
             y: [0, -20, 0],
@@ -250,11 +254,13 @@ const DashboardStudent = () => {
           transition={{
             duration: 8,
             repeat: Infinity,
-            ease: "linear"
+            ease: "easeInOut"
           }}
         />
         <motion.div
-          className="absolute bottom-20 left-20 w-40 h-40 bg-green-100 rounded-full"
+          className={`absolute bottom-20 left-20 w-40 h-40 rounded-full ${
+            darkMode ? 'bg-green-500/20' : 'bg-green-400/30'
+          }`}
           animate={{
             x: [0, -30, 0],
             y: [0, 25, 0],
@@ -264,803 +270,466 @@ const DashboardStudent = () => {
           transition={{
             duration: 10,
             repeat: Infinity,
-            ease: "linear"
+            ease: "easeInOut"
           }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/3 w-24 h-24 bg-purple-100 rounded-full"
+          className={`absolute top-1/2 left-1/3 w-24 h-24 rounded-full ${
+            darkMode ? 'bg-purple-500/20' : 'bg-purple-400/30'
+          }`}
           animate={{
             x: [0, 20, 0],
             y: [0, -15, 0],
             scale: [1, 1.15, 1],
-            rotate: [0, 90, 180, 270, 360],
+            rotate: [0, 90, 180],
           }}
           transition={{
             duration: 12,
             repeat: Infinity,
-            ease: "linear"
+            ease: "easeInOut"
           }}
         />
-        <motion.div
-          className="absolute top-1/4 right-1/4 w-20 h-20 bg-pink-100 rounded-full"
-          animate={{
-            x: [0, -20, 0],
-            y: [0, 15, 0],
-            scale: [1, 1.1, 1],
-            rotate: [0, -90, -180, -270, -360],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
+        
+        {/* Étoiles flottantes pour les enfants */}
+        {[...Array(12)].map((_, i) => (
+          <motion.div
+            key={i}
+            className={`absolute w-3 h-3 ${
+              i % 4 === 0 ? 'text-yellow-400' : 
+              i % 4 === 1 ? 'text-pink-400' : 
+              i % 4 === 2 ? 'text-blue-400' : 'text-green-400'
+            }`}
+            style={{
+              left: `${10 + (i * 7)}%`,
+              top: `${5 + (i * 8)}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              x: [0, 15, 0],
+              scale: [1, 1.5, 1],
+              rotate: [0, 360, 720],
+              opacity: [0.3, 1, 0.3],
+            }}
+            transition={{
+              duration: 4 + i,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.3,
+            }}
+          >
+            <Star size={16} />
+          </motion.div>
+        ))}
+
+        {/* Cœurs flottants */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`heart-${i}`}
+            className={`absolute w-4 h-4 ${
+              i % 3 === 0 ? 'text-red-400' : 
+              i % 3 === 1 ? 'text-pink-400' : 'text-rose-400'
+            }`}
+            style={{
+              left: `${70 + (i * 4)}%`,
+              top: `${20 + (i * 10)}%`,
+            }}
+            animate={{
+              y: [0, -20, 0],
+              x: [0, 10, 0],
+              scale: [1, 1.3, 1],
+              rotate: [0, -180, -360],
+            }}
+            transition={{
+              duration: 6 + i,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.4,
+            }}
+          >
+            <Heart size={20} />
+          </motion.div>
+        ))}
+
+        {/* Bulles colorées */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={`bubble-${i}`}
+            className={`absolute rounded-full ${
+              i % 3 === 0 ? 'bg-blue-400/40' : 
+              i % 3 === 1 ? 'bg-purple-400/40' : 'bg-green-400/40'
+            }`}
+            style={{
+              width: `${20 + (i * 5)}px`,
+              height: `${20 + (i * 5)}px`,
+              left: `${15 + (i * 15)}%`,
+              top: `${60 + (i * 6)}%`,
+            }}
+            animate={{
+              y: [0, -40, 0],
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.8, 0.3],
+            }}
+            transition={{
+              duration: 5 + i,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.5,
+            }}
+          />
+        ))}
       </div>
 
-      {/* Floating decorative elements - Animations ultra attractives */}
-      <motion.div
-        className="absolute top-16 right-16 text-blue-400"
-        animate={{ 
-          rotate: 360,
-          scale: [1, 1.3, 1],
-          y: [0, -10, 0],
-          x: [0, 5, 0],
-        }}
-        transition={{ 
-          duration: 15, 
-          repeat: Infinity, 
-          ease: "linear",
-          scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-          y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
-          x: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-        }}
-      >
-        <Sparkles size={32} />
-      </motion.div>
-      <motion.div
-        className="absolute bottom-16 left-16 text-green-400"
-        animate={{ 
-          rotate: -360,
-          scale: [1, 1.2, 1],
-          y: [0, 10, 0],
-          x: [0, -5, 0],
-        }}
-        transition={{ 
-          duration: 20, 
-          repeat: Infinity, 
-          ease: "linear",
-          scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-          y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-          x: { duration: 5, repeat: Infinity, ease: "easeInOut" }
-        }}
-      >
-        <Star size={28} />
-      </motion.div>
-      <motion.div
-        className="absolute top-1/2 left-1/2 text-purple-400"
-        animate={{ 
-          rotate: 360,
-          scale: [1, 1.4, 1],
-          y: [0, -15, 0],
-          x: [0, 10, 0],
-        }}
-        transition={{ 
-          duration: 18, 
-          repeat: Infinity, 
-          ease: "linear",
-          scale: { duration: 5, repeat: Infinity, ease: "easeInOut" },
-          y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-          x: { duration: 6, repeat: Infinity, ease: "easeInOut" }
-        }}
-      >
-        <Trophy size={24} />
-      </motion.div>
-
-      <div className="relative z-10 py-8 px-6">
-        <motion.div
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-7xl mx-auto"
-        >
-          {/* Header avec animations ultra attractives */}
+      {/* Main Content */}
+      <div className="relative z-10 p-4 sm:p-6 lg:p-8">
+        {/* Header avec design enfantin */}
+        <div className="mb-6 sm:mb-8">
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-center mb-12"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-between"
           >
-            <motion.div
-              className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              <motion.div
-                className="p-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl shadow-2xl"
-                whileHover={{ scale: 1.2, rotate: 15 }}
-                animate={{ 
-                  boxShadow: [
-                    "0 25px 50px -12px rgba(59, 130, 246, 0.25)",
-                    "0 25px 50px -12px rgba(147, 51, 234, 0.25)",
-                    "0 25px 50px -12px rgba(59, 130, 246, 0.25)"
-                  ],
-                  scale: [1, 1.05, 1],
-                  rotate: [0, 5, 0, -5, 0],
-                }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 300,
-                  boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-                  scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                  rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
-                }}
+            <div>
+              <motion.h1 
+                className={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 ${
+                  darkMode ? 'text-white' : 'text-gray-900'
+                }`}
+                animate={{ scale: 1 }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
-                <motion.span 
-                  className="text-6xl"
-                  animate={{ 
-                    scale: [1, 1.2, 1],
-                    rotate: [0, 10, 0, -10, 0],
-                  }}
-                  transition={{ 
-                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
-                    rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                  }}
-                >
-                  🎓
-                </motion.span>
-              </motion.div>
-              <div className="text-center sm:text-left">
-                <motion.h1 
-                  className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
-                  animate={{ 
-                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    scale: [1, 1.02, 1],
-                    y: [0, -3, 0],
-                  }}
-                  transition={{ 
-                    duration: 6, 
-                    repeat: Infinity, 
-                    ease: "easeInOut",
-                    scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-                    y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-                  }}
-                >
-                  🎒 Bienvenue Élève !
-                </motion.h1>
-                <motion.p 
-                  className="text-xl sm:text-2xl font-medium text-gray-700"
-                  animate={{ 
-                    opacity: [0.8, 1, 0.8],
-                    scale: [1, 1.01, 1],
-                  }}
-                  transition={{ 
-                    duration: 3, 
-                    repeat: Infinity, 
-                    ease: "easeInOut",
-                    scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }
-                  }}
-                >
-                  Voici ton espace d'apprentissage personnalisé ✨
-                </motion.p>
-              </div>
-            </motion.div>
-
-            {/* Refresh Button - Animation ultra attractive */}
+                🎓 Mon Monde d'Apprentissage
+              </motion.h1>
+              <motion.p 
+                className={`text-lg sm:text-xl ${
+                  darkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                Salut {userInfo.name || "Élève"} ! 🌟 Prêt(e) pour une aventure incroyable ?
+              </motion.p>
+            </div>
+            
             <motion.button
               onClick={handleRefresh}
               disabled={refreshing}
-              className={`inline-flex items-center gap-4 px-8 py-4 rounded-2xl font-bold transition-all duration-300 text-lg shadow-xl ${
-                refreshing 
-                  ? 'bg-gray-400 text-white cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 hover:scale-105 hover:shadow-2xl'
+              className={`p-4 rounded-2xl border-2 transition-all duration-300 ${
+                darkMode 
+                  ? 'bg-purple-600 border-purple-500 text-white hover:bg-purple-700' 
+                  : 'bg-gradient-to-r from-blue-500 to-purple-500 border-blue-400 text-white hover:from-blue-600 hover:to-purple-600'
               }`}
-              whileHover={!refreshing ? { 
-                scale: 1.1, 
-                y: -5,
-                rotate: [0, 2, -2, 0],
-              } : {}}
-              whileTap={!refreshing ? { scale: 0.95 } : {}}
-              animate={!refreshing ? { 
-                boxShadow: [
-                  "0 10px 25px -5px rgba(59, 130, 246, 0.3)",
-                  "0 20px 40px -10px rgba(147, 51, 234, 0.4)",
-                  "0 10px 25px -5px rgba(59, 130, 246, 0.3)"
-                ],
-                scale: [1, 1.02, 1],
-              } : {}}
-              transition={{ 
-                boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-                rotate: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-              }}
+              whileHover={{ scale: 1.05, rotate: 5 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <motion.div
-                animate={refreshing ? { rotate: 360 } : { 
-                  rotate: [0, 10, 0, -10, 0],
-                  scale: [1, 1.1, 1],
-                }}
-                transition={{ 
-                  duration: refreshing ? 1 : 2, 
-                  repeat: Infinity, 
-                  ease: refreshing ? "linear" : "easeInOut" 
-                }}
-              >
-                <RefreshCw size={24} />
-              </motion.div>
-              {refreshing ? "Actualisation..." : "🔄 Actualiser les données"}
+              <RefreshCw className={`w-6 h-6 ${refreshing ? 'animate-spin' : ''}`} />
             </motion.button>
-
-            <AnimatePresence>
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -20, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                  className="bg-red-50 border-2 border-red-200 text-red-700 py-5 px-8 rounded-2xl mb-8 flex items-center justify-center gap-4 max-w-md mx-auto text-lg shadow-xl"
-                >
-                  <AlertCircle size={24} />
-                  {error}
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.div>
+        </div>
 
-          {/* Stats Cards - Animations ultra attractives */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
-          >
-            {statCards.map((card, index) => (
-              <motion.div
-                key={card.title}
-                initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 0.1 * index, duration: 0.6 }}
-                whileHover={{ 
-                  scale: 1.08, 
-                  y: -10,
-                  rotateY: [0, 5, 0],
-                  rotateX: [0, 3, 0],
-                }}
-                className={`relative overflow-hidden rounded-3xl shadow-2xl border-2 ${card.borderColor} ${card.bgColor} group`}
-              >
-                <div className="p-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <motion.div
-                      className={`p-4 rounded-2xl ${card.color} text-white shadow-xl group-hover:shadow-2xl transition-all duration-300`}
-                      whileHover={{ scale: 1.2, rotate: 15 }}
-                      animate={{ 
-                        boxShadow: [
-                          "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
-                          "0 20px 40px -10px rgba(0, 0, 0, 0.2)",
-                          "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
-                        ],
-                        scale: [1, 1.05, 1],
-                        rotate: [0, 5, 0, -5, 0],
-                      }}
-                      transition={{ 
-                        type: "spring", 
-                        stiffness: 300,
-                        boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                        scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-                        rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
-                      }}
-                    >
-                      <motion.span 
-                        className="text-4xl"
-                        animate={{ 
-                          scale: [1, 1.1, 1],
-                          rotate: [0, 10, 0, -10, 0],
-                        }}
-                        transition={{ 
-                          scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                          rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
-                        }}
-                      >
-                        {card.icon}
-                      </motion.span>
-                    </motion.div>
-                    <motion.div
-                      className="flex items-center gap-2 text-sm font-bold text-green-600"
-                      animate={{ 
-                        y: [0, -3, 0],
-                        scale: [1, 1.05, 1],
-                      }}
-                      transition={{ 
-                        duration: 2, 
-                        repeat: Infinity, 
-                        ease: "easeInOut",
-                        scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-                      }}
-                    >
-                      <ArrowUpRight size={20} />
-                      {card.change}
-                    </motion.div>
-                  </div>
-                  
-                  <motion.h3 
-                    className="text-3xl sm:text-4xl font-bold mb-2 text-gray-800"
-                    animate={{ 
-                      scale: [1, 1.02, 1],
-                      y: [0, -2, 0],
-                    }}
-                    transition={{ 
-                      duration: 3, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                  >
-                    {card.value}
-                  </motion.h3>
-                  <p className="text-lg text-gray-600">
-                    {card.title}
-                  </p>
-                  <motion.div
-                    className="mt-4 text-2xl"
-                    animate={{ 
-                      scale: [1, 1.2, 1],
-                      rotate: [0, 15, 0, -15, 0],
-                      y: [0, -5, 0],
-                    }}
-                    transition={{ 
-                      duration: 4, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" },
-                      y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                  >
-                    {card.emoji}
-                  </motion.div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Additional Stats Row - Animations améliorées */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
-          >
-            {additionalStats.map((stat, index) => (
-              <motion.div
-                key={stat.title}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 * index, duration: 0.6 }}
-                whileHover={{ 
-                  scale: 1.05, 
-                  y: -8,
-                  rotateY: [0, 3, 0],
-                }}
-                className={`p-8 rounded-3xl shadow-2xl border-2 ${stat.borderColor} ${stat.bgColor}`}
-              >
-                <div className="flex items-center gap-6">
-                  <motion.div
-                    className={`p-4 rounded-2xl ${stat.color} text-white shadow-xl`}
-                    whileHover={{ scale: 1.2, rotate: 15 }}
-                    animate={{ 
-                      boxShadow: [
-                        "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
-                        "0 20px 40px -10px rgba(0, 0, 0, 0.2)",
-                        "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
-                      ],
-                      scale: [1, 1.05, 1],
-                      rotate: [0, 8, 0, -8, 0],
-                    }}
-                    transition={{ 
-                      type: "spring", 
-                      stiffness: 300,
-                      boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                      scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-                      rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                  >
-                    <motion.span 
-                      className="text-3xl"
-                      animate={{ 
-                        scale: [1, 1.1, 1],
-                        rotate: [0, 12, 0, -12, 0],
-                      }}
-                      transition={{ 
-                        scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                        rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                      }}
-                    >
-                      {stat.icon}
-                    </motion.span>
-                  </motion.div>
-                  <div>
-                    <motion.p 
-                      className="text-3xl sm:text-4xl font-bold text-gray-800"
-                      animate={{ 
-                        scale: [1, 1.02, 1],
-                        y: [0, -2, 0],
-                      }}
-                      transition={{ 
-                        duration: 3, 
-                        repeat: Infinity, 
-                        ease: "easeInOut",
-                        y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                      }}
-                    >
-                      {stat.value}
-                    </motion.p>
-                    <p className="text-lg text-gray-600">
-                      {stat.title}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Quick Actions Section - Animations ultra attractives */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2 }}
-            className="mb-12"
-          >
-            <motion.h2 
-              className="text-3xl sm:text-4xl font-bold mb-8 text-center text-gray-800"
-              animate={{ 
-                scale: [1, 1.02, 1],
-                y: [0, -3, 0],
-              }}
-              transition={{ 
-                duration: 4, 
-                repeat: Infinity, 
-                ease: "easeInOut",
-                y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-              }}
+        {/* Error Display */}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className={`mb-6 p-4 rounded-2xl border-2 ${
+                darkMode 
+                  ? 'bg-red-900/20 border-red-700 text-red-300' 
+                  : 'bg-red-50 border-red-200 text-red-700'
+              }`}
             >
-              🚀 Actions Rapides
-            </motion.h2>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {quickActions.map((action, index) => (
-                <motion.button
-                  key={action.title}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 * index, duration: 0.6 }}
-                  whileHover={{ 
-                    scale: 1.1, 
-                    y: -8,
-                    rotateY: [0, 5, 0],
-                    rotateX: [0, 3, 0],
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`p-8 rounded-3xl shadow-2xl border-2 ${action.borderColor} ${action.bgColor} transition-all duration-300 group`}
-                >
-                  <div className="flex flex-col items-center gap-6">
-                    <motion.div
-                      className={`p-5 rounded-2xl ${action.color} text-white shadow-xl group-hover:shadow-2xl transition-all duration-300`}
-                      whileHover={{ scale: 1.3, rotate: 20 }}
-                      animate={{ 
-                        boxShadow: [
-                          "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
-                          "0 20px 40px -10px rgba(0, 0, 0, 0.2)",
-                          "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
-                        ],
-                        scale: [1, 1.05, 1],
-                        rotate: [0, 8, 0, -8, 0],
-                      }}
-                      transition={{ 
-                        type: "spring", 
-                        stiffness: 300,
-                        boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                        scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-                        rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
-                      }}
-                    >
-                      <motion.span 
-                        className="text-4xl"
-                        animate={{ 
-                          scale: [1, 1.15, 1],
-                          rotate: [0, 15, 0, -15, 0],
-                        }}
-                        transition={{ 
-                          scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                          rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                        }}
-                      >
-                        {action.icon}
-                      </motion.span>
-                    </motion.div>
-                    <div className="text-center">
-                      <span className="font-bold text-lg block text-gray-800">
-                        {action.title}
-                      </span>
-                      <span className="text-sm opacity-75 text-gray-600">
-                        {action.description}
-                      </span>
-                    </div>
-                  </div>
-                </motion.button>
-              ))}
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5" />
+                <span className="font-medium">{error}</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Loading State */}
+        {loading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center justify-center py-12"
+          >
+            <div className="flex items-center gap-3">
+              <motion.div
+                className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              />
+              <span className={`text-lg font-medium ${
+                darkMode ? 'text-white' : 'text-gray-700'
+              }`}>
+                Chargement de ton univers...
+              </span>
             </div>
           </motion.div>
+        )}
 
-          {/* Progress Section - Animations ultra attractives */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.4 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-          >
-            {/* Progress Section */}
+        {/* Dashboard Content */}
+        {!loading && !error && (
+          <div className="space-y-8">
+            {/* Welcome Section avec design enfantin */}
             <motion.div
-              whileHover={{ scale: 1.03, y: -8 }}
-              className="rounded-3xl shadow-2xl border-2 border-blue-200 bg-blue-50 overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className={`p-8 rounded-3xl border-2 shadow-2xl ${
+                darkMode 
+                  ? 'bg-gradient-to-br from-purple-900/50 to-blue-900/50 border-purple-500/50' 
+                  : 'bg-gradient-to-br from-white/80 to-blue-50/80 border-blue-200/50'
+              } backdrop-blur-sm`}
             >
-              <div className="bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-6">
-                <div className="flex items-center gap-6">
-                  <motion.div
-                    className="p-4 bg-white/20 rounded-2xl"
-                    whileHover={{ scale: 1.2, rotate: 15 }}
-                    animate={{ 
-                      boxShadow: [
-                        "0 10px 25px -5px rgba(255, 255, 255, 0.1)",
-                        "0 20px 40px -10px rgba(255, 255, 255, 0.2)",
-                        "0 10px 25px -5px rgba(255, 255, 255, 0.1)"
-                      ],
-                      scale: [1, 1.05, 1],
-                      rotate: [0, 8, 0, -8, 0],
-                    }}
-                    transition={{ 
-                      type: "spring", 
-                      stiffness: 300,
-                      boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                      scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-                      rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                  >
-                    <motion.span 
-                      className="text-4xl"
-                      animate={{ 
-                        scale: [1, 1.1, 1],
-                        rotate: [0, 12, 0, -12, 0],
-                      }}
-                      transition={{ 
-                        scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                        rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                      }}
-                    >
-                      📊
-                    </motion.span>
-                  </motion.div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-white">📊 Progression Générale</h3>
-                    <p className="text-white/90 text-lg">Ton avancement dans les cours</p>
-                  </div>
-                </div>
-              </div>
-              <div className="p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <motion.span 
-                    className="text-4xl sm:text-5xl font-bold text-gray-800"
-                    animate={{ 
-                      scale: [1, 1.02, 1],
-                      y: [0, -3, 0],
-                    }}
-                    transition={{ 
-                      duration: 3, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                  >
-                    {stats?.avgPerformance ?? 75}%
-                  </motion.span>
-                  <motion.div
-                    className="flex items-center gap-2 text-green-600"
-                    animate={{ 
-                      y: [0, -3, 0],
-                      scale: [1, 1.05, 1],
-                    }}
-                    transition={{ 
-                      duration: 2, 
-                      repeat: Infinity, 
-                      ease: "easeInOut",
-                      scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                  >
-                    <TrendingUp size={24} />
-                    <span className="text-lg font-bold">+5%</span>
-                  </motion.div>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
-                  <motion.div
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-4 rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${stats?.avgPerformance ?? 75}%` }}
-                    transition={{ duration: 2, delay: 0.5 }}
-                  />
-                </div>
-                <p className="text-lg text-gray-600">
-                  Taux de progression moyen dans tes cours
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Next Sessions Section */}
-            <motion.div
-              whileHover={{ scale: 1.03, y: -8 }}
-              className="rounded-3xl shadow-2xl border-2 border-orange-200 bg-orange-50 overflow-hidden"
-            >
-              <div className="bg-gradient-to-r from-orange-500 to-red-500 px-8 py-6">
-                <div className="flex items-center gap-6">
-                  <motion.div
-                    className="p-4 bg-white/20 rounded-2xl"
-                    whileHover={{ scale: 1.2, rotate: 15 }}
-                    animate={{ 
-                      boxShadow: [
-                        "0 10px 25px -5px rgba(255, 255, 255, 0.1)",
-                        "0 20px 40px -10px rgba(255, 255, 255, 0.2)",
-                        "0 10px 25px -5px rgba(255, 255, 255, 0.1)"
-                      ],
-                      scale: [1, 1.05, 1],
-                      rotate: [0, 8, 0, -8, 0],
-                    }}
-                    transition={{ 
-                      type: "spring", 
-                      stiffness: 300,
-                      boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                      scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-                      rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                  >
-                    <motion.span 
-                      className="text-4xl"
-                      animate={{ 
-                        scale: [1, 1.1, 1],
-                        rotate: [0, 12, 0, -12, 0],
-                      }}
-                      transition={{ 
-                        scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                        rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                      }}
-                    >
-                      ⏰
-                    </motion.span>
-                  </motion.div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-white">⏰ Prochaines Sessions</h3>
-                    <p className="text-white/90 text-lg">Tes cours à venir</p>
-                  </div>
-                </div>
-              </div>
-              <div className="p-8">
-                <div className="space-y-6">
-                  <motion.div
-                    className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-orange-100 to-red-100 border border-orange-200"
-                    whileHover={{ scale: 1.02 }}
-                    animate={{ 
-                      boxShadow: [
-                        "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                        "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-                        "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
-                      ],
-                      y: [0, -2, 0],
-                    }}
-                    transition={{ 
-                      boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                      y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <motion.div 
-                        className="w-3 h-3 bg-green-500 rounded-full"
-                        animate={{ 
-                          scale: [1, 1.3, 1],
-                          opacity: [1, 0.7, 1],
-                        }}
-                        transition={{ 
-                          duration: 2, 
-                          repeat: Infinity, 
-                          ease: "easeInOut" 
-                        }}
-                      />
-                      <div>
-                        <p className="font-semibold text-gray-800 text-lg">Mathématiques</p>
-                        <p className="text-gray-600">Aujourd'hui à 14h00</p>
-                      </div>
-                    </div>
-                    <motion.div
-                      animate={{ 
-                        rotate: [0, 10, 0, -10, 0],
-                        scale: [1, 1.1, 1],
-                      }}
-                      transition={{ 
-                        duration: 4, 
-                        repeat: Infinity, 
-                        ease: "easeInOut",
-                        scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-                      }}
-                    >
-                      <span className="text-2xl">⏰</span>
-                    </motion.div>
-                  </motion.div>
-                  
-                  <motion.div
-                    className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-200"
-                    whileHover={{ scale: 1.02 }}
-                    animate={{ 
-                      boxShadow: [
-                        "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                        "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-                        "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
-                      ],
-                      y: [0, -2, 0],
-                    }}
-                    transition={{ 
-                      boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                      y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <motion.div 
-                        className="w-3 h-3 bg-blue-500 rounded-full"
-                        animate={{ 
-                          scale: [1, 1.3, 1],
-                          opacity: [1, 0.7, 1],
-                        }}
-                        transition={{ 
-                          duration: 2, 
-                          repeat: Infinity, 
-                          ease: "easeInOut" 
-                        }}
-                      />
-                      <div>
-                        <p className="font-semibold text-gray-800 text-lg">Sciences</p>
-                        <p className="text-gray-600">Demain à 10h30</p>
-                      </div>
-                    </div>
-                    <motion.div
-                      animate={{ 
-                        rotate: [0, 10, 0, -10, 0],
-                        scale: [1, 1.1, 1],
-                      }}
-                      transition={{ 
-                        duration: 4, 
-                        repeat: Infinity, 
-                        ease: "easeInOut",
-                        scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-                      }}
-                    >
-                      <span className="text-2xl">📅</span>
-                    </motion.div>
-                  </motion.div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Loading State */}
-          <AnimatePresence>
-            {loading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-              >
+              <div className="flex items-center gap-6 mb-6">
                 <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+                  className={`p-6 rounded-2xl ${
+                    darkMode ? 'bg-gradient-to-r from-purple-600 to-blue-600' : 'bg-gradient-to-r from-blue-500 to-purple-500'
+                  } text-white`}
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <GraduationCap className="w-12 h-12" />
+                </motion.div>
+                <div>
+                  <h2 className={`text-2xl sm:text-3xl font-bold mb-2 ${
+                    darkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    Bonjour {userInfo.name || "Élève"} ! 👋✨
+                  </h2>
+                  <p className={`text-lg ${
+                    darkMode ? 'text-gray-300' : 'text-gray-600'
+                  }`}>
+                    Prêt(e) pour une journée magique d'apprentissage ?
+                  </p>
+                </div>
+              </div>
+              
+              {/* Barre de progression amusante */}
+              <div className="mt-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`text-sm font-medium ${
+                    darkMode ? 'text-gray-300' : 'text-gray-600'
+                  }`}>
+                    Progression de la journée 🌟
+                  </span>
+                  <span className={`text-sm font-bold ${
+                    darkMode ? 'text-purple-400' : 'text-purple-600'
+                  }`}>
+                    75%
+                  </span>
+                </div>
+                <motion.div 
+                  className={`w-full h-4 rounded-full overflow-hidden ${
+                    darkMode ? 'bg-gray-700' : 'bg-gray-200'
+                  }`}
+                >
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+                    initial={{ width: 0 }}
+                    animate={{ width: "75%" }}
+                    transition={{ duration: 2, ease: "easeOut" }}
+                  />
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {/* Stats Cards avec design enfantin */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <h2 className={`text-2xl sm:text-3xl font-bold mb-6 ${
+                darkMode ? 'text-white' : 'text-gray-900'
+              }`}>
+                📊 Mes Super Statistiques
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {statCards.map((card, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                    className={`p-6 rounded-2xl border-2 ${card.bgColor} ${card.borderColor} transition-all duration-300 hover:shadow-2xl backdrop-blur-sm`}
+                    whileHover={{ scale: 1.05, y: -10 }}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-3xl sm:text-4xl">{card.icon}</span>
+                      <motion.div
+                        className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          card.change.startsWith('+') 
+                            ? 'bg-green-100 text-green-700' 
+                            : 'bg-gray-100 text-gray-700'
+                        }`}
+                        animate={{ scale: [1, 1.05, 1] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        {card.change}
+                      </motion.div>
+                    </div>
+                    <h3 className={`text-lg font-bold mb-2 ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {card.title}
+                    </h3>
+                    <p className={`text-3xl sm:text-4xl font-bold ${card.color} text-white mb-2`}>
+                      {card.value}
+                    </p>
+                    <p className={`text-sm ${
+                      darkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>
+                      {card.description}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Quick Actions avec design enfantin */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <h2 className={`text-2xl sm:text-3xl font-bold mb-6 ${
+                darkMode ? 'text-white' : 'text-gray-900'
+              }`}>
+                ⚡ Mes Actions Magiques
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {quickActions.map((action, index) => (
+                  <motion.button
+                    key={index}
+                    onClick={action.action}
+                    className={`p-6 rounded-2xl border-2 ${action.bgColor} ${action.borderColor} transition-all duration-300 hover:shadow-2xl text-left backdrop-blur-sm`}
+                    whileHover={{ scale: 1.05, y: -10 }}
+                    whileTap={{ scale: 0.98 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                  >
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="text-3xl">{action.icon}</span>
+                      <div className={`w-10 h-10 rounded-full ${action.color} flex items-center justify-center`}>
+                        <ArrowRight className="w-5 h-5 text-white" />
+                      </div>
+                    </div>
+                    <h3 className={`text-lg font-bold mb-2 ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {action.title}
+                    </h3>
+                    <p className={`text-sm ${
+                      darkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>
+                      {action.description}
+                    </p>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Achievements Section avec design enfantin */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <h2 className={`text-2xl sm:text-3xl font-bold mb-6 ${
+                darkMode ? 'text-white' : 'text-gray-900'
+              }`}>
+                🏆 Mes Réalisations Épiques
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {achievements.map((achievement, index) => (
+                  <motion.div
+                    key={index}
+                    className={`p-6 rounded-2xl border-2 transition-all duration-300 backdrop-blur-sm ${
+                      achievement.unlocked
+                        ? darkMode 
+                          ? 'bg-green-900/30 border-green-500/50' 
+                          : 'bg-green-50 border-green-200'
+                        : darkMode 
+                          ? 'bg-gray-800/50 border-gray-700/50 opacity-50' 
+                          : 'bg-gray-50 border-gray-200 opacity-50'
+                    }`}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                  >
+                    <div className="flex items-center gap-4 mb-3">
+                      <span className="text-3xl">{achievement.icon}</span>
+                      <h3 className={`text-lg font-bold ${
+                        darkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
+                        {achievement.title}
+                      </h3>
+                    </div>
+                    <p className={`text-sm ${
+                      darkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>
+                      {achievement.description}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Recent Activities avec design enfantin */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <h2 className={`text-2xl sm:text-3xl font-bold mb-6 ${
+                darkMode ? 'text-white' : 'text-gray-900'
+              }`}>
+                📝 Mes Aventures Récentes
+              </h2>
+              <div className="space-y-4">
+                {recentActivities.map((activity, index) => (
+                  <motion.div
+                    key={index}
+                    className={`p-6 rounded-2xl border-2 ${
+                      darkMode 
+                        ? 'bg-gray-800/50 border-gray-700/50' 
+                        : 'bg-white/80 border-gray-200/50'
+                    } shadow-lg backdrop-blur-sm`}
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <span className="text-3xl">{activity.icon}</span>
+                        <div>
+                          <p className={`text-lg font-bold ${
+                            darkMode ? 'text-white' : 'text-gray-900'
+                          }`}>
+                            {activity.title}
+                          </p>
+                          <p className={`text-sm ${
+                            darkMode ? 'text-gray-300' : 'text-gray-600'
+                          }`}>
+                            {activity.time}
+                          </p>
+                        </div>
+                      </div>
+                      <div className={`w-4 h-4 rounded-full bg-${activity.color}-500`}></div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        )}
       </div>
     </div>
   );

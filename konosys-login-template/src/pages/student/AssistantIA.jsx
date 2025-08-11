@@ -235,7 +235,7 @@ export default function AssistantIA() {
                 className="p-3 bg-white/20 rounded-xl"
                 whileHover={{ scale: 1.1, rotate: 10 }}
                 animate={{ rotate: [0, 5, -5, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
+                transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
               >
                 <Bot className="text-white w-6 h-6 sm:w-7 sm:h-7" />
               </motion.div>
@@ -330,7 +330,7 @@ export default function AssistantIA() {
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
                 className={`fixed left-0 top-0 h-full w-80 max-w-[85vw] z-50 ${darkMode ? 'bg-gray-800' : 'bg-white'} border-r ${darkMode ? 'border-gray-700' : 'border-gray-200'} flex flex-col lg:hidden shadow-2xl`}
               >
                 {/* Mobile Sidebar Header */}
@@ -445,7 +445,7 @@ export default function AssistantIA() {
                 className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
                 whileHover={{ scale: 1.1, rotate: 10 }}
                 animate={{ rotate: [0, 5, -5, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
+                transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
               >
                 <Bot className="text-white w-4 h-4 sm:w-5 sm:h-5" />
               </motion.div>
@@ -453,14 +453,14 @@ export default function AssistantIA() {
                 <motion.h1 
                   className={`font-bold text-sm sm:text-base ${darkMode ? 'text-white' : 'text-gray-900'}`}
                   animate={{ scale: [1, 1.02, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 1, repeat: Infinity, ease: "easeInOut" }}
                 >
                   Assistant IA {getRandomEmoji()}
                 </motion.h1>
                 <motion.p 
                   className={`text-xs sm:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}
                   animate={{ opacity: [0.8, 1, 0.8] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 >
                   {loading ? "En train de réfléchir..." : "Prêt à t'aider ! ✨"}
                 </motion.p>
@@ -500,7 +500,7 @@ export default function AssistantIA() {
                       className="p-1 sm:p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
                       whileHover={{ scale: 1.1, rotate: 10 }}
                       animate={{ rotate: [0, 5, -5, 0] }}
-                      transition={{ duration: 3, repeat: Infinity }}
+                      transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     >
                       <Bot className="text-white w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.div>
@@ -524,7 +524,7 @@ export default function AssistantIA() {
                         <motion.div 
                           className="mt-2 sm:mt-3 flex items-center gap-2"
                           animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
+                          transition={{ type: "tween", duration: 1, repeat: Infinity, ease: "easeInOut" }}
                         >
                           <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-pink-500" />
                           <span className="text-xs text-pink-500">Je suis là pour t'aider !</span>
@@ -541,7 +541,7 @@ export default function AssistantIA() {
                       className="p-1 sm:p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
                       whileHover={{ scale: 1.1, rotate: -10 }}
                       animate={{ rotate: [0, -5, 5, 0] }}
-                      transition={{ duration: 3, repeat: Infinity }}
+                      transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     >
                       <User className="text-white w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.div>
@@ -558,7 +558,7 @@ export default function AssistantIA() {
                   <motion.div 
                     className="p-1 sm:p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
                     animate={{ rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 3, repeat: Infinity }}
+                    transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   >
                     <Bot className="text-white w-4 h-4 sm:w-5 sm:h-5" />
                   </motion.div>
@@ -569,17 +569,17 @@ export default function AssistantIA() {
                       <motion.div
                         className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full"
                         animate={{ scale: [1, 1.5, 1] }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+                        transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
                       />
                       <motion.div
                         className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full"
                         animate={{ scale: [1, 1.5, 1] }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+                        transition={{ type: "tween", duration: 0.5, ease: "easeInOut", delay: 0.2 }}
                       />
                       <motion.div
                         className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full"
                         animate={{ scale: [1, 1.5, 1] }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
+                        transition={{ type: "tween", duration: 0.5, ease: "easeInOut", delay: 0.4 }}
                       />
                       <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                         Je réfléchis...
@@ -604,7 +604,7 @@ export default function AssistantIA() {
                 >
                   <motion.div
                     animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 1, repeat: Infinity }}
+                    transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   >
                     <AlertCircle size={12} className="sm:w-4 sm:h-4" />
                   </motion.div>

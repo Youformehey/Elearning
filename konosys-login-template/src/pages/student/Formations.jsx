@@ -161,7 +161,7 @@ export default function Formations() {
           </motion.div>
           <motion.div
             animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
             className="mt-6"
           >
             <p className="text-xl font-bold text-purple-600">
@@ -317,8 +317,8 @@ export default function Formations() {
                     rotate: [0, 5, 0, -5, 0],
                   }}
                   transition={{ 
-                    type: "spring", 
-                    stiffness: 300,
+                    type: "tween", 
+                    duration: 4,
                     boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" },
                     scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                     rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
@@ -403,7 +403,7 @@ export default function Formations() {
               >
                 <motion.div
                   animate={filter === filterOption.key ? { rotate: [0, 10, -10, 0] } : {}}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
                 >
                   <filterOption.icon className="w-8 h-8" />
                 </motion.div>
@@ -422,7 +422,7 @@ export default function Formations() {
               <div className="flex items-center justify-center gap-3">
                 <motion.div
                   animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 1, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <AlertCircle className="w-8 h-8" />
                 </motion.div>
@@ -449,7 +449,7 @@ export default function Formations() {
                     scale: [1, 1.1, 1],
                     rotate: [0, 5, -5, 0]
                   }}
-                  transition={{ duration: 3, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   className="text-8xl mb-6"
                 >
                   🎓
@@ -457,14 +457,14 @@ export default function Formations() {
                 <motion.h2
                   className="text-2xl font-bold mb-4 text-purple-600"
                   animate={{ scale: [1, 1.02, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 1, repeat: Infinity, ease: "easeInOut" }}
                 >
                   Aucune formation achetée encore
                 </motion.h2>
                 <motion.p
                   className="text-lg mb-8 text-purple-500"
                   animate={{ opacity: [0.8, 1, 0.8] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 >
                   Tes parents n'ont pas encore acheté de formations pour toi. 
                   <br />Demande-leur d'en acheter une ! 😊
@@ -515,7 +515,7 @@ export default function Formations() {
                     key={formation._id}
                     initial={{ opacity: 0, y: 20, scale: 0.9 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ delay: index * 0.1, type: "spring", bounce: 0.4 }}
+                    transition={{ delay: index * 0.1, type: "tween", duration: 0.5, ease: "easeInOut" }}
                     whileHover={{ scale: 1.03, y: -8, rotate: 1 }}
                     className="rounded-3xl shadow-2xl border-2 overflow-hidden bg-white/90 backdrop-blur-sm border-blue-200 relative group"
                   >
@@ -540,13 +540,13 @@ export default function Formations() {
                         <motion.div
                           whileHover={{ scale: 1.2, rotate: 15 }}
                           animate={{ rotate: [0, 5, -5, 0] }}
-                          transition={{ duration: 3, repeat: Infinity }}
+                          transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                         >
                           <IconComponent className="w-10 h-10" />
                         </motion.div>
                         <motion.div
                           animate={{ scale: [1, 1.1, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
+                          transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
                         >
                           <CheckCircle className="w-8 h-8 text-green-400" />
                         </motion.div>
@@ -554,7 +554,7 @@ export default function Formations() {
                       <motion.h3 
                         className="text-xl font-bold mb-2"
                         animate={{ scale: [1, 1.02, 1] }}
-                        transition={{ duration: 3, repeat: Infinity }}
+                        transition={{ type: "tween", duration: 1, repeat: Infinity, ease: "easeInOut" }}
                       >
                         {formation.titre}
                       </motion.h3>
@@ -586,14 +586,14 @@ export default function Formations() {
                         <motion.span 
                           className="text-2xl font-bold text-blue-600"
                           animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
+                          transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                         >
                           {formation.prix}€
                         </motion.span>
                         <motion.span 
                           className="text-sm px-4 py-2 bg-green-100 text-green-700 rounded-full font-medium border-2 border-green-200"
                           animate={{ scale: [1, 1.1, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
+                          transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                         >
                           ✅ Achetée
                         </motion.span>
@@ -608,7 +608,7 @@ export default function Formations() {
                           <div className="flex items-center gap-2 text-sm text-blue-700">
                             <motion.div
                               animate={{ rotate: [0, 10, -10, 0] }}
-                              transition={{ duration: 2, repeat: Infinity }}
+                              transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}
                             >
                               <Calendar className="w-5 h-5" />
                             </motion.div>
@@ -626,7 +626,7 @@ export default function Formations() {
                       >
                         <motion.div
                           animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 1, repeat: Infinity }}
+                          transition={{ type: "tween", duration: 1, repeat: Infinity, ease: "easeInOut" }}
                         >
                           <Play className="w-8 h-8" />
                         </motion.div>

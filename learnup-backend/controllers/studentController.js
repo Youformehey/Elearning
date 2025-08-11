@@ -122,6 +122,7 @@ const loginStudent = async (req, res) => {
       email: student.email,
       classe: student.classe,
       token,
+      role: "etudiant" // <-- AJOUT OBLIGATOIRE
     });
   } catch (err) {
     console.error("❌ Erreur loginStudent:", err);

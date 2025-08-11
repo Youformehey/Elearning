@@ -26,7 +26,7 @@ function PrivateRoute() {
 // Route protégée Professeur uniquement
 function PrivateRouteProf() {
   const userInfo = useUserInfo();
-  if (!hasRole(userInfo, ["prof"])) return <Navigate to="/login" replace />;
+  if (!hasRole(userInfo, ["prof", "teacher"])) return <Navigate to="/login" replace />;
   return <Outlet />;
 }
 

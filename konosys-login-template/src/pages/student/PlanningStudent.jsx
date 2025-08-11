@@ -224,7 +224,7 @@ export default function PlanningStudent() {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                transition={{ delay: 0.2, type: "tween", duration: 0.6, ease: "easeInOut" }}
           >
             <AlertCircle className="h-20 w-20 text-red-500 mx-auto mb-6" />
           </motion.div>
@@ -379,8 +379,8 @@ export default function PlanningStudent() {
                   rotate: [0, 5, 0, -5, 0],
                 }}
                 transition={{ 
-                  type: "spring", 
-                  stiffness: 300,
+                  type: "tween", 
+                  duration: 4,
                   boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" },
                   scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                   rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
@@ -393,6 +393,7 @@ export default function PlanningStudent() {
                     rotate: [0, 10, 0, -10, 0],
                   }}
                   transition={{ 
+                    type: "tween",
                     scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
                     rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
                   }}

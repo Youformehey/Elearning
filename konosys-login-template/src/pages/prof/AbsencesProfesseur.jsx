@@ -133,27 +133,38 @@ export default function AbsencesProfesseur() {
     
     setSaving(true);
     try {
-      const absencesToSave = Object.entries(attendance)
-        .filter(([_, isPresent]) => !isPresent)
-        .map(([studentId]) => ({
-          student: studentId,
-          course: selectedCours._id,
-          date: today,
-          justified: false
-        }));
+      // Préparer les données selon le format attendu par le backend
+      const attendanceData = {};
+      Object.entries(attendance).forEach(([studentId, isPresent]) => {
+        attendanceData[studentId] = !isPresent; // Inverser car le backend attend true pour absent
+      });
 
-      await Promise.all(
-        absencesToSave.map(abs => 
-          axios.post("http://localhost:5001/api/absences", abs, authHeaders)
-        )
-      );
+      const payload = {
+        courseId: selectedCours._id,
+        attendance: attendanceData
+      };
+
+      console.log("Absences à sauvegarder:", payload);
+
+      const response = await axios.post("http://localhost:5001/api/absences", payload, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log("Réponse du serveur:", response.data);
 
       setSuccessMessage("Absences enregistrées avec succès !");
       setTimeout(() => setSuccessMessage(""), 3000);
+      
+      // Réinitialiser les absences locales
+      setAttendance({});
+      
     } catch (err) {
       console.error("Erreur sauvegarde absences :", err);
-      setErrorMessage("Erreur lors de la sauvegarde des absences");
-      setTimeout(() => setErrorMessage(""), 3000);
+      setErrorMessage("Erreur lors de la sauvegarde des absences: " + (err.response?.data?.message || err.message));
+      setTimeout(() => setErrorMessage(""), 5000);
     } finally {
       setSaving(false);
     }

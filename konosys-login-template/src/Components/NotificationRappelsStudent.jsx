@@ -58,7 +58,7 @@ export default function NotificationRappelsStudent() {
   if (rappels.length === 0) {
     return (
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-8">
-        <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }}>
+        <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ type: "tween", duration: 2, repeat: Infinity, ease: "easeInOut" }}>
           <Bell className="w-12 h-12 text-blue-300 mx-auto mb-4" />
         </motion.div>
         <h3 className="text-base text-blue-600 font-medium mb-2">Aucun rappel</h3>

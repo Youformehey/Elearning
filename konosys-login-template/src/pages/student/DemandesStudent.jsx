@@ -141,7 +141,7 @@ export default function DemandesStudent() {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Animated background elements - Animations ultra attractives */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* <div className="absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute top-20 left-10 w-16 h-16 sm:w-20 sm:h-20 bg-blue-100 rounded-full"
           animate={{ 
@@ -179,7 +179,7 @@ export default function DemandesStudent() {
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
         />
-      </div>
+      </div> */}
 
       {/* Floating decorative elements - Animations ultra attractives */}
       <motion.div
@@ -273,8 +273,8 @@ export default function DemandesStudent() {
                   rotate: [0, 5, 0, -5, 0],
                 }}
                 transition={{ 
-                  type: "spring", 
-                  stiffness: 300,
+                  type: "tween", 
+                  duration: 4,
                   boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" },
                   scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                   rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }

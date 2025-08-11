@@ -131,6 +131,44 @@ const getSeancesByEmail = async (req, res) => {
   }
 };
 
+// GET /api/seances/course/:courseId - Séances d'un cours spécifique
+const getSeancesByCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    
+    if (!courseId) {
+      return res.status(400).json({ message: "ID du cours manquant" });
+    }
+
+    const seances = await Seance.find({ course: courseId })
+      .populate('course')
+      .populate('professeur', 'name email')
+      .sort({ date: 1, heureDebut: 1 });
+
+    const formatted = seances.map((s) => ({
+      _id: s._id,
+      date: s.date,
+      classe: s.classe || s.course?.classe || "--",
+      heureDebut: s.heureDebut || "Inconnue",
+      heureFin: s.heureFin || calculerHeureFin(s.heureDebut, s.course?.duree) || "Inconnue",
+      matiere: s.course?.matiere?.nom || s.course?.nom || "Inconnue",
+      groupe: s.groupe || "Inconnu",
+      salle: s.salle || "Inconnue",
+      professeur: {
+        name: s.professeur?.name || "Inconnu",
+        email: s.professeur?.email || "Inconnu",
+      },
+      fait: s.fait || false,
+      course: s.course
+    }));
+
+    res.json(formatted);
+  } catch (err) {
+    console.error("❌ Erreur getSeancesByCourse :", err);
+    res.status(500).json({ message: "Erreur lors de la récupération des séances du cours" });
+  }
+};
+
 // POST /api/seances
 const createSeance = async (req, res) => {
   try {
@@ -203,4 +241,5 @@ module.exports = {
   createSeance,
   marquerSeanceFaite,
   deleteSeance,
+  getSeancesByCourse,
 };

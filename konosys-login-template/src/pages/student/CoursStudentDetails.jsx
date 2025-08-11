@@ -30,7 +30,6 @@ import {
   Zap,
   Trophy
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ThemeContext } from "../../context/ThemeContext";
 
 const API_URL = "http://localhost:5001/api";
@@ -123,9 +122,7 @@ export default function CoursStudentDetails() {
   if (loading)
     return (
       <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        <div
           className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
         />
       </div>
@@ -154,7 +151,7 @@ export default function CoursStudentDetails() {
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50'} relative overflow-hidden`}>
       {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      {/* <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full opacity-20"
           animate={{ 
@@ -171,19 +168,15 @@ export default function CoursStudentDetails() {
           }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
-      </div>
+      </div> */}
 
       <div className="max-w-7xl mx-auto p-6 relative z-10">
         {/* Header avec bouton retour */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
           className="mb-8"
         >
-          <motion.button
+          <button
             onClick={() => navigate("/student/cours")}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
             className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
               darkMode 
                 ? 'bg-gray-700 text-white hover:bg-gray-600' 
@@ -192,14 +185,11 @@ export default function CoursStudentDetails() {
           >
             <ArrowLeft size={20} />
             Retour aux cours
-          </motion.button>
-        </motion.div>
+          </button>
+        </div>
 
         {/* Titre principal */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <div
           className="text-center mb-8"
         >
           <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${
@@ -210,13 +200,10 @@ export default function CoursStudentDetails() {
           <p className={`text-xl ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             {course.nom || course.matiere?.nom} — {course.classe}
           </p>
-        </motion.div>
+        </div>
 
         {/* Statistiques du cours */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+        <div
           className={`mb-8 rounded-2xl shadow-xl border border-white/20 backdrop-blur-sm overflow-hidden ${
             darkMode ? 'bg-gray-800/80' : 'bg-white/80'
           }`}
@@ -227,22 +214,19 @@ export default function CoursStudentDetails() {
               : 'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-900'
           }`}>
             <div className="flex items-center gap-3">
-              <motion.div
+              <div
                 className={`p-2 rounded-lg ${darkMode ? 'bg-blue-600' : 'bg-blue-500'}`}
-                whileHover={{ scale: 1.1, rotate: 10 }}
-                transition={{ type: "spring", stiffness: 300 }}
               >
                 <BarChart3 className="text-white" size={24} />
-              </motion.div>
+              </div>
               <span className="uppercase tracking-wide">Statistiques du cours</span>
             </div>
           </div>
           
           <div className="p-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <motion.div 
+              <div 
                 className="text-center"
-                whileHover={{ scale: 1.05 }}
               >
                 <div className={`text-3xl font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
                   {courseStats.totalChapitres}
@@ -250,10 +234,9 @@ export default function CoursStudentDetails() {
                 <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} font-medium`}>
                   Chapitres
                 </div>
-              </motion.div>
-              <motion.div 
+              </div>
+              <div 
                 className="text-center"
-                whileHover={{ scale: 1.05 }}
               >
                 <div className={`text-3xl font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
                   {courseStats.totalStudents}
@@ -261,10 +244,9 @@ export default function CoursStudentDetails() {
                 <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} font-medium`}>
                   Étudiants
                 </div>
-              </motion.div>
-              <motion.div 
+              </div>
+              <div 
                 className="text-center"
-                whileHover={{ scale: 1.05 }}
               >
                 <div className={`text-3xl font-bold ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
                   {courseStats.totalDevoirs}
@@ -272,10 +254,9 @@ export default function CoursStudentDetails() {
                 <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} font-medium`}>
                   Devoirs
                 </div>
-              </motion.div>
-              <motion.div 
+              </div>
+              <div 
                 className="text-center"
-                whileHover={{ scale: 1.05 }}
               >
                 <div className={`text-3xl font-bold ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
                   {courseStats.totalDocuments}
@@ -283,16 +264,13 @@ export default function CoursStudentDetails() {
                 <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} font-medium`}>
                   Documents
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Informations du cours */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+        <div
           className={`mb-8 rounded-2xl shadow-xl border border-white/20 backdrop-blur-sm overflow-hidden ${
             darkMode ? 'bg-gray-800/80' : 'bg-white/80'
           }`}
@@ -303,13 +281,11 @@ export default function CoursStudentDetails() {
               : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-900'
           }`}>
             <div className="flex items-center gap-3">
-              <motion.div
+              <div
                 className={`p-2 rounded-lg ${darkMode ? 'bg-green-600' : 'bg-green-500'}`}
-                whileHover={{ scale: 1.1, rotate: 10 }}
-                transition={{ type: "spring", stiffness: 300 }}
               >
                 <User2 className="text-white" size={24} />
-              </motion.div>
+              </div>
               <span className="uppercase tracking-wide">Informations du cours</span>
             </div>
           </div>
@@ -389,20 +365,15 @@ export default function CoursStudentDetails() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Actions principales */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+        <div
           className="mb-8"
         >
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <motion.button
+            <button
               onClick={() => navigate(`/student/cours/forum/${course._id}`)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               className={`p-6 rounded-2xl font-semibold shadow-lg transition-all duration-300 flex flex-col items-center gap-3 ${
                 darkMode 
                   ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800' 
@@ -411,12 +382,10 @@ export default function CoursStudentDetails() {
             >
               <MessageCircle size={32} />
               <span>Forum</span>
-            </motion.button>
+            </button>
             
-            <motion.button
+            <button
               onClick={() => navigate(`/student/cours/quiz/${course._id}`)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               className={`p-6 rounded-2xl font-semibold shadow-lg transition-all duration-300 flex flex-col items-center gap-3 ${
                 darkMode 
                   ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800' 
@@ -425,12 +394,10 @@ export default function CoursStudentDetails() {
             >
               <FileQuestion size={32} />
               <span>Quiz</span>
-            </motion.button>
+            </button>
             
-            <motion.button
+            <button
               onClick={() => navigate(`/student/cours/devoirs/${course._id}`)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               className={`p-6 rounded-2xl font-semibold shadow-lg transition-all duration-300 flex flex-col items-center gap-3 ${
                 darkMode 
                   ? 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800' 
@@ -439,12 +406,10 @@ export default function CoursStudentDetails() {
             >
               <FileText size={32} />
               <span>Devoir à rendre</span>
-            </motion.button>
+            </button>
             
-            <motion.button
+            <button
               onClick={() => navigate(`/student/documents-cours/${course._id}`)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               className={`p-6 rounded-2xl font-semibold shadow-lg transition-all duration-300 flex flex-col items-center gap-3 ${
                 darkMode 
                   ? 'bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800' 
@@ -453,12 +418,10 @@ export default function CoursStudentDetails() {
             >
               <FolderKanban size={32} />
               <span>Documents</span>
-            </motion.button>
+            </button>
             
-            <motion.button
+            <button
               onClick={() => navigate(`/student/planning`)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               className={`p-6 rounded-2xl font-semibold shadow-lg transition-all duration-300 flex flex-col items-center gap-3 ${
                 darkMode 
                   ? 'bg-gradient-to-r from-orange-600 to-orange-700 text-white hover:from-orange-700 hover:to-orange-800' 
@@ -467,15 +430,12 @@ export default function CoursStudentDetails() {
             >
               <CalendarDays size={32} />
               <span>Planning</span>
-            </motion.button>
+            </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Chapitres */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
+        <div
           className={`mb-8 rounded-2xl shadow-xl border border-white/20 backdrop-blur-sm overflow-hidden ${
             darkMode ? 'bg-gray-800/80' : 'bg-white/80'
           }`}
@@ -486,13 +446,11 @@ export default function CoursStudentDetails() {
               : 'bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-900'
           }`}>
             <div className="flex items-center gap-3">
-              <motion.div
+              <div
                 className={`p-2 rounded-lg ${darkMode ? 'bg-indigo-600' : 'bg-indigo-500'}`}
-                whileHover={{ scale: 1.1, rotate: 10 }}
-                transition={{ type: "spring", stiffness: 300 }}
               >
                 <FolderOpen className="text-white" size={24} />
-              </motion.div>
+              </div>
               <span className="uppercase tracking-wide">Chapitres ({course.chapitres?.length || 0})</span>
             </div>
           </div>
@@ -501,11 +459,8 @@ export default function CoursStudentDetails() {
             {course.chapitres?.length > 0 ? (
               <div className="space-y-4">
                 {course.chapitres.map((chap, index) => (
-                  <motion.div
+                  <div
                     key={chap._id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
                     className={`p-6 rounded-xl border ${
                       darkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-gray-200'
                     }`}
@@ -540,7 +495,7 @@ export default function CoursStudentDetails() {
                         </span>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -556,13 +511,10 @@ export default function CoursStudentDetails() {
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
 
         {/* Devoirs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2 }}
+        <div
           className={`mb-8 rounded-2xl shadow-xl border border-white/20 backdrop-blur-sm overflow-hidden ${
             darkMode ? 'bg-gray-800/80' : 'bg-white/80'
           }`}
@@ -573,13 +525,11 @@ export default function CoursStudentDetails() {
               : 'bg-gradient-to-r from-red-100 to-pink-100 text-red-900'
           }`}>
             <div className="flex items-center gap-3">
-              <motion.div
+              <div
                 className={`p-2 rounded-lg ${darkMode ? 'bg-red-600' : 'bg-red-500'}`}
-                whileHover={{ scale: 1.1, rotate: 10 }}
-                transition={{ type: "spring", stiffness: 300 }}
               >
                 <FileText className="text-white" size={24} />
-              </motion.div>
+              </div>
               <span className="uppercase tracking-wide">Devoirs à rendre ({course.devoirs?.length || 0})</span>
             </div>
           </div>
@@ -588,11 +538,8 @@ export default function CoursStudentDetails() {
             {course.devoirs?.length > 0 ? (
               <div className="space-y-4">
                 {course.devoirs.map((devoir, index) => (
-                  <motion.div
+                  <div
                     key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
                     className={`p-6 rounded-xl border ${
                       darkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-gray-200'
                     }`}
@@ -617,18 +564,16 @@ export default function CoursStudentDetails() {
                           </p>
                         </div>
                       </div>
-                      <motion.button
+                      <button
                         onClick={() => window.open(`http://localhost:5001${devoir.fileUrl}`, '_blank')}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
                         className={`p-3 rounded-lg ${
                           darkMode ? 'bg-red-600 hover:bg-red-700' : 'bg-red-500 hover:bg-red-600'
                         } text-white`}
                       >
                         <Download className="w-5 h-5" />
-                      </motion.button>
+                      </button>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -644,13 +589,10 @@ export default function CoursStudentDetails() {
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
 
         {/* Rappels du professeur */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4 }}
+        <div
           className={`rounded-2xl shadow-xl border border-white/20 backdrop-blur-sm overflow-hidden ${
             darkMode ? 'bg-gray-800/80' : 'bg-white/80'
           }`}
@@ -661,13 +603,11 @@ export default function CoursStudentDetails() {
               : 'bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-900'
           }`}>
             <div className="flex items-center gap-3">
-              <motion.div
+              <div
                 className={`p-2 rounded-lg ${darkMode ? 'bg-yellow-600' : 'bg-yellow-500'}`}
-                whileHover={{ scale: 1.1, rotate: 10 }}
-                transition={{ type: "spring", stiffness: 300 }}
               >
                 <AlertCircle className="text-white" size={24} />
-              </motion.div>
+              </div>
               <span className="uppercase tracking-wide">Rappels du professeur ({rappels.length})</span>
             </div>
           </div>
@@ -676,11 +616,8 @@ export default function CoursStudentDetails() {
             {rappels.length > 0 ? (
               <div className="space-y-4">
                 {rappels.map((rappel, index) => (
-                  <motion.div
+                  <div
                     key={rappel._id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
                     className={`p-6 rounded-xl border ${
                       darkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-gray-200'
                     }`}
@@ -706,7 +643,7 @@ export default function CoursStudentDetails() {
                         </p>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -722,7 +659,7 @@ export default function CoursStudentDetails() {
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

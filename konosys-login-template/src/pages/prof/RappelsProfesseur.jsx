@@ -152,13 +152,13 @@ const RappelsProfesseur = () => {
             </motion.div>
             <div>
               <h1 className={`text-4xl font-bold ${darkMode ? 'text-white' : 'text-blue-900'}`}>
-                {role === "teacher" ? "Gestion des Rappels" : "Mes Rappels"}
+                {role === "teacher" || role === "prof" ? "Gestion des Rappels" : "Mes Rappels"}
               </h1>
               <p className={`font-medium ${darkMode ? 'text-gray-300' : 'text-blue-600'}`}>Organisez vos tâches et devoirs</p>
             </div>
           </div>
 
-          {role === "teacher" && (
+          {(role === "teacher" || role === "prof") && (
             <motion.button
               onClick={() => setShowAddForm(!showAddForm)}
               whileHover={{ scale: 1.05 }}
@@ -200,7 +200,7 @@ const RappelsProfesseur = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Formulaire */}
-          {role === "teacher" && showAddForm && (
+          {(role === "teacher" || role === "prof") && showAddForm && (
             <motion.div 
               className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden"
               initial={{ opacity: 0, x: -50 }}

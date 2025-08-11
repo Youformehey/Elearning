@@ -32,7 +32,8 @@ import {
   Award,
   Star,
   RefreshCw,
-  User
+  User,
+  ChevronDown
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeContext } from "../../context/ThemeContext";
@@ -69,6 +70,9 @@ export default function MesCoursProf() {
   const [absencesStats, setAbsencesStats] = useState({});
   const [openAbsence, setOpenAbsence] = useState({});
   const [courseStats, setCourseStats] = useState({});
+  const [expandedCourses, setExpandedCourses] = useState({});
+  const [absenceForm, setAbsenceForm] = useState({});
+  const [loadingAbsence, setLoadingAbsence] = useState({});
   
   const token = JSON.parse(localStorage.getItem("userInfo"))?.token;
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -98,87 +102,78 @@ export default function MesCoursProf() {
 
       const studentsMap = {};
       const absStatsMap = {};
-      const statsMap = {};
-      
-      await Promise.all(
-        courses.map(async (course) => {
-          // Fetch students for each course
-          const resStud = await fetch(`${API_URL}/courses/${course._id}/students`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (resStud.ok) {
-            const studData = await resStud.json();
-            studentsMap[course._id] = Array.isArray(studData)
-              ? studData
-              : studData.students || [];
-          } else {
-            studentsMap[course._id] = [];
-          }
+      const seancesMap = {};
 
-          // Fetch absence stats per course
-          const resAbs = await fetch(`${API_URL}/absences/stats/${course._id}`, {
+      // Récupérer les données pour chaque cours
+      for (const course of courses) {
+        // Récupérer les étudiants
+        try {
+          const studentsRes = await fetch(`${API_URL}/courses/${course._id}/students`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          if (resAbs.ok) {
-            const absData = await resAbs.json();
-            const stats = {};
-            (absData.absences || []).forEach((s) => {
-              stats[s._id] = s;
-            });
-            absStatsMap[course._id] = stats;
-          } else {
-            absStatsMap[course._id] = {};
+          if (studentsRes.ok) {
+            const studentsData = await studentsRes.json();
+            studentsMap[course._id] = studentsData.students || studentsData;
           }
+        } catch (error) {
+          console.error(`Erreur récupération étudiants pour cours ${course._id}:`, error);
+        }
 
-          // Calculer les statistiques du cours
-          const students = studentsMap[course._id] || [];
-          const uniqueStudents = students.filter((s, idx, arr) => 
-            arr.findIndex((u) => u._id === s._id) === idx
-          );
-          
-          // Récupérer le nombre de séances pour ce cours
-          const seancesRes = await fetch(`${API_URL}/seances/professeur`, {
+        // Récupérer les statistiques d'absences
+        try {
+          const absRes = await fetch(`${API_URL}/absences/stats/${course._id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          let totalSeances = 0;
-          let completedSeances = 0;
+          if (absRes.ok) {
+            const absData = await absRes.json();
+            absStatsMap[course._id] = absData;
+          }
+        } catch (error) {
+          console.error(`Erreur récupération absences pour cours ${course._id}:`, error);
+        }
+
+        // Récupérer les séances du cours
+        try {
+          const seancesRes = await fetch(`${API_URL}/seances/course/${course._id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           if (seancesRes.ok) {
             const seancesData = await seancesRes.json();
-            const courseSeances = seancesData.filter(s => {
-              const courseId = typeof s.course === 'object' ? s.course._id : s.course;
-              return courseId === course._id;
-            });
-            totalSeances = courseSeances.length;
-            completedSeances = courseSeances.filter(s => s.fait).length;
-            
-            console.log(`Cours ${course.nom}: ${totalSeances} séances totales, ${completedSeances} terminées`);
+            seancesMap[course._id] = seancesData;
+            console.log(`🔍 Séances pour cours ${course.nom}:`, seancesData);
           }
-          
-          statsMap[course._id] = {
-            totalStudents: uniqueStudents.length,
-            totalChapitres: course.chapitres?.length || 0,
-            totalSeances: totalSeances,
-            completedSeances: completedSeances,
-            totalAbsences: Object.keys(absStatsMap[course._id] || {}).length,
-            averageAbsences: uniqueStudents.length > 0 ? 
-              (Object.keys(absStatsMap[course._id] || {}).length / uniqueStudents.length).toFixed(1) : 0
-          };
-        })
-      );
+        } catch (error) {
+          console.error(`Erreur récupération séances pour cours ${course._id}:`, error);
+        }
+      }
+
       setStudentsByCourse(studentsMap);
       setAbsencesStats(absStatsMap);
-      setCourseStats(statsMap);
-
-      // Dummy progress (à remplacer par données réelles)
-      const prog = {};
-      courses.forEach((course) => {
-        course.chapitres?.forEach((chap) => {
-          prog[chap._id] = 50;
-        });
+      
+      // Calculer les statistiques des cours avec les séances
+      const newCourseStats = {};
+      courses.forEach(course => {
+        const students = studentsMap[course._id] || [];
+        const seances = seancesMap[course._id] || [];
+        const seancesTerminees = seances.filter(s => s.fait).length;
+        const seancesTotal = seances.length;
+        
+        newCourseStats[course._id] = {
+          totalStudents: students.length,
+          totalChapitres: course.chapitres?.length || 0,
+          totalSeances: seancesTotal,
+          seancesTerminees: seancesTerminees,
+          seancesNonTerminees: seancesTotal - seancesTerminees,
+          pourcentageTerminees: seancesTotal > 0 ? Math.round((seancesTerminees / seancesTotal) * 100) : 0
+        };
       });
-      setProgress(prog);
-    } catch (err) {
-      setError(err.message || "Erreur serveur");
+      
+      setCourseStats(newCourseStats);
+      console.log('🔍 Statistiques des cours avec séances:', newCourseStats);
+      
+    } catch (error) {
+      console.error("Erreur fetchCourses:", error);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -201,42 +196,39 @@ export default function MesCoursProf() {
   // Add a new course
   async function handleAddCourse(e) {
     e.preventDefault();
-    if (!form.nom.trim() || !form.matiere || !form.classe.trim()) {
-      setErrorMessage("Les champs nom, matière et classe sont obligatoires.");
+    if (!newCourse.nom || !newCourse.matiere) {
+      setErrorMessage("Veuillez remplir tous les champs obligatoires");
       setTimeout(() => setErrorMessage(""), 3000);
       return;
     }
+
     try {
-      const payload = { ...form, teacher: teacherId };
-      const res = await fetch(`${API_URL}/courses`, {
+      const courseData = {
+        ...newCourse,
+        dateCreation: new Date().toISOString(),
+        status: "active"
+      };
+
+      const res = await fetch(`${API_URL}/api/courses`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(courseData),
       });
+
       if (!res.ok) {
         const errData = await res.json();
         throw new Error(errData.message || "Erreur création cours");
       }
-      setShowAddCourse(false);
-      setForm({
-        nom: "",
-        matiere: "",
-        classe: "",
-        semestre: "",
-        horaire: "",
-        date: "",
-        salle: "",
-        groupe: "",
-        duree: "120",
-      });
-      setSuccessMessage("✅ Cours ajouté avec succès !");
+
+      setSuccessMessage("✅ Cours créé avec succès !");
       setTimeout(() => setSuccessMessage(""), 3000);
+      setNewCourse({ nom: "", matiere: "", description: "" });
       fetchCourses();
-    } catch (error) {
-      setErrorMessage("Erreur lors de l'ajout du cours : " + error.message);
+    } catch (err) {
+      setErrorMessage(err.message);
       setTimeout(() => setErrorMessage(""), 3000);
     }
   }
@@ -303,19 +295,28 @@ export default function MesCoursProf() {
 
   // Supprimer un cours
   async function deleteCourse(id) {
-    if (!window.confirm("Supprimer ce cours ?")) return;
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce cours ? Cette action est irréversible.")) return;
     try {
-      const res = await fetch(`${API_URL}/courses/${id}`, {
+      const res = await fetch(`${API_URL}/api/courses/${id}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
       });
-      if (!res.ok) throw new Error("Erreur suppression cours");
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Erreur lors de la suppression du cours");
+      }
+      
       setSuccessMessage("✅ Cours supprimé avec succès !");
       setTimeout(() => setSuccessMessage(""), 3000);
       fetchCourses();
     } catch (err) {
-      setErrorMessage(err.message);
-      setTimeout(() => setErrorMessage(""), 3000);
+      console.error("Erreur suppression cours:", err);
+      setErrorMessage("Erreur lors de la suppression: " + err.message);
+      setTimeout(() => setErrorMessage(""), 5000);
     }
   }
 
@@ -453,26 +454,136 @@ export default function MesCoursProf() {
   // Générer les séances pour un cours
   async function generateSeancesForCourse(course) {
     if (!window.confirm(`Générer les séances pour le cours "${course.nom}" ?`)) return;
+    
     try {
-      const res = await fetch(`${API_URL}/courses/${course._id}/generate-seances`, {
+      const courseCreationDate = new Date(course.dateCreation || course.createdAt || new Date());
+      const startDate = new Date(courseCreationDate);
+      startDate.setDate(startDate.getDate() + 1); // Commencer le lendemain de la création
+      
+      const seancesData = {
+        courseId: course._id,
+        startDate: startDate.toISOString(),
+        endDate: new Date(startDate.getTime() + (30 * 24 * 60 * 60 * 1000)).toISOString(), // 30 jours
+        frequency: "weekly",
+        duration: 120, // 2 heures par défaut
+        status: "planned"
+      };
+
+      const res = await fetch(`${API_URL}/api/seances/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify(seancesData),
       });
+
       if (!res.ok) {
         const errData = await res.json();
         throw new Error(errData.message || "Erreur génération séances");
       }
+
       setSuccessMessage("✅ Séances générées avec succès !");
       setTimeout(() => setSuccessMessage(""), 3000);
-      fetchCourses(); // Rafraîchir la liste pour mettre à jour les statistiques
-    } catch (error) {
-      setErrorMessage("Erreur lors de la génération des séances : " + error.message);
-      setTimeout(() => setErrorMessage(""), 3000);
+      fetchCourses();
+    } catch (err) {
+      console.error("Erreur génération séances:", err);
+      setErrorMessage("Erreur lors de la génération des séances: " + err.message);
+      setTimeout(() => setErrorMessage(""), 5000);
     }
   }
+
+  // Fonction pour basculer l'expansion d'un cours
+  const toggleCourseExpansion = (courseId) => {
+    setExpandedCourses(prev => ({
+      ...prev,
+      [courseId]: !prev[courseId]
+    }));
+  };
+
+  // Fonction pour gérer les absences
+  const handleAbsenceChange = (courseId, studentId, field, value) => {
+    setAbsenceForm(prev => ({
+      ...prev,
+      [courseId]: {
+        ...prev[courseId],
+        [studentId]: {
+          ...prev[courseId]?.[studentId],
+          [field]: value
+        }
+      }
+    }));
+  };
+
+  // Fonction pour marquer une absence
+  const markAbsence = async (courseId, studentId) => {
+    if (!absenceForm[courseId]?.[studentId]) return;
+    
+    setLoadingAbsence(prev => ({ ...prev, [courseId]: true }));
+    
+    try {
+      const absenceData = absenceForm[courseId][studentId];
+      const res = await fetch(`${API_URL}/api/absences/marquer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          etudiantId: studentId,
+          coursId: courseId,
+          date: absenceData.date || new Date().toISOString()
+        }),
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        setSuccessMessage(`Absence ${result.removed ? 'retirée' : 'marquée'} pour ${absenceData.studentName || 'l\'étudiant'}`);
+        // Rafraîchir les données
+        fetchCourses();
+        // Réinitialiser le formulaire
+        setAbsenceForm(prev => ({
+          ...prev,
+          [courseId]: {
+            ...prev[courseId],
+            [studentId]: {}
+          }
+        }));
+      } else {
+        const errorData = await res.json();
+        setErrorMessage(`Erreur: ${errorData.message || 'Erreur lors du marquage de l\'absence'}`);
+      }
+    } catch (error) {
+      console.error('Erreur marquage absence:', error);
+      setErrorMessage('Erreur lors du marquage de l\'absence');
+    } finally {
+      setLoadingAbsence(prev => ({ ...prev, [courseId]: false }));
+    }
+  };
+
+  // Fonction pour supprimer une absence
+  const removeAbsence = async (courseId, absenceId) => {
+    try {
+      const res = await fetch(`${API_URL}/api/absences/${absenceId}`, {
+        method: 'DELETE',
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+
+      if (res.ok) {
+        setSuccessMessage('Absence supprimée avec succès');
+        fetchCourses();
+      } else {
+        const errorData = await res.json();
+        setErrorMessage(`Erreur lors de la suppression de l'absence: ${errorData.message || 'Erreur inconnue'}`);
+      }
+    } catch (error) {
+      console.error('Erreur suppression absence:', error);
+      setErrorMessage('Erreur lors de la suppression de l\'absence');
+    }
+  };
 
   if (!token) return <p>Merci de vous connecter</p>;
   if (loading) {
@@ -732,9 +843,26 @@ export default function MesCoursProf() {
                     </div>
                   </div>
                   
-                  <div className="text-right text-white">
-                    <div className="text-xl font-bold">{courseStats[cours._id]?.totalStudents || 0}</div>
-                    <div className="text-blue-100 text-sm">Étudiants</div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-right text-white">
+                      <div className="text-xl font-bold">{courseStats[cours._id]?.totalStudents || 0}</div>
+                      <div className="text-blue-100 text-sm">Étudiants</div>
+                    </div>
+                    
+                    {/* Bouton d'expansion */}
+                    <motion.button
+                      onClick={() => toggleCourseExpansion(cours._id)}
+                      className="p-2 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 transition-all duration-300"
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <motion.div
+                        animate={{ rotate: expandedCourses[cours._id] ? 180 : 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <ChevronDown className="w-5 h-5 text-white" />
+                      </motion.div>
+                    </motion.button>
                   </div>
                 </div>
               </div>
@@ -762,11 +890,48 @@ export default function MesCoursProf() {
                   </div>
                   <div className="text-center p-3 rounded-lg bg-amber-50 hover:bg-amber-100 transition-all duration-300 group">
                     <div className="text-base font-bold text-amber-600 mb-1 group-hover:scale-110 transition-transform duration-300">
-                      {courseStats[cours._id]?.averageAbsences || 0}
+                      {courseStats[cours._id]?.pourcentageTerminees || 0}%
                     </div>
-                    <div className="text-xs text-amber-600">Abs. moy.</div>
+                    <div className="text-xs text-amber-600">Terminé</div>
                   </div>
                 </div>
+                
+                {/* Détails des séances */}
+                {courseStats[cours._id]?.totalSeances > 0 && (
+                  <div className="mt-4 p-3 bg-white rounded-lg border border-gray-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-blue-600" />
+                        Progression des séances
+                      </h4>
+                      <span className="text-xs text-gray-500">
+                        {courseStats[cours._id]?.seancesTerminees || 0} / {courseStats[cours._id]?.totalSeances || 0}
+                      </span>
+                    </div>
+                    
+                    {/* Barre de progression */}
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                      <div 
+                        className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full transition-all duration-500"
+                        style={{ 
+                          width: `${courseStats[cours._id]?.pourcentageTerminees || 0}%` 
+                        }}
+                      />
+                    </div>
+                    
+                    {/* Détails des séances */}
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1 text-emerald-600">
+                        <CheckCircle className="w-3 h-3" />
+                        <span>{courseStats[cours._id]?.seancesTerminees || 0} terminées</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-amber-600">
+                        <Clock className="w-3 h-3" />
+                        <span>{courseStats[cours._id]?.seancesNonTerminees || 0} à faire</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Actions compactes */}
@@ -863,35 +1028,52 @@ export default function MesCoursProf() {
                   <motion.button
                     onClick={() => generateSeancesForCourse(cours)}
                     className={`group relative overflow-hidden flex-1 py-3 px-3 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-1 ${
-                      courseStats[cours._id]?.completedSeances > 0
+                      courseStats[cours._id]?.seancesTerminees > 0
                         ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700"
                         : courseStats[cours._id]?.totalSeances > 0
                         ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700"
-                        : "bg-gradient-to-r from-cyan-500 to-cyan-600 text-white hover:from-cyan-600 hover:to-cyan-700"
+                        : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700"
                     }`}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    whileHover={{ scale: 1.05, y: -1 }}
+                    whileTap={{ scale: 0.95 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
                     <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                      courseStats[cours._id]?.completedSeances > 0
+                      courseStats[cours._id]?.seancesTerminees > 0
                         ? "bg-gradient-to-r from-emerald-600 to-emerald-700"
                         : courseStats[cours._id]?.totalSeances > 0
                         ? "bg-gradient-to-r from-amber-600 to-amber-700"
-                        : "bg-gradient-to-r from-cyan-600 to-cyan-700"
+                        : "bg-gradient-to-r from-blue-600 to-blue-700"
                     }`} />
                     <div className="relative z-10 flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        {courseStats[cours._id]?.completedSeances > 0 
+                        {courseStats[cours._id]?.seancesTerminees > 0 
                           ? "Terminé" 
                           : courseStats[cours._id]?.totalSeances > 0 
-                          ? "Regénérer" 
+                          ? "En cours"
                           : "Générer"
                         }
                       </span>
                     </div>
                   </motion.button>
+                  
+                  {/* Bouton pour voir le planning */}
+                  {courseStats[cours._id]?.totalSeances > 0 && (
+                    <motion.button
+                      onClick={() => navigate('/prof/planning')}
+                      className="group relative overflow-hidden bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-3 px-3 rounded-lg font-semibold text-sm hover:from-indigo-600 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-1"
+                      whileHover={{ scale: 1.05, y: -1 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="relative z-10 flex items-center gap-2">
+                        <Eye className="w-4 h-4" />
+                        <span>Planning</span>
+                      </div>
+                    </motion.button>
+                  )}
                   
                   <motion.button
                     onClick={() => setOpenAbsence((prev) => ({ ...prev, [cours._id]: !prev[cours._id] }))}
@@ -1178,6 +1360,158 @@ export default function MesCoursProf() {
                   )}
                 </div>
               </div>
+
+              {/* Section développée avec absences */}
+              <AnimatePresence>
+                {expandedCourses[cours._id] && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="border-t border-gray-200 bg-gray-50"
+                  >
+                    <div className="p-6 space-y-6">
+                      {/* Section des absences */}
+                      <div className="bg-white rounded-lg border border-gray-200 p-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <AlertCircle className="w-5 h-5 text-red-600" />
+                            Gestion des absences
+                          </h3>
+                          <motion.button
+                            onClick={() => setOpenAbsence(prev => ({ ...prev, [cours._id]: !prev[cours._id] }))}
+                            className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-red-600 hover:to-red-700 transition-all duration-300"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            {openAbsence[cours._id] ? "Fermer" : "Marquer absence"}
+                          </motion.button>
+                        </div>
+
+                        {/* Formulaire d'absence */}
+                        <AnimatePresence>
+                          {openAbsence[cours._id] && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -20 }}
+                              className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4"
+                            >
+                              <h4 className="text-sm font-semibold text-red-800 mb-3">Marquer une absence</h4>
+                              
+                              {studentsByCourse[cours._id]?.map((student) => (
+                                <div key={student._id} className="mb-3 p-3 bg-white rounded-lg border border-red-200">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="font-medium text-gray-800">
+                                      {student.name} {student.lastName}
+                                    </span>
+                                    <motion.button
+                                      onClick={() => markAbsence(cours._id, student._id)}
+                                      disabled={loadingAbsence[cours._id]}
+                                      className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors disabled:opacity-50"
+                                      whileHover={{ scale: 1.05 }}
+                                      whileTap={{ scale: 0.95 }}
+                                    >
+                                      {loadingAbsence[cours._id] ? "..." : "Marquer 2h"}
+                                    </motion.button>
+                                  </div>
+                                  
+                                  <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                      <label className="block text-gray-600 mb-1">Date</label>
+                                      <input
+                                        type="date"
+                                        value={absenceForm[cours._id]?.[student._id]?.date || new Date().toISOString().split('T')[0]}
+                                        onChange={(e) => handleAbsenceChange(cours._id, student._id, 'date', e.target.value)}
+                                        className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-gray-600 mb-1">Durée (h)</label>
+                                      <input
+                                        type="number"
+                                        min="1"
+                                        max="8"
+                                        value={absenceForm[cours._id]?.[student._id]?.duree || 2}
+                                        onChange={(e) => handleAbsenceChange(cours._id, student._id, 'duree', parseInt(e.target.value))}
+                                        className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+
+                        {/* Liste des absences existantes */}
+                        <div className="space-y-2">
+                          <h4 className="text-sm font-semibold text-gray-700 mb-2">Absences récentes</h4>
+                          {absencesStats[cours._id]?.absences?.slice(0, 5).map((absence) => (
+                            <div key={absence._id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                                <span className="text-sm text-gray-700">
+                                  {absence.student?.name} {absence.student?.lastName}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  {new Date(absence.date).toLocaleDateString('fr-FR')} - {absence.duree}h
+                                </span>
+                              </div>
+                              <motion.button
+                                onClick={() => removeAbsence(cours._id, absence._id)}
+                                className="text-red-500 hover:text-red-700 text-xs"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </motion.button>
+                            </div>
+                          ))}
+                          {(!absencesStats[cours._id]?.absences || absencesStats[cours._id].absences.length === 0) && (
+                            <p className="text-gray-500 text-sm italic">Aucune absence enregistrée</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Section des étudiants */}
+                      <div className="bg-white rounded-lg border border-gray-200 p-4">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                          <Users className="w-5 h-5 text-blue-600" />
+                          Étudiants inscrits ({studentsByCourse[cours._id]?.length || 0})
+                        </h3>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {studentsByCourse[cours._id]?.map((student) => (
+                            <div key={student._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                  <User className="w-4 h-4 text-blue-600" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-800">
+                                    {student.name} {student.lastName}
+                                  </p>
+                                  <p className="text-xs text-gray-500">{student.email}</p>
+                                </div>
+                              </div>
+                              <motion.button
+                                onClick={() => handleRemoveStudent(cours._id, student._id)}
+                                className="text-red-500 hover:text-red-700 p-1"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </motion.button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           ))}
 

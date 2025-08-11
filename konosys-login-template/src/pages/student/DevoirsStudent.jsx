@@ -370,7 +370,7 @@ export default function DevoirsStudent() {
         <motion.div
           className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-r from-red-400 to-pink-400 rounded-full opacity-20"
           animate={{ 
-            y: [0, -20, 0],
+            y: 0,
             rotate: [0, 180, 360]
           }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
@@ -378,8 +378,8 @@ export default function DevoirsStudent() {
         <motion.div
           className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-r from-orange-400 to-red-400 rounded-full opacity-20"
           animate={{ 
-            y: [0, 20, 0],
-            scale: [1, 1.2, 1]
+            y: 0,
+            scale: 1
           }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />

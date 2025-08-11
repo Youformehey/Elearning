@@ -328,8 +328,8 @@ export default function CoursStudent() {
                   rotate: [0, 5, 0, -5, 0],
                 }}
                 transition={{ 
-                  type: "spring", 
-                  stiffness: 300,
+                  type: "tween", 
+                  duration: 4,
                   boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" },
                   scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                   rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
@@ -418,8 +418,8 @@ export default function CoursStudent() {
                     rotate: [0, 8, 0, -8, 0],
                   }}
                   transition={{ 
-                    type: "spring", 
-                    stiffness: 300,
+                    type: "tween", 
+                    duration: 4,
                     boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                     scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
                     rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
@@ -647,8 +647,8 @@ export default function CoursStudent() {
                         rotate: [0, 8, 0, -8, 0],
                       }}
                       transition={{ 
-                        type: "spring", 
-                        stiffness: 300,
+                        type: "tween", 
+                        duration: 4,
                         boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                         scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
                         rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
@@ -764,8 +764,8 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
             rotate: [0, 5, 0, -5, 0],
           }}
           transition={{ 
-            type: "spring", 
-            stiffness: 300,
+            type: "tween", 
+            duration: 4,
             scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
             rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
           }}
@@ -826,9 +826,9 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
                   scale: [1, 1.05, 1],
                   rotate: [0, 2, -2, 0]
                 }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 300,
+                 transition={{ 
+                  type: "tween", 
+                  duration: 2,
                   scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
                   rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
                 }}
@@ -901,8 +901,8 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
                                 rotate: [0, 2, -2, 0]
                               }}
                               transition={{ 
-                                type: "spring", 
-                                stiffness: 300,
+                                type: "tween", 
+                                duration: 2,
                                 scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
                                 rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
                               }}
@@ -932,7 +932,7 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
                         >
                           <motion.div
                             animate={{ scale: [1, 1.1, 1] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
+                            transition={{ type: "tween", duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                           >
                             <Play className="w-4 h-4" />
                           </motion.div>
@@ -954,6 +954,7 @@ function CoursCard({ cours, navigate, formatDate, getMatiereNom, darkMode, fetch
                         rotate: [0, 5, -5, 0]
                       }}
                       transition={{ 
+                        type: "tween",
                         scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
                         rotate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
                       }}
