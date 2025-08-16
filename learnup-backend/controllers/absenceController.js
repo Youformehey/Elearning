@@ -9,38 +9,52 @@ const countAbsencesForStudent = async (studentId, courseId) => {
 // ✅ Enregistre les absences groupées (appelé lors du bouton "Sauvegarder")
 const enregistrerAbsences = async (req, res) => {
   const { courseId, attendance } = req.body;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
   try {
-    const absences = [];
+    if (!courseId || !attendance || typeof attendance !== "object") {
+      return res.status(400).json({ message: "Payload invalide" });
+    }
+
+    // Jour serveur (plage du jour)
+    const dayStart = new Date();
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+
+    const ops = [];
 
     for (const [studentId, isAbsent] of Object.entries(attendance)) {
-      if (!isAbsent) continue;
+      if (!isAbsent) continue; // on n'enregistre que les absents
 
-      const existing = await Absence.findOne({
-        student: studentId,
-        course: courseId,
-        date: today,
-      });
-
-      if (existing) continue;
-
-      const total = await countAbsencesForStudent(studentId, courseId);
+      // Limite max (6) AVANT l'upsert
+      const total = await Absence.countDocuments({ student: studentId, course: courseId });
       if (total >= 6) continue;
 
-      const newAbs = await Absence.create({
-        course: courseId,
-        student: studentId,
-        date: today,
-      });
-
-      absences.push(newAbs);
+      // Upsert: un seul enregistrement/jour/élève/cours
+      ops.push(
+        Absence.updateOne(
+          {
+            student: studentId,
+            course: courseId,
+            date: { $gte: dayStart, $lt: dayEnd },
+          },
+          {
+            $setOnInsert: {
+              student: studentId,
+              course: courseId,
+              date: new Date(), // horodatage exact, mais contraint par la plage du jour
+            },
+          },
+          { upsert: true }
+        )
+      );
     }
+
+    await Promise.all(ops);
 
     res.status(200).json({
       message: "Absences enregistrées.",
-      totalAbsents: absences.length,
+      totalAbsents: ops.length,
     });
   } catch (err) {
     console.error("❌ Erreur :", err.message);
@@ -48,18 +62,22 @@ const enregistrerAbsences = async (req, res) => {
   }
 };
 
-// ✅ Marque ou retire une absence spécifique
+
+// ✅ Marque ou retire une absence spécifique (toggle sur la journée)
 const marquerAbsence = async (req, res) => {
   const { etudiantId, coursId, date } = req.body;
 
   try {
-    const parsedDate = new Date(date);
-    parsedDate.setHours(0, 0, 0, 0);
+    const base = date ? new Date(date) : new Date();
+    base.setHours(0, 0, 0, 0);
+    const dayStart = base;
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
 
     const existing = await Absence.findOne({
       student: etudiantId,
       course: coursId,
-      date: parsedDate,
+      date: { $gte: dayStart, $lt: dayEnd },
     });
 
     if (existing) {
@@ -67,7 +85,7 @@ const marquerAbsence = async (req, res) => {
       return res.status(200).json({ removed: true, message: "Présence marquée" });
     }
 
-    const total = await countAbsencesForStudent(etudiantId, coursId);
+    const total = await Absence.countDocuments({ student: etudiantId, course: coursId });
     if (total >= 6) {
       return res.status(400).json({ message: "⚠️ Limite atteinte" });
     }
@@ -75,7 +93,7 @@ const marquerAbsence = async (req, res) => {
     const newAbs = await Absence.create({
       student: etudiantId,
       course: coursId,
-      date: parsedDate,
+      date: new Date(),
     });
 
     res.status(200).json({ removed: false, message: "Absence marquée", absence: newAbs });
@@ -85,10 +103,12 @@ const marquerAbsence = async (req, res) => {
   }
 };
 
+
 // ✅ Récupère toutes les absences d’un cours
 const getAbsencesParCours = async (req, res) => {
   try {
-    const absences = await Absence.find({ course: req.params.courseId })
+    const courseId = req.params.courseId || req.params.coursId; // 👈 compat route
+    const absences = await Absence.find({ course: courseId })
       .populate("student", "name email")
       .sort({ date: -1 });
 
@@ -98,6 +118,7 @@ const getAbsencesParCours = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
 
 // 📊 Stats d'absences par matière, classe et prof
 const getAbsencesParMatiereEtClasse = async (req, res) => {
@@ -178,8 +199,8 @@ const getAbsencesByCourseId = async (req, res) => {
 // ✅ Récupère les absences d'un étudiant avec détails
 const getAbsencesEtudiantParMatiere = async (req, res) => {
   try {
-    // 1. Récupérer l'ID étudiant depuis le token
-    const studentId = req.user._id;
+    // 1. Récupérer l'ID étudiant depuis le token (compat id/_id)
+    const studentId = req.user?.id || req.user?._id;
 
     // 2. Vérifier que l'ID existe
     if (!studentId) {

@@ -72,8 +72,15 @@ export default function AbsencesProfesseur() {
   const handleSelectCours = async (id) => {
     try {
       const { data } = await axios.get(`http://localhost:5001/api/courses/${id}`, authHeaders);
+
       setSelectedCours(data);
-      setAttendance({});
+
+      // ✅ Par défaut : marquer tous les étudiants comme Présents (true)
+      const initial = {};
+      (data.etudiants || []).forEach((s) => {
+        if (s?._id) initial[s._id] = true;
+      });
+      setAttendance(initial);
     } catch (err) {
       console.error("Erreur cours sélectionné :", err);
       setErrorMessage("Erreur lors de la sélection du cours");
@@ -81,25 +88,37 @@ export default function AbsencesProfesseur() {
   };
 
   // 3. Charger les absences existantes pour le cours sélectionné
+  // 4. Calculer les statistiques du cours
   useEffect(() => {
     if (!selectedCours) return;
 
-    axios
-      .get(`http://localhost:5001/api/absences/cours/${selectedCours._id}`, authHeaders)
-      .then(({ data }) => {
-        const mapped = {};
-        data.forEach((abs) => {
-          const id = abs.student?._id || abs.etudiant;
-          if (!mapped[id]) mapped[id] = [];
-          mapped[id].push(abs.date.split("T")[0]);
-        });
-        setAbsences(mapped);
-      })
-      .catch((err) => {
-        console.error("Erreur chargement absences :", err);
-        setAbsences({});
-      });
-  }, [selectedCours]);
+    const students = selectedCours.etudiants || [];
+    const totalStudents = students.length;
+
+    // Présents "locaux" (sélection du jour)
+    const presentToday = Object.values(attendance).filter(Boolean).length;
+    const absentToday = totalStudents - presentToday;
+
+    // ✅ Compter uniquement les absences du jour pour le taux
+    const todayStr = new Date().toISOString().split("T")[0];
+    const todaysAbsencesCount = Object.values(absences).reduce(
+      (sum, dates) => sum + dates.filter((d) => d === todayStr).length,
+      0
+    );
+
+    const attendanceRate = totalStudents > 0
+      ? (((totalStudents - todaysAbsencesCount) / totalStudents) * 100).toFixed(1)
+      : 0;
+
+    setCourseStats({
+      totalStudents,
+      presentToday,
+      absentToday,
+      totalAbsences: todaysAbsencesCount, // 👈 ou garde ton cumul si tu préfères
+      attendanceRate,
+    });
+  }, [selectedCours, attendance, absences]);
+
 
   // 4. Calculer les statistiques du cours
   useEffect(() => {
@@ -129,46 +148,62 @@ export default function AbsencesProfesseur() {
   };
 
   const handleSave = async () => {
-    if (!selectedCours) return;
-    
-    setSaving(true);
-    try {
-      // Préparer les données selon le format attendu par le backend
-      const attendanceData = {};
-      Object.entries(attendance).forEach(([studentId, isPresent]) => {
-        attendanceData[studentId] = !isPresent; // Inverser car le backend attend true pour absent
+  if (!selectedCours) return;
+
+  setSaving(true);
+  try {
+    // ✅ Construire un payload minimal : uniquement les absents
+    const attendanceData = {};
+    for (const [studentId, isPresent] of Object.entries(attendance)) {
+      if (isPresent === false) attendanceData[studentId] = true; // absent
+    }
+
+    const payload = {
+      courseId: selectedCours._id,
+      attendance: attendanceData,
+    };
+
+    const response = await axios.post("http://localhost:5001/api/absences", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    setSuccessMessage("Absences enregistrées avec succès !");
+    setTimeout(() => setSuccessMessage(""), 3000);
+
+    // ✅ Recharger les absences du cours pour mettre à jour les compteurs
+    const { data } = await axios.get(
+        `http://localhost:5001/api/absences/cours/${selectedCours._id}`,
+        authHeaders
+      );
+      const mapped = {};
+      data.forEach((abs) => {
+        const id = abs.student?._id || abs.etudiant;
+        if (!mapped[id]) mapped[id] = [];
+        mapped[id].push(abs.date.split("T")[0]);
       });
+      setAbsences(mapped);
 
-      const payload = {
-        courseId: selectedCours._id,
-        attendance: attendanceData
-      };
-
-      console.log("Absences à sauvegarder:", payload);
-
-      const response = await axios.post("http://localhost:5001/api/absences", payload, {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+      // ✅ Réinitialiser la présence du jour (tout le monde présent)
+      const initial = {};
+      (selectedCours.etudiants || []).forEach((s) => {
+        if (s?._id) initial[s._id] = true;
       });
-
-      console.log("Réponse du serveur:", response.data);
-
-      setSuccessMessage("Absences enregistrées avec succès !");
-      setTimeout(() => setSuccessMessage(""), 3000);
-      
-      // Réinitialiser les absences locales
-      setAttendance({});
-      
+      setAttendance(initial);
     } catch (err) {
       console.error("Erreur sauvegarde absences :", err);
-      setErrorMessage("Erreur lors de la sauvegarde des absences: " + (err.response?.data?.message || err.message));
+      setErrorMessage(
+        "Erreur lors de la sauvegarde des absences: " +
+          (err.response?.data?.message || err.message)
+      );
       setTimeout(() => setErrorMessage(""), 5000);
     } finally {
       setSaving(false);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 overflow-hidden text-gray-800">

@@ -194,44 +194,70 @@ export default function MesCoursProf() {
   }
 
   // Add a new course
-  async function handleAddCourse(e) {
-    e.preventDefault();
-    if (!newCourse.nom || !newCourse.matiere) {
-      setErrorMessage("Veuillez remplir tous les champs obligatoires");
-      setTimeout(() => setErrorMessage(""), 3000);
-      return;
-    }
+async function handleAddCourse(e) {
+  e.preventDefault();
 
-    try {
-      const courseData = {
-        ...newCourse,
-        dateCreation: new Date().toISOString(),
-        status: "active"
-      };
-
-      const res = await fetch(`${API_URL}/api/courses`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(courseData),
-      });
-
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Erreur création cours");
-      }
-
-      setSuccessMessage("✅ Cours créé avec succès !");
-      setTimeout(() => setSuccessMessage(""), 3000);
-      setNewCourse({ nom: "", matiere: "", description: "" });
-      fetchCourses();
-    } catch (err) {
-      setErrorMessage(err.message);
-      setTimeout(() => setErrorMessage(""), 3000);
-    }
+  // validations côté UI (le schéma exige aussi "classe")
+  if (!form.nom?.trim() || !form.matiere || !form.classe?.trim()) {
+    setErrorMessage("Veuillez remplir tous les champs obligatoires");
+    setTimeout(() => setErrorMessage(""), 3000);
+    return;
   }
+
+  try {
+    const payload = {
+      nom: form.nom.trim(),
+      matiere: form.matiere,
+      classe: form.classe.trim(),
+      semestre: form.semestre || undefined,
+      horaire: form.horaire || undefined,
+      date: form.date || undefined,
+      salle: form.salle || undefined,
+      groupe: form.groupe || form.classe,     // fallback utile
+      duree: Number(form.duree) || 120,
+      teacher: teacherId                      // au cas où le backend ne lit pas req.user
+    };
+
+    // ⚠️ ton API_URL contient déjà "/api"
+    const res = await fetch(`${API_URL}/courses`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || "Erreur création cours");
+    }
+
+    setSuccessMessage("✅ Cours créé avec succès !");
+    setTimeout(() => setSuccessMessage(""), 3000);
+
+    // reset du formulaire
+    setForm({
+      nom: "",
+      matiere: "",
+      classe: "",
+      semestre: "",
+      horaire: "",
+      date: "",
+      salle: "",
+      groupe: "",
+      duree: "120",
+    });
+
+    setShowAddCourse(false);
+    fetchCourses();
+  } catch (err) {
+    setErrorMessage(err.message);
+    setTimeout(() => setErrorMessage(""), 3000);
+  }
+}
+
+
 
   // Gestion inscription élève
   async function handleInscrireEleve(courseId) {

@@ -79,6 +79,7 @@ router.get(
   getAbsencesEtudiantParMatiere
 );
 
+
 // ✅ STATS : par matière / classe / prof
 router.get(
   "/matiere/:matiere/:classe/:profId",
@@ -92,12 +93,13 @@ router.get(
         .populate("student", "name email")
         .populate("course", "matiere classe teacher");
 
+      // 👉 ICI tu remplaces le bloc du filter
       const filtered = absences.filter((abs) => {
         const course = abs.course;
         return (
-          course?.matiere === matiere &&
+          course?.matiere?.toString?.() === matiere &&
           course?.classe === classe &&
-          course?.teacher?.toString() === profId
+          course?.teacher?.toString?.() === profId
         );
       });
 
@@ -121,6 +123,8 @@ router.get(
     }
   }
 );
+
+
 
 // ✅ STATS : par courseId (utilisé dans MesCours.jsx)
 router.get(

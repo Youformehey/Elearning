@@ -31,12 +31,15 @@ const AdminTeachers = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState(null);
   const [newTeacher, setNewTeacher] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    tel: '',
-    matiere: '',
+    phone: '',
+    subject: '',
+    department: '',
     adresse: '',
-    status: 'active'
+    status: 'active',
+    password: '' // nouveau
   });
 
   // Debug logs
@@ -86,10 +89,11 @@ const AdminTeachers = () => {
     setFilteredTeachers(filtered);
   };
 
+
   const handleAddTeacher = async () => {
     try {
       console.log('🔄 Création du professeur:', newTeacher);
-      
+
       const token = localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTk5YzY5YzY5YzY5YzY5YzY5YzY5YzY5YyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNDY5NzIwMCwiZXhwIjoxNzA0NzgzNjAwfQ.example';
       const config = {
         headers: {
@@ -97,45 +101,55 @@ const AdminTeachers = () => {
           'Content-Type': 'application/json'
         }
       };
-      
+
+      // 🔑 Mappage propre vers l’API
+      const name = (newTeacher.firstName || newTeacher.lastName)
+        ? `${newTeacher.firstName || ''} ${newTeacher.lastName || ''}`.trim()
+        : (newTeacher.name || '').trim();
+
       const teacherData = {
-        name: `${newTeacher.firstName} ${newTeacher.lastName}`,
-        email: newTeacher.email,
-        telephone: newTeacher.phone,
-        matiere: newTeacher.subject,
-        status: newTeacher.status || 'active'
+        name,
+        email: newTeacher.email?.trim(),
+        password: (newTeacher.password && newTeacher.password.trim().length >= 6)
+          ? newTeacher.password.trim()
+          : 'Temp12345!', // fallback si vide
+        tel: newTeacher.phone?.trim() || '',
+        matiere: newTeacher.subject || '',
+        adresse: newTeacher.adresse || ''
       };
-      
+
       const response = await fetch(`http://localhost:5001/api/admin/teachers`, {
         method: 'POST',
         headers: config.headers,
         body: JSON.stringify(teacherData)
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Erreur lors de la création');
       }
-      
+
       const newTeacherData = await response.json();
       console.log('✅ Réponse création:', newTeacherData);
-      
-      // Ajouter le nouveau professeur à la liste locale
+
+      // ✅ Ajouter le nouveau professeur à la liste locale
       const teacherItem = {
         _id: newTeacherData.teacher._id,
         name: newTeacherData.teacher.name,
         email: newTeacherData.teacher.email,
-        tel: newTeacherData.teacher.telephone,
+        tel: newTeacherData.teacher.tel,
         matiere: newTeacherData.teacher.matiere,
-        status: newTeacherData.teacher.status,
+        status: newTeacher.status || 'active',
         experience: '0 an',
         students: 0,
         rating: 0,
         joinDate: new Date().toISOString().split('T')[0],
         avatar: '👨‍🏫'
       };
-      
+
       setTeachers([...teachers, teacherItem]);
+
+      // 🔄 Reset du formulaire
       setNewTeacher({
         firstName: '',
         lastName: '',
@@ -143,66 +157,94 @@ const AdminTeachers = () => {
         phone: '',
         subject: '',
         department: '',
-        status: 'active'
+        adresse: '',
+        status: 'active',
+        password: ''
       });
+
       setShowAddModal(false);
       alert('Professeur créé avec succès');
     } catch (err) {
       console.error('❌ Error adding teacher:', err);
-      const errorMessage = err.message;
-      alert(`Erreur lors de la création du professeur: ${errorMessage}`);
+      alert(`Erreur lors de la création du professeur: ${err.message}`);
     }
   };
 
+
   const handleEditTeacher = async () => {
-    try {
-      console.log('🔄 Modification du professeur:', editingTeacher._id);
-      console.log('📝 Données à envoyer:', editingTeacher);
-      
-      const token = localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTk5YzY5YzY5YzY5YzY5YzY5YzY5YzY5YyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNDY5NzIwMCwiZXhwIjoxNzA0NzgzNjAwfQ.example';
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      };
-      
-      const teacherData = {
-        name: `${editingTeacher.firstName} ${editingTeacher.lastName}`,
-        email: editingTeacher.email,
-        telephone: editingTeacher.phone,
-        matiere: editingTeacher.subject,
-        status: editingTeacher.status
-      };
-      
-      const response = await fetch(`http://localhost:5001/api/admin/teachers/${editingTeacher._id}`, {
-        method: 'PUT',
-        headers: config.headers,
-        body: JSON.stringify(teacherData)
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erreur lors de la modification');
-      }
-      
-      const updatedTeacher = await response.json();
-      console.log('✅ Réponse modification:', updatedTeacher);
-      
-      // Mettre à jour la liste locale
-      const updatedTeachers = teachers.map(teacher =>
-        teacher._id === editingTeacher._id ? { ...teacher, ...editingTeacher } : teacher
-      );
-      setTeachers(updatedTeachers);
-      setEditingTeacher(null);
-      setShowEditModal(false);
-      alert('Professeur modifié avec succès');
-    } catch (err) {
-      console.error('❌ Error updating teacher:', err);
-      const errorMessage = err.message;
-      alert(`Erreur lors de la modification du professeur: ${errorMessage}`);
+  try {
+    if (!editingTeacher?._id) {
+      alert("Aucun professeur sélectionné.");
+      return;
     }
-  };
+
+    console.log('🔄 Modification du professeur:', editingTeacher._id);
+    console.log('📝 Données à envoyer (UI):', editingTeacher);
+
+    const token = localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTk5YzY5YzY5YzY5YzY5YzY5YzY5YzY5YyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNDY5NzIwMCwiZXhwIjoxNzA0NzgzNjAwfQ.example';
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    };
+
+    // 🔑 Normalisation des champs vers l’API
+    const name =
+      (editingTeacher.firstName || editingTeacher.lastName)
+        ? `${editingTeacher.firstName || ''} ${editingTeacher.lastName || ''}`.trim()
+        : (editingTeacher.name || '').trim();
+
+    const teacherData = {
+      name,
+      email: editingTeacher.email?.trim(),
+      tel: editingTeacher.phone?.trim() || editingTeacher.tel || '',
+      matiere: editingTeacher.subject || editingTeacher.matiere || '',
+      adresse: editingTeacher.adresse || '',
+      status: editingTeacher.status // seulement si ton back le gère côté update
+    };
+
+    const response = await fetch(`http://localhost:5001/api/admin/teachers/${editingTeacher._id}`, {
+      method: 'PUT',
+      headers: config.headers,
+      body: JSON.stringify(teacherData)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Erreur lors de la modification');
+    }
+
+    const updatedFromApi = await response.json();
+    console.log('✅ Réponse modification:', updatedFromApi);
+
+    // ✅ Mise à jour locale avec des clés cohérentes (tel/matiere/adresse)
+    const updatedTeachers = teachers.map(t =>
+      t._id === editingTeacher._id
+        ? {
+            ...t,
+            _id: t._id,
+            name: teacherData.name ?? t.name,
+            email: teacherData.email ?? t.email,
+            tel: teacherData.tel ?? t.tel,
+            matiere: teacherData.matiere ?? t.matiere,
+            adresse: teacherData.adresse ?? t.adresse,
+            status: teacherData.status ?? t.status
+          }
+        : t
+    );
+
+    setTeachers(updatedTeachers);
+    setEditingTeacher(null);
+    setShowEditModal(false);
+    alert('Professeur modifié avec succès');
+  } catch (err) {
+    console.error('❌ Error updating teacher:', err);
+    alert(`Erreur lors de la modification du professeur: ${err.message}`);
+  }
+};
+
+
 
   const handleDeleteTeacher = async (id) => {
     try {
@@ -496,13 +538,27 @@ const AdminTeachers = () => {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => {
-                          setEditingTeacher(teacher);
+                          // Découper le nom en prénom/nom pour le formulaire
+                          const fullName = (teacher.name || '').trim();
+                          const parts = fullName.split(' ').filter(Boolean);
+                          const firstName = parts[0] || '';
+                          const lastName = parts.slice(1).join(' ') || '';
+
+                          setEditingTeacher({
+                            ...teacher,
+                            firstName,
+                            lastName,
+                            phone: teacher.tel || '',
+                            subject: teacher.matiere || '',
+                            department: teacher.department || '' // si tu ajoutes un vrai champ plus tard
+                          });
                           setShowEditModal(true);
                         }}
                         className="text-blue-600 hover:text-blue-800"
                       >
                         <FaEdit />
                       </motion.button>
+
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
@@ -566,6 +622,15 @@ const AdminTeachers = () => {
                     type="email"
                     value={newTeacher.email}
                     onChange={(e) => setNewTeacher({...newTeacher, email: e.target.value})}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
+                  <input
+                    type="password"
+                    value={newTeacher.password}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, password: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
