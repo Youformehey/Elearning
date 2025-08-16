@@ -5,18 +5,18 @@ import HomeNavbarStudent from "../../Components/HomeNavbarStudent";
 
 const StudentLayout = () => {
   return (
-    <div className="flex min-h-screen bg-white">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-white flex">
+      {/* Sidebar (fixe à gauche dans ton composant) */}
       <SidebarStudent />
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Navbar */}
+
+      {/* Main Content (décalé de la largeur de la sidebar en ≥ md) */}
+      <div className="flex-1 flex flex-col min-w-0 md:pl-72">
+        {/* Navbar (fixe/sticky dans ton composant) */}
         <HomeNavbarStudent />
-        
-        {/* Main Content Area */}
-        <main className="flex-1 pt-40 px-6 sm:px-8 lg:px-10 pb-8">
-          <div className="max-w-7xl mx-auto">
+
+        {/* Main Content Area (padding-top pour laisser la place à la navbar) */}
+        <main className="flex-1 pt-[7rem]">
+          <div className="w-full mx-auto">
             <Outlet />
           </div>
         </main>
