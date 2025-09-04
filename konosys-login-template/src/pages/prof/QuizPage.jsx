@@ -64,11 +64,11 @@ const QuizPage = () => {
 
     setLoading(true);
     setErrorMessage("");
-    
+
     try {
       console.log("🔍 Fetching quiz for chapitreId:", chapitreId);
-      
-      // Récupérer les données du chapitre et du cours
+
+      // On lance les deux requêtes en parallèle
       const [quizRes, chapitreRes] = await Promise.all([
         fetch(`${API_URL}/api/quiz/chapitre/${chapitreId}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -81,40 +81,52 @@ const QuizPage = () => {
       console.log("🔍 Quiz response status:", quizRes.status);
       console.log("🔍 Chapitre response status:", chapitreRes.status);
 
-      // Vérifier d'abord si le chapitre existe
-      if (!chapitreRes.ok) {
-        const errorData = await chapitreRes.text();
-        console.error("❌ Chapitre API error:", errorData);
-        throw new Error(`❌ Chapitre introuvable (${chapitreRes.status}). Vérifiez que le chapitre existe.`);
-      }
+      // 1) Traiter le quiz en priorité (l'UI ne dépend pas du chapitre)
+      let q = null;
+      if (quizRes.ok) {
+        const quizData = await quizRes.json();
+        console.log("🔍 Quiz data:", quizData);
 
-      const chapitreData = await chapitreRes.json();
-      console.log("🔍 Chapitre data:", chapitreData);
-      setChapitre(chapitreData);
-
-      if (!quizRes.ok) {
-        const errorData = await quizRes.text();
-        console.error("❌ Quiz API error:", errorData);
-        
-        if (quizRes.status === 404) {
-          // Pas de quiz existant, c'est normal
-          console.log("ℹ️ Aucun quiz existant pour ce chapitre");
-          setQuiz(null);
-          return;
-        } else {
-          throw new Error(`Erreur API quiz: ${quizRes.status}`);
+        if (quizData && typeof quizData === "object") {
+          if ("quiz" in quizData && quizData.quiz) {
+            q = quizData.quiz;
+          } else if (Array.isArray(quizData.questions)) {
+            // normalisation si le serveur renvoie directement {questions:[]}
+            q = {
+              _id: quizData._id ?? null,
+              chapitreId,
+              questions: quizData.questions,
+              createdAt: quizData.createdAt,
+              updatedAt: quizData.updatedAt,
+            };
+          } else if (quizData.exists === false) {
+            q = null;
+          }
         }
-      }
-
-      const quizData = await quizRes.json();
-      console.log("🔍 Quiz data:", quizData);
-
-      if (quizData.exists) {
-        setQuiz(quizData.quiz);
-      } else {
+        setQuiz(q);
+      } else if (quizRes.status === 404) {
         setQuiz(null);
+      } else {
+        const errorText = await quizRes.text();
+        console.error("❌ Quiz API error:", errorText);
+        throw new Error(`Erreur API quiz: ${quizRes.status}`);
       }
-      
+
+      // 2) Traiter le chapitre en best-effort (ne pas bloquer l'affichage du quiz)
+      if (chapitreRes.ok) {
+        const chapitreData = await chapitreRes.json();
+        console.log("🔍 Chapitre data:", chapitreData);
+        setChapitre(chapitreData);
+      } else if (chapitreRes.status === 403) {
+        console.warn("⛔ Accès au chapitre refusé pour ce compte (403)");
+        setChapitre({ _id: chapitreId, titre: "Chapitre (accès restreint)" });
+      } else if (chapitreRes.status === 404) {
+        setChapitre(null);
+      } else {
+        const chapterErr = await chapitreRes.text();
+        console.error("❌ Chapitre API error:", chapterErr);
+        setChapitre(null);
+      }
     } catch (err) {
       console.error("❌ Erreur fetchQuizData:", err);
       setErrorMessage(err.message);
@@ -131,49 +143,65 @@ const QuizPage = () => {
 
     setErrorMessage("");
     setSuccessMessage("");
-    
+
     try {
       console.log("🔍 Creating quiz for chapitreId:", chapitreId);
       console.log("🔍 User info:", userInfo);
       console.log("🔍 Token:", token ? "Present" : "Missing");
-      
+
       const res = await fetch(`${API_URL}/api/quiz/chapitre/${chapitreId}`, {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         },
       });
 
       console.log("🔍 Create quiz response status:", res.status);
 
       if (!res.ok) {
-        const errorData = await res.text();
-        console.error("❌ Create quiz error:", errorData);
-        
-        let errorMessage = "Erreur création quiz";
-        
-        if (res.status === 404) {
-          errorMessage = "❌ Chapitre introuvable. Vérifiez que le chapitre existe.";
-        } else if (res.status === 403) {
-          errorMessage = "❌ Accès refusé. Vous n'enseignez pas ce cours.";
-        } else if (res.status === 400) {
-          errorMessage = "❌ Un quiz existe déjà pour ce chapitre.";
-        } else {
-          errorMessage = `❌ Erreur création quiz: ${res.status}`;
+        const raw = await res.text();
+        console.error("❌ Create quiz error:", raw);
+
+        let messageServer = "";
+        try {
+          messageServer = JSON.parse(raw)?.message || "";
+        } catch {
+          // ignore
         }
-        
-        throw new Error(errorMessage);
+
+        if (res.status === 404) {
+          throw new Error("❌ Chapitre introuvable. Vérifiez que le chapitre existe.");
+        }
+        if (res.status === 403) {
+          throw new Error("❌ Accès refusé. Vous n'enseignez pas ce cours.");
+        }
+        if (
+          res.status === 400 &&
+          (messageServer.toLowerCase().includes("existe déjà") ||
+           messageServer.toLowerCase().includes("existe deja") ||
+           messageServer.toLowerCase().includes("already exists"))
+        ) {
+          // Le quiz existe déjà : le charger et sortir proprement
+          await fetchQuizData();
+          setSuccessMessage("ℹ️ Un quiz existant a été chargé.");
+          setTimeout(() => setSuccessMessage(""), 3000);
+          return;
+        }
+
+        throw new Error(`❌ Erreur création quiz: ${res.status}`);
       }
 
       const data = await res.json();
       console.log("🔍 Created quiz data:", data);
-      
-      setQuiz(data.quiz);
+
+      setQuiz(data?.quiz ?? null);
       setSuccessMessage("✅ Quiz créé avec succès !");
+      setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
       console.error("❌ Erreur création quiz:", err);
-      setErrorMessage(err.message);
+      setErrorMessage(err.message || "❌ Erreur création quiz");
+      setTimeout(() => setErrorMessage(""), 4000);
     }
   };
 
@@ -191,11 +219,11 @@ const QuizPage = () => {
 
     setErrorMessage("");
     setSuccessMessage("");
-    
+
     try {
       console.log("🔍 Adding question for chapitreId:", chapitreId);
       console.log("🔍 Question data:", { question: newQuestion, options: newOptions, correctIndex });
-      
+
       const res = await fetch(`${API_URL}/api/quiz/chapitre/${chapitreId}/question`, {
         method: "POST",
         headers: {
@@ -219,7 +247,7 @@ const QuizPage = () => {
 
       const data = await res.json();
       console.log("🔍 Added question data:", data);
-      
+
       setQuiz(data.quiz);
       setNewQuestion("");
       setNewOptions(["", "", "", ""]);
@@ -244,10 +272,10 @@ const QuizPage = () => {
 
     setErrorMessage("");
     setSuccessMessage("");
-    
+
     try {
       console.log("🔍 Deleting question:", questionId, "for chapitreId:", chapitreId);
-      
+
       const res = await fetch(`${API_URL}/api/quiz/chapitre/${chapitreId}/question/${questionId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
@@ -344,6 +372,7 @@ const QuizPage = () => {
       <AnimatePresence>
         {errorMessage && (
           <motion.div
+            key="quiz-error"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -364,6 +393,7 @@ const QuizPage = () => {
         
         {successMessage && (
           <motion.div
+            key="quiz-success"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -458,12 +488,12 @@ const QuizPage = () => {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Question
                   </label>
-                  <textarea
-                    value={newQuestion}
-                    onChange={(e) => setNewQuestion(e.target.value)}
-                    placeholder="Entrez votre question..."
-                    className="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-lg resize-none h-24"
-                  />
+                    <textarea
+                      value={newQuestion}
+                      onChange={(e) => setNewQuestion(e.target.value)}
+                      placeholder="Entrez votre question..."
+                      className="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none text-lg resize-none h-24"
+                    />
                 </div>
 
                 <div>
@@ -535,7 +565,7 @@ const QuizPage = () => {
                 <div className="space-y-6">
                   {quiz.questions.map((question, index) => (
                     <motion.div
-                      key={question._id}
+                      key={question._id || index}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}

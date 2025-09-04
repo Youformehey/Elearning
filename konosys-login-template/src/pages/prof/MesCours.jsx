@@ -74,9 +74,16 @@ export default function MesCoursProf() {
   const [absenceForm, setAbsenceForm] = useState({});
   const [loadingAbsence, setLoadingAbsence] = useState({});
   
-  const token = JSON.parse(localStorage.getItem("userInfo"))?.token;
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const teacherId = userInfo?._id;
+  const token = userInfo?.token;
+
+  // Rends la détection robuste: certains logins renvoient id, d'autres _id, parfois dans user
+  const teacherId =
+    userInfo?._id ||
+    userInfo?.id ||
+    userInfo?.user?._id ||
+    userInfo?.user?.id;
+
   const navigate = useNavigate();
   const { darkMode } = useContext(ThemeContext);
 
@@ -98,7 +105,18 @@ export default function MesCoursProf() {
       if (!res.ok) throw new Error("Erreur chargement cours");
       const data = await res.json();
       const courses = data.courses || data;
-      setCoursProf(courses);
+      // Essaie de récupérer l’ID du prof de plusieurs façons (teacher, professeur)
+      const onlyMine = (courses || []).filter(c => {
+        const t =
+          c?.teacher?._id ??
+          c?.teacher ??
+          c?.professeur?._id ??
+          c?.professeur;
+        return String(t || "") === String(teacherId || "");
+      });
+
+      setCoursProf(onlyMine);
+
 
       const studentsMap = {};
       const absStatsMap = {};
@@ -998,11 +1016,31 @@ async function handleAddCourse(e) {
                   </motion.button>
                   
                   <motion.button
-                    onClick={() => navigate(`/prof/cours/quiz/${cours._id}`)}
+                    onClick={() => {
+                          // Sécurité: vérifie que ce cours est bien au prof connecté
+                          const ownerId =
+                            cours?.teacher?._id ??
+                            cours?.teacher ??
+                            cours?.professeur?._id ??
+                            cours?.professeur;
+
+                          if (String(ownerId || "") !== String(teacherId || "")) {
+                            setErrorMessage("⛔ Vous n'enseignez pas ce cours");
+                            setTimeout(() => setErrorMessage(""), 2500);
+                            return;
+                          }
+
+                          const chapitres = cours.chapitres || [];
+                          if (chapitres.length > 0) {
+                            // Ouvre le quiz du 1er chapitre (ou choisis-en un autre si tu préfères)
+                            navigate(`/prof/cours/quiz/${chapitres[0]._id}`);
+                          } else {
+                            setErrorMessage("Ajoutez un chapitre avant de créer un quiz.");
+                            setOpenChapitres(prev => ({ ...prev, [cours._id]: true }));
+                            setTimeout(() => setErrorMessage(""), 2500);
+                          }
+                        }}
                     className="group relative overflow-hidden bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 px-3 rounded-lg font-semibold text-sm hover:from-purple-600 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-1"
-                    whileHover={{ scale: 1.05, y: -1 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: "spring", stiffness: 300 }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="relative z-10 flex items-center gap-2">
@@ -1010,7 +1048,8 @@ async function handleAddCourse(e) {
                       <span>Quiz</span>
                     </div>
                   </motion.button>
-                </div>
+
+                </div> 
                 
                 <div className="grid grid-cols-3 gap-3">
                   <motion.button
