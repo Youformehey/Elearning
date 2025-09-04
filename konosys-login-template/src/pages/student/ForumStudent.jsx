@@ -43,17 +43,24 @@ const ForumStudent = () => {
 
     const body = {
       content: newMessageContent,
-      parentId: replyingTo, // null si message principal, sinon id du message parent
+      parentId: replyingTo, // optionnel, ignoré côté back si non utilisé
     };
 
     try {
-      const res = await fetch(`/api/forum/${id}/message`, {
+      // IMPORTANT: pas de "/message" à la fin
+      const res = await fetch(`/api/forum/${id}`, {
         method: "POST",
-        headers: authHeaders,
+        headers: authHeaders, // contient déjà Content-Type + Authorization
         body: JSON.stringify(body),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+
+      // parse robuste pour éviter l’erreur si la réponse n'est pas JSON
+      const ct = res.headers.get("content-type") || "";
+      const data = ct.includes("application/json") ? await res.json() : { message: await res.text() };
+
+      if (!res.ok) throw new Error(data?.message || `HTTP ${res.status}`);
+
+      // reset + reload
       setNewMessageContent("");
       setReplyingTo(null);
       await fetchMessages();
