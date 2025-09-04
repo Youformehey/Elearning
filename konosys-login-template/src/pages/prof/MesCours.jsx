@@ -495,14 +495,20 @@ async function handleAddCourse(e) {
         status: "planned"
       };
 
-      const res = await fetch(`${API_URL}/api/seances/generate`, {
+      // à l’intérieur de generateSeancesForCourse(course)
+      const res = await fetch(`${API_URL}/courses/${course._id}/generate-seances`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(seancesData),
+        // pas besoin de body : la route utilise courseId en params et req.user
       });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || "Erreur génération séances");
+      }
+
 
       if (!res.ok) {
         const errData = await res.json();
