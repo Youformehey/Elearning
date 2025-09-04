@@ -138,14 +138,7 @@ const SidebarProfesseur = () => {
       description: "Emploi du temps",
       color: "from-blue-700 to-blue-800"
     },
-    { 
-      id: "documents", 
-      icon: FileCheck, 
-      label: "Documents", 
-      path: "/prof/documents", 
-      description: "Ressources pédagogiques",
-      color: "from-blue-600 to-blue-700"
-    },
+  
     { 
       id: "rappels", 
       icon: Bell, 

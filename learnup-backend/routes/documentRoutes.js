@@ -8,6 +8,7 @@ const {
   getDocumentsByCourse,
   getDocumentsByTeacher,
   uploadVideoUrl,
+  deleteDocument,
 } = require("../controllers/documentController");
 
 const { protect, authorizeRoles } = require("../middleware/authMiddleware");
@@ -62,5 +63,8 @@ router.get("/course/:id", protect, getDocumentsByCourse);
 
 // Récupérer tous les documents du professeur connecté
 router.get("/me", protect, authorizeRoles("teacher"), getDocumentsByTeacher);
+
+// Supprimer un document
+router.delete("/:id", protect, authorizeRoles("teacher"), deleteDocument);
 
 module.exports = router;

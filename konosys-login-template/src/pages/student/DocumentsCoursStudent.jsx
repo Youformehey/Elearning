@@ -82,10 +82,20 @@ export default function DocumentsCoursStudent() {
       return;
     }
 
-    const testUrl = `${API_URL}${doc.fileUrl}`;
+    // Vérifier si c'est une URL YouTube
+    const isYoutube = isYoutubeUrl(doc.fileUrl);
+    
+    // Construire l'URL correctement selon le type
+    const testUrl = isYoutube ? doc.fileUrl : `${API_URL}${doc.fileUrl}`;
     console.log('🔍 Test d\'accès au document:', testUrl);
 
     try {
+      // Pour YouTube, on ne peut pas faire de HEAD request, on affiche simplement l'URL
+      if (isYoutube) {
+        alert(`✅ Vidéo YouTube\n\nNom: ${doc.fileName}\nURL: ${testUrl}`);
+        return;
+      }
+      
       const response = await fetch(testUrl, { method: 'HEAD' });
       
       if (response.ok) {
@@ -95,6 +105,26 @@ export default function DocumentsCoursStudent() {
       }
     } catch (error) {
       alert(`❌ Erreur d'accès au document\n\nNom: ${doc.fileName}\nURL: ${testUrl}\n\nErreur: ${error.message}`);
+    }
+  };
+  
+  const handleDelete = async (docId) => {
+    if (!window.confirm("Confirmer la suppression ?")) return;
+    
+    try {
+      const res = await fetch(`${API_URL}/api/documents/${docId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (res.ok) {
+        setDocuments(prev => prev.filter(doc => doc._id !== docId));
+        alert("✅ Document supprimé avec succès !");
+      } else {
+        throw new Error("Erreur lors de la suppression");
+      }
+    } catch (err) {
+      alert("❌ " + err.message);
     }
   };
 
@@ -188,7 +218,7 @@ export default function DocumentsCoursStudent() {
                   <div className="mt-4 aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
                     <iframe
                       className="w-full h-48 md:h-56"
-                      src={`https://www.youtube.com/embed/${youtubeId}`}
+                      src={`https://www.youtube.com/embed/${youtubeId}?rel=0`}
                       title="YouTube video player"
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -212,6 +242,13 @@ export default function DocumentsCoursStudent() {
                     >
                       Voir le fichier
                     </a>
+                    <button
+                      onClick={() => handleDelete(doc._id)}
+                      className="text-red-600 hover:text-red-800 text-sm flex items-center gap-1"
+                      title="Supprimer le document"
+                    >
+                      🗑️ Supprimer
+                    </button>
                   </div>
                 )}
               </div>

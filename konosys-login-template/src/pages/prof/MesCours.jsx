@@ -58,9 +58,9 @@ export default function MesCoursProf() {
     nom: "",
     matiere: "",
     classe: "",
-    semestre: "",
-    horaire: "",
-    date: "",
+    semestre: "1",
+    horaire: "09:00",
+    jour: "lundi",
     salle: "",
     groupe: "",
     duree: "120",
@@ -209,13 +209,13 @@ async function handleAddCourse(e) {
       nom: form.nom.trim(),
       matiere: form.matiere,
       classe: form.classe.trim(),
-      semestre: form.semestre || undefined,
-      horaire: form.horaire || undefined,
-      date: form.date || undefined,
-      salle: form.salle || undefined,
-      groupe: form.groupe || form.classe,     // fallback utile
+      semestre: form.semestre || "1",
+      horaire: form.horaire || "09:00",
+      jour: form.jour || "lundi",
+      salle: form.salle,
+      groupe: form.groupe || form.classe,
       duree: Number(form.duree) || 120,
-      teacher: teacherId                      // au cas où le backend ne lit pas req.user
+      teacher: teacherId
     };
 
     // ⚠️ ton API_URL contient déjà "/api"
@@ -482,20 +482,46 @@ async function handleAddCourse(e) {
     if (!window.confirm(`Générer les séances pour le cours "${course.nom}" ?`)) return;
     
     try {
-      const courseCreationDate = new Date(course.dateCreation || course.createdAt || new Date());
-      const startDate = new Date(courseCreationDate);
-      startDate.setDate(startDate.getDate() + 1); // Commencer le lendemain de la création
+      // Vérification des données requises
+      if (!course.horaire || !course.jour || !course.salle || !course.duree) {
+        throw new Error("Veuillez d'abord configurer l'horaire, le jour, la salle et la durée du cours");
+      }
+
+      // Créer un tableau de correspondance pour les jours
+      const joursSemaine = {
+        "lundi": 1,
+        "mardi": 2,
+        "mercredi": 3,
+        "jeudi": 4,
+        "vendredi": 5,
+        "samedi": 6,
+        "dimanche": 0
+      };
+
+      // Obtenir le numéro du jour souhaité
+      const jourCible = joursSemaine[course.jour.toLowerCase()];
+      if (jourCible === undefined) {
+        throw new Error("Jour de la semaine invalide");
+      }
+
+      // Trouver la prochaine occurrence du jour souhaité
+      let startDate = new Date();
+      while (startDate.getDay() !== jourCible) {
+        startDate.setDate(startDate.getDate() + 1);
+      }
       
       const seancesData = {
         courseId: course._id,
-        startDate: startDate.toISOString(),
-        endDate: new Date(startDate.getTime() + (30 * 24 * 60 * 60 * 1000)).toISOString(), // 30 jours
-        frequency: "weekly",
-        duration: 120, // 2 heures par défaut
-        status: "planned"
+        jourSemaine: course.jour,
+        date: startDate.toISOString().split('T')[0],
+        heureDebut: course.horaire,
+        salle: course.salle,
+        duree: parseInt(course.duree),
+        nombreSeances: parseInt(course.semestre) === 1 ? 12 : 24, // 12 séances pour semestre 1, 24 pour semestre 2
+        recurrence: "hebdomadaire"
       };
 
-      const res = await fetch(`${API_URL}/api/seances/generate`, {
+      const res = await fetch(`${API_URL}/seances/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -816,6 +842,50 @@ async function handleAddCourse(e) {
                     />
                   </div>
                   
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">Jour de cours</label>
+                    <select
+                      name="jour"
+                      value={form.jour}
+                      onChange={(e) => setForm((f) => ({ ...f, jour: e.target.value }))}
+                      required
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-800 focus:ring-2 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none transition-all duration-300 text-sm"
+                    >
+                      {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'].map((jour) => (
+                        <option key={jour} value={jour.toLowerCase()}>
+                          {jour}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">Horaire</label>
+                    <input
+                      type="time"
+                      name="horaire"
+                      value={form.horaire}
+                      onChange={(e) => setForm((f) => ({ ...f, horaire: e.target.value }))}
+                      required
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-800 focus:ring-2 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none transition-all duration-300 text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">Durée (minutes)</label>
+                    <input
+                      type="number"
+                      name="duree"
+                      value={form.duree}
+                      onChange={(e) => setForm((f) => ({ ...f, duree: e.target.value }))}
+                      min="30"
+                      max="360"
+                      step="30"
+                      required
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-800 focus:ring-2 focus:ring-blue-400/30 focus:border-blue-400 focus:outline-none transition-all duration-300 text-sm"
+                    />
+                  </div>
+
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">Salle</label>
                     <input

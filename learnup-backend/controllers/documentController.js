@@ -81,3 +81,35 @@ exports.getDocumentsByTeacher = async (req, res) => {
     res.status(500).json({ error: "Erreur serveur." });
   }
 };
+
+// ✅ DELETE - Supprimer un document
+exports.deleteDocument = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Vérifier si l'ID est valide
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "ID de document invalide" });
+    }
+
+    // Trouver le document
+    const doc = await Document.findById(id);
+    
+    if (!doc) {
+      return res.status(404).json({ message: "Document non trouvé" });
+    }
+
+    // Vérifier que le prof est bien propriétaire du document
+    if (doc.teacher.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Non autorisé à supprimer ce document" });
+    }
+
+    // Supprimer le document de la base de données
+    await Document.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Document supprimé avec succès" });
+  } catch (error) {
+    console.error("Erreur deleteDocument:", error);
+    res.status(500).json({ message: "Erreur serveur lors de la suppression" });
+  }
+};

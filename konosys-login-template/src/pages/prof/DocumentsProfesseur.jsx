@@ -127,7 +127,8 @@ export default function DocumentsProfesseur() {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("course", selectedCourse);
-        formData.append("message", documentDescription || documentTitle || "");
+        formData.append("fileName", documentTitle || file.name);
+        formData.append("message", documentDescription || "");
 
         const res = await fetch(`${API_URL}/api/documents`, {
           method: "POST",

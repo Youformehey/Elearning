@@ -58,6 +58,7 @@ export default function DocumentsCours() {
   const [externalUrl, setExternalUrl] = useState("");
   const [documentTitle, setDocumentTitle] = useState("");
   const [documentDescription, setDocumentDescription] = useState("");
+  const [isEssential, setIsEssential] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
   const token = JSON.parse(localStorage.getItem("userInfo"))?.token;
@@ -97,14 +98,35 @@ export default function DocumentsCours() {
     if (!selectedCourse) return setDocuments([]);
     const fetchDocuments = async () => {
       try {
+        console.log("Chargement des documents pour le cours:", selectedCourse._id);
+        
         const res = await fetch(`${API_URL}/api/documents/course/${selectedCourse._id}`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
+          },
         });
-        if (!res.ok) throw new Error("Erreur chargement documents");
+
+        console.log("Status de la réponse:", res.status);
+
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("Réponse du serveur:", text);
+          try {
+            const errorData = JSON.parse(text);
+            throw new Error(errorData.message || "Erreur chargement documents");
+          } catch (e) {
+            throw new Error("Erreur de chargement: " + text);
+          }
+        }
+
         const data = await res.json();
+        console.log("Documents chargés:", data);
         setDocuments(data);
       } catch (err) {
-        console.error("Erreur chargement documents:", err);
+        console.error("Erreur détaillée chargement documents:", err);
+        setErrorMessage("❌ " + (err.message || "Erreur lors du chargement des documents"));
+        setTimeout(() => setErrorMessage(""), 3000);
         setDocuments([]);
       }
     };
@@ -124,14 +146,50 @@ export default function DocumentsCours() {
   };
 
   const isYoutubeUrl = (url) => {
-    return url && (url.includes("youtube.com") || url.includes("youtu.be"));
+    if (!url) return false;
+    // Vérifie si c'est un ID YouTube direct (11 caractères)
+    if (/^[A-Za-z0-9_-]{11}$/.test(url)) return true;
+    // Vérifie si c'est une URL YouTube
+    return url.includes("youtube.com") || url.includes("youtu.be");
   };
 
   const getYoutubeId = (url) => {
     if (!url) return null;
-    const ytMatch = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&\s]+)/);
-    return ytMatch ? ytMatch[1] : null;
+
+    // Si c'est déjà un ID YouTube (11 caractères)
+    if (/^[A-Za-z0-9_-]{11}$/.test(url)) return url;
+
+    try {
+      // Gérer les URLs courtes youtu.be
+      if (url.includes("youtu.be")) {
+        const id = url.split("youtu.be/")[1]?.split(/[?#]/)[0];
+        if (id?.length === 11) return id;
+      }
+
+      // Gérer les URLs youtube.com
+      if (url.includes("youtube.com")) {
+        // Format watch?v=
+        const params = new URLSearchParams(new URL(url).search);
+        const v = params.get("v");
+        if (v?.length === 11) return v;
+
+        // Format embed/
+        if (url.includes("/embed/")) {
+          const id = url.split("/embed/")[1]?.split(/[/?#]/)[0];
+          if (id?.length === 11) return id;
+        }
+      }
+
+      // Si aucun format standard n'est trouvé, chercher un ID de 11 caractères
+      const match = url.match(/([A-Za-z0-9_-]{11})/);
+      return match?.[1] || null;
+
+    } catch (e) {
+      console.error("Erreur lors de l'extraction de l'ID YouTube:", e, {url});
+      return null;
+    }
   };
+
 
   const getDocumentStats = () => {
     const stats = {
@@ -167,7 +225,9 @@ export default function DocumentsCours() {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("course", selectedCourse._id);
-        formData.append("message", documentDescription || documentTitle || "");
+        formData.append("fileName", documentTitle || file.name);
+        formData.append("message", documentDescription || "");
+        formData.append("isEssential", isEssential);
 
         const res = await fetch(`${API_URL}/api/documents`, {
           method: "POST",
@@ -186,9 +246,13 @@ export default function DocumentsCours() {
           throw new Error("Veuillez entrer une URL YouTube");
         }
 
-        if (!videoUrl.includes('youtube.com') && !videoUrl.includes('youtu.be')) {
-          throw new Error("Veuillez entrer une URL YouTube valide");
+        // Extraction de l'ID YouTube
+        const youtubeId = getYoutubeId(videoUrl.trim());
+        if (!youtubeId) {
+          throw new Error("URL YouTube invalide. Veuillez entrer une URL YouTube valide");
         }
+
+        console.log("Ajout vidéo YouTube:", { url: videoUrl, id: youtubeId });
 
         const res = await fetch(`${API_URL}/api/documents/url`, {
           method: "POST",
@@ -198,9 +262,11 @@ export default function DocumentsCours() {
           },
           body: JSON.stringify({
             courseId: selectedCourse._id,
-            fileUrl: videoUrl.trim(),
+            fileUrl: youtubeId, // On envoie uniquement l'ID YouTube
             fileName: documentTitle || "Vidéo YouTube",
             message: documentDescription || "",
+            isEssential: isEssential,
+            type: "youtube" // Indique que c'est une vidéo YouTube
           }),
         });
 
@@ -226,6 +292,7 @@ export default function DocumentsCours() {
             fileUrl: externalUrl.trim(),
             fileName: documentTitle || "Document externe",
             message: documentDescription || "",
+            isEssential: isEssential,
           }),
         });
 
@@ -262,6 +329,7 @@ export default function DocumentsCours() {
     setExternalUrl("");
     setDocumentTitle("");
     setDocumentDescription("");
+    setIsEssential(false);
     setActiveTab('file');
   };
 
@@ -269,20 +337,53 @@ export default function DocumentsCours() {
     if (!window.confirm("Confirmer la suppression ?")) return;
     
     try {
+      // Vérification que l'ID existe
+      if (!docId) {
+        throw new Error("ID du document manquant");
+      }
+
+      console.log("Tentative de suppression du document:", docId);
+      
       const res = await fetch(`${API_URL}/api/documents/${docId}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          'Authorization': `Bearer ${token}`
+        },
       });
       
-      if (res.ok) {
-        setDocuments(prev => prev.filter(doc => doc._id !== docId));
-        setSuccessMessage("✅ Document supprimé avec succès !");
-        setTimeout(() => setSuccessMessage(""), 3000);
-      } else {
-        throw new Error("Erreur lors de la suppression");
+      // Log de la réponse pour le débogage
+      console.log("Status de la réponse:", res.status);
+      
+      if (!res.ok) {
+        if (res.status === 404) {
+          throw new Error("Document non trouvé");
+        }
+        const text = await res.text();
+        console.error("Réponse du serveur:", text);
+        try {
+          const errorData = JSON.parse(text);
+          throw new Error(errorData.message || "Erreur lors de la suppression");
+        } catch (e) {
+          throw new Error("Erreur lors de la suppression: " + text);
+        }
       }
+
+      setDocuments(prev => prev.filter(doc => doc._id !== docId));
+      setSuccessMessage("✅ Document supprimé avec succès !");
+      
+      // Recharger la liste des documents
+      const docsRes = await fetch(`${API_URL}/api/documents/course/${selectedCourse._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (docsRes.ok) {
+        const docsData = await docsRes.json();
+        setDocuments(docsData);
+      }
+
+      setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
-      setErrorMessage("❌ " + err.message);
+      console.error("Erreur détaillée lors de la suppression:", err);
+      setErrorMessage("❌ " + (err.message || "Erreur lors de la suppression"));
       setTimeout(() => setErrorMessage(""), 3000);
     }
   };
@@ -730,6 +831,24 @@ export default function DocumentsCours() {
                     />
                   </div>
 
+                  {/* Option Document Essentiel */}
+                  <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-xl border border-yellow-200">
+                    <input
+                      type="checkbox"
+                      id="isEssential"
+                      checked={isEssential}
+                      onChange={(e) => setIsEssential(e.target.checked)}
+                      className="w-5 h-5 text-yellow-600 rounded focus:ring-yellow-500"
+                    />
+                    <label htmlFor="isEssential" className="flex items-center gap-2 cursor-pointer">
+                      <Star className="w-5 h-5 text-yellow-500" />
+                      <span className="font-medium text-yellow-700">Marquer comme document essentiel</span>
+                    </label>
+                    <div className="ml-auto text-xs text-yellow-600 max-w-xs">
+                      Les documents essentiels sont mis en évidence pour les étudiants
+                    </div>
+                  </div>
+
                   {/* Boutons */}
                   <div className="flex gap-4 pt-4">
                     <motion.button
@@ -906,87 +1025,107 @@ export default function DocumentsCours() {
               <div className="p-8">
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
                   <motion.div
-                    className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200"
+                    className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200 shadow-md"
                     whileHover={{ scale: 1.05, y: -5 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 bg-blue-600 rounded-lg">
+                      <div className="p-3 bg-blue-600 rounded-lg shadow-inner">
                         <FileText className="w-6 h-6 text-white" />
                       </div>
-                      <h3 className="font-semibold text-blue-800">PDF</h3>
+                      <h3 className="font-semibold text-blue-800">PDF/Documents</h3>
                     </div>
-                    <motion.div 
-                      className="text-3xl font-bold text-blue-600"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.7, type: "spring", stiffness: 200 }}
-                    >
-                      {stats.pdf}
-                    </motion.div>
+                    <div className="flex items-center justify-between">
+                      <motion.div 
+                        className="text-3xl font-bold text-blue-600"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.7, type: "spring", stiffness: 200 }}
+                      >
+                        {stats.pdf}
+                      </motion.div>
+                      <div className="text-xs text-blue-500 font-medium">
+                        {Math.round((stats.pdf / documents.length) * 100) || 0}% des ressources
+                      </div>
+                    </div>
                   </motion.div>
 
                   <motion.div
-                    className="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-xl border border-pink-200"
+                    className="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-xl border border-pink-200 shadow-md"
                     whileHover={{ scale: 1.05, y: -5 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 bg-pink-600 rounded-lg">
+                      <div className="p-3 bg-pink-600 rounded-lg shadow-inner">
                         <ImgIcon className="w-6 h-6 text-white" />
                       </div>
                       <h3 className="font-semibold text-pink-800">Images</h3>
                     </div>
-                    <motion.div 
-                      className="text-3xl font-bold text-pink-600"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
-                    >
+                    <div className="flex items-center justify-between">
+                      <motion.div 
+                        className="text-3xl font-bold text-pink-600"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
+                      >
                       {stats.images}
-                    </motion.div>
+                      </motion.div>
+                      <div className="text-xs text-pink-500 font-medium">
+                        {Math.round((stats.images / documents.length) * 100) || 0}% des ressources
+                      </div>
+                    </div>
                   </motion.div>
 
                   <motion.div
-                    className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200"
+                    className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200 shadow-md"
                     whileHover={{ scale: 1.05, y: -5 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 bg-purple-600 rounded-lg">
+                      <div className="p-3 bg-purple-600 rounded-lg shadow-inner">
                         <Film className="w-6 h-6 text-white" />
                       </div>
                       <h3 className="font-semibold text-purple-800">Vidéos</h3>
                     </div>
-                    <motion.div 
-                      className="text-3xl font-bold text-purple-600"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.9, type: "spring", stiffness: 200 }}
-                    >
-                      {stats.videos}
-                    </motion.div>
+                    <div className="flex items-center justify-between">
+                      <motion.div 
+                        className="text-3xl font-bold text-purple-600"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.9, type: "spring", stiffness: 200 }}
+                      >
+                        {stats.videos}
+                      </motion.div>
+                      <div className="text-xs text-purple-500 font-medium">
+                        {Math.round((stats.videos / documents.length) * 100) || 0}% des ressources
+                      </div>
+                    </div>
                   </motion.div>
 
                   <motion.div
-                    className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-xl border border-yellow-200"
+                    className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-xl border border-yellow-200 shadow-md"
                     whileHover={{ scale: 1.05, y: -5 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 bg-yellow-600 rounded-lg">
+                      <div className="p-3 bg-yellow-600 rounded-lg shadow-inner">
                         <Archive className="w-6 h-6 text-white" />
                       </div>
                       <h3 className="font-semibold text-yellow-800">Archives</h3>
                     </div>
-                    <motion.div 
-                      className="text-3xl font-bold text-yellow-600"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 1.0, type: "spring", stiffness: 200 }}
-                    >
-                      {stats.archives}
-                    </motion.div>
+                    <div className="flex items-center justify-between">
+                      <motion.div 
+                        className="text-3xl font-bold text-yellow-600"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 1.0, type: "spring", stiffness: 200 }}
+                      >
+                        {stats.archives}
+                      </motion.div>
+                      <div className="text-xs text-yellow-500 font-medium">
+                        {Math.round((stats.archives / documents.length) * 100) || 0}% des ressources
+                      </div>
+                    </div>
                   </motion.div>
 
                   <motion.div
@@ -1026,11 +1165,29 @@ export default function DocumentsCours() {
                   <motion.div
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
+                    className="relative"
                   >
                     <BookOpenCheck className="w-20 h-20 text-blue-300 mx-auto mb-4" />
+                    <motion.div 
+                      className="absolute -top-2 -right-2 p-2 bg-blue-100 rounded-full"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Plus className="w-5 h-5 text-blue-500" />
+                    </motion.div>
                   </motion.div>
                   <h3 className="text-xl text-blue-600 font-medium mb-2">Aucun document trouvé</h3>
-                  <p className="text-blue-400">Aucun document n'a encore été publié pour ce cours</p>
+                  <p className="text-blue-400 mb-6">Aucun document n'a encore été publié pour ce cours</p>
+                  
+                  <div className="max-w-md mx-auto bg-blue-50 p-4 rounded-xl border border-blue-200">
+                    <h4 className="font-medium text-blue-700 mb-2">Suggestions de documents à ajouter :</h4>
+                    <ul className="text-left text-sm text-blue-600 space-y-2">
+                      <li className="flex items-center gap-2"><FileText className="w-4 h-4" /> Support de cours au format PDF</li>
+                      <li className="flex items-center gap-2"><Youtube className="w-4 h-4" /> Vidéos explicatives</li>
+                      <li className="flex items-center gap-2"><FileImage className="w-4 h-4" /> Schémas et illustrations</li>
+                      <li className="flex items-center gap-2"><Link className="w-4 h-4" /> Liens vers des ressources complémentaires</li>
+                    </ul>
+                  </div>
                 </motion.div>
               ) : (
                 <motion.div
@@ -1070,11 +1227,17 @@ export default function DocumentsCours() {
                                 )}
                               </motion.div>
                               <div className="overflow-hidden flex-1">
-                                <h3 className="font-bold text-blue-900 text-sm truncate" title={doc.fileName}>
+                                <h3 className="font-bold text-blue-900 text-lg truncate" title={doc.fileName}>
                                   {isYoutube ? "Vidéo YouTube" : doc.fileName}
                                 </h3>
+                                <div className="flex items-center gap-1 mt-1">
+                                  <Calendar className="w-3 h-3 text-blue-500" />
+                                  <span className="text-xs text-blue-500">
+                                    {new Date(doc.createdAt).toLocaleDateString()}
+                                  </span>
+                                </div>
                                 {doc.message && (
-                                  <p className="text-xs text-blue-600 italic mt-1 truncate">
+                                  <p className="text-xs text-blue-600 mt-2 line-clamp-2">
                                     {doc.message}
                                   </p>
                                 )}
@@ -1082,28 +1245,53 @@ export default function DocumentsCours() {
                             </div>
 
                             {isYoutube ? (
-                              <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden mb-4">
-                                <iframe
-                                  className="w-full h-32"
-                                  src={`https://www.youtube.com/embed/${youtubeId}`}
-                                  title="YouTube video player"
-                                  frameBorder="0"
-                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                  allowFullScreen
-                                />
+                              <div className="rounded-lg overflow-hidden mb-4 shadow-lg border border-red-100">
+                                <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+                                  <iframe
+                                    src={`https://www.youtube.com/embed/${youtubeId}`}
+                                    title="YouTube video player"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    style={{
+                                      position: 'absolute',
+                                      top: 0,
+                                      left: 0,
+                                      width: '100%',
+                                      height: '100%'
+                                    }}
+                                  />
+                                </div>
+                                <div className="bg-gradient-to-r from-red-50 to-red-100 p-2 text-center">
+                                  <p className="text-xs text-red-600 font-medium">
+                                    Vidéo YouTube {youtubeId && `- ID: ${youtubeId}`}
+                                  </p>
+                                </div>
                               </div>
                             ) : (
-                              <motion.a
-                                href={`${API_URL}${doc.fileUrl}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200"
-                              >
-                                <Eye className="w-4 h-4" />
-                                Voir le fichier
-                              </motion.a>
+                              <div className="space-y-3">
+                                <motion.a
+                                  href={`${API_URL}${doc.fileUrl}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 w-full justify-center"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                  Consulter le document
+                                </motion.a>
+                                <motion.a
+                                  href={`${API_URL}${doc.fileUrl}`}
+                                  download
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 rounded-xl font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-200 w-full justify-center"
+                                >
+                                  <DownloadCloud className="w-4 h-4" />
+                                  Télécharger
+                                </motion.a>
+                              </div>
                             )}
 
                             <div className="flex items-center gap-2">
